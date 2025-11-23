@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  name             String?
+  image            String?
+  githubId         Int       @unique
+  githubUsername   String    @unique
+  githubToken      String?   @db.Text
+  
+  // Subscription
+  plan             Plan      @default(FREE)
+  stripeCustomerId String?   @unique
+  subscriptionId   String?
+  subscriptionEnd  DateTime?
+  
+  profiles         Profile[]
+  scans            Scan[]
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  @@index([githubUsername])
+}
+
+enum Plan {
+  FREE
+  PRO
+  PREMIUM
+  RECRUITER_BASIC
+  RECRUITER_PRO
+  ENTERPRISE
+}
+
+model Profile {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Core Metrics
+  score           Float
+  percentile      Float?
+  
+  // GitHub Data (cached)
+  totalCommits    Int
+  totalRepos      Int
+  totalStars      Int
+  totalForks      Int
+  languages       Json
+  topRepos        Json
+  contributions   Json
+  
+  // Analysis
+  strengths       Json?
+  weaknesses      Json?
+  roadmap         Json?
+  marketValue     Json?
+  
+  // Settings
+  isPublic        Boolean   @default(true)
+  
+  scannedAt       DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([score])
+}
+
+model Scan {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scannedAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([scannedAt])
+}
