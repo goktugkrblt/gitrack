@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { GitHubService } from "@/lib/github";
 import {
@@ -10,7 +10,7 @@ import {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await auth();
 
     if (!session || !session.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -26,13 +26,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check if user can scan (FREE tier = 1 scan only)
-    if (user.plan === "FREE" && user.scans.length >= 1) {
-      return NextResponse.json(
-        { error: "Free tier limit reached. Upgrade to Pro for unlimited scans." },
-        { status: 403 }
-      );
-    }
+    // // Check if user can scan (FREE tier = 1 scan only)
+    // if (user.plan === "FREE" && user.scans.length >= 1) {
+    //   return NextResponse.json(
+    //     { error: "Free tier limit reached. Upgrade to Pro for unlimited scans." },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Check if user has GitHub token
     if (!user.githubToken) {

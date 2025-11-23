@@ -1,11 +1,12 @@
 import { Plan } from "@prisma/client";
 
 
+// NextAuth type augmentation for v5
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string;
-      email: string;
+      id?: string;
+      email?: string | null;
       name?: string | null;
       image?: string | null;
     };

@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { handleSignIn } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 
@@ -27,14 +27,16 @@ export default function LoginPage() {
               personalized insights.
             </p>
 
-            <Button
-              onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-              size="lg"
-            >
-              <Github className="mr-2 h-5 w-5" />
-              Sign in with GitHub
-            </Button>
+            <form action={handleSignIn}>
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                size="lg"
+              >
+                <Github className="mr-2 h-5 w-5" />
+                Sign in with GitHub
+              </Button>
+            </form>
           </div>
 
           <div className="text-center text-sm text-gray-400">
