@@ -34,7 +34,7 @@ export default function HomePage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-gray-700 text-white hover:bg-gray-800"
+                  className="border-gray-700 text-black hover:bg-gray-800"
                 >
                   View Pricing
                 </Button>
