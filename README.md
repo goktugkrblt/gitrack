@@ -1,7 +1,7 @@
 # Gitrack
 
 <div align="center">
-  <img src="public/logo.svg" alt="Gitrack Logo" width="60" height="60">
+  <img src="public/logo.svg" alt="gitrack Logo" width="120" height="120">
   
   ### GitHub Quantified
   
@@ -19,18 +19,18 @@
 
 ## 📋 Table of Contents
 
-- [About The Project](#about-the-project)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
-- [Scoring Algorithm](#scoring-algorithm)
-- [Environment Variables](#environment-variables)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+- [About The Project](#-about-the-project)
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
+- [Project Structure](#-project-structure)
+- [API Documentation](#-api-documentation)
+- [Scoring Algorithm](#-scoring-algorithm)
+- [Environment Variables](#-environment-variables)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
 
 ---
 
