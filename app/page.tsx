@@ -124,12 +124,7 @@ export default function HomePage() {
               >
                 Transform your code contributions into quantifiable career metrics.                
                 Powered by advanced algorithms. Built for developers.
-              </motion.p>
-              <div className="flex items-center justify-center gap-8 mt-12 text-xs font-mono text-[#666]">
-                  <span>✓ 2MIN SETUP</span>
-                  <span>✓ INSTANT RESULTS</span>
-                  <span>✓ FREE FOREVER</span>
-                </div>
+              </motion.p>             
             </div>
 
             <motion.div
