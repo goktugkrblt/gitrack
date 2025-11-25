@@ -79,9 +79,9 @@ export default function HomePage() {
               <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}>
                 <Sparkles className="h-4 w-4 text-[#666]" />
               </motion.div>
-              <span className="text-sm text-[#919191] font-mono tracking-wider">
-                NEXT-GEN DEVELOPER ANALYTICS
-              </span>
+              <span className="text-[13px] sm:text-sm text-[#919191] font-mono tracking-wider">
+                  NEXT-GEN DEVELOPER ANALYTICS
+                </span>
             </motion.div>
 
             <div className="space-y-8">
