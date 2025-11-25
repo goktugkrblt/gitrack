@@ -1,7 +1,7 @@
 # Gitrack
 
 <div align="center">
-  <img src="public/logo.svg" alt="gitrack Logo" width="120" height="120">
+  <img src="public/logo.svg" alt="gitrack Logo" width="50" height="50">
   
   ### GitHub Quantified
   
