@@ -31,6 +31,12 @@ export interface GitHubRepo {
   name: string;
   full_name: string;
   description: string | null;
+  owner: {
+    login: string;
+    id: number;
+    avatar_url?: string;
+    type?: string;
+  };
   stargazers_count?: number;
   forks_count?: number;
   language: string | null;
