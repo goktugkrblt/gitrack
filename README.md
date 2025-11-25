@@ -12,7 +12,7 @@
   [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-316192?style=flat-square&logo=postgresql)](https://neon.tech/)
   [![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com/)
   
-  [Live Demo](https://gitrack.me) · [Report Bug](https://github.com/yourusername/gitrack/issues) · [Request Feature](https://github.com/yourusername/gitrack/issues)
+  [Live Demo](https://gitrack.me) · [Report Bug](https://github.com/goktugkrblt/gitrack/issues) · [Request Feature](https://github.com/goktugkrblt/gitrack/issues)
 </div>
 
 ---
@@ -118,7 +118,7 @@ Gitrack is a comprehensive GitHub profile analyzer that transforms your code con
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/gitrack.git
+   git clone https://github.com/goktugkrblt/gitrack.git
    cd gitrack
    ```
 
