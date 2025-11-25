@@ -34,13 +34,15 @@ export interface GitHubRepo {
   stargazers_count: number;
   forks_count: number;
   language: string | null;
-  topics: string[];
-  updated_at: string;
+  fork: boolean; // BUNU EKLE
   size: number;
-  has_readme: boolean;
+  updated_at: string;
+  topics: string[];
   license: {
+    key: string;
     name: string;
   } | null;
+  html_url: string;
 }
 
 export interface LanguageStats {
