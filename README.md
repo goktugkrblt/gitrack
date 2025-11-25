@@ -38,7 +38,7 @@
 
 Gitrack is a comprehensive GitHub profile analyzer that transforms your code contributions into quantifiable career metrics. Built for developers who want to showcase their impact, track their growth, and understand their coding patterns through advanced analytics and beautiful visualizations.
 
-### Why GitTrack?
+### Why Gitrack?
 
 - **Quantifiable Metrics**: Convert abstract GitHub activity into concrete, career-relevant numbers
 - **Developer Score**: Proprietary algorithm that evaluates your overall GitHub impact
@@ -243,7 +243,7 @@ gitrack/
 
 ## 📊 Scoring Algorithm
 
-GitTrack uses a proprietary algorithm to calculate your Developer Score (0-100):
+Gitrack uses a proprietary algorithm to calculate your Developer Score (0-100):
 
 ### Score Components
 
@@ -292,7 +292,7 @@ Score = (
 
 ### Percentile Ranking
 
-Your score is compared against all GitTrack users to determine your percentile:
+Your score is compared against all Gitrack users to determine your percentile:
 - **Top 1%**: Score 90-100
 - **Top 5%**: Score 80-89
 - **Top 10%**: Score 70-79
