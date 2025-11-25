@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
-    darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,27 +10,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#1f1f1f",
-        foreground: "#ffffff",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
         copy: "#919191",
-        card: "#2a2a2a",
-        "card-hover": "#333333",
-        border: "#3a3a3a",
-        primary: {
-          DEFAULT: "#3b82f6",
-          hover: "#2563eb",
-        },
-        secondary: {
-          DEFAULT: "#8b5cf6",
-          hover: "#7c3aed",
-        },
+        card: "var(--card)",
+        border: "var(--border)",
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 };
 
 export default config;
