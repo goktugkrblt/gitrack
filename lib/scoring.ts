@@ -68,12 +68,13 @@ export function analyzeRepoQuality(repo: GitHubRepo): number {
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
   if (new Date(repo.updated_at) > sixMonthsAgo) quality += 0.15;
 
-  // Has meaningful size (not empty)
-  if (repo.size > 100) quality += 0.15;
+  // Has meaningful size (not empty) - repo.size optional olduğu için kontrol eklendi
+  if ((repo.size || 0) > 100) quality += 0.15;
 
-  // Has stars (community validation)
-  if (repo.stargazers_count >= 10) quality += 0.15;
-  else if (repo.stargazers_count >= 5) quality += 0.10;
+  // Has stars (community validation) - stargazers_count optional olduğu için kontrol eklendi
+  const stars = repo.stargazers_count || 0;
+  if (stars >= 10) quality += 0.15;
+  else if (stars >= 5) quality += 0.10;
 
   return Math.min(quality, 1);
 }
