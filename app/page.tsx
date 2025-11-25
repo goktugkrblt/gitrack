@@ -122,8 +122,7 @@ export default function HomePage() {
                 transition={{ delay: 0.5 }}
                 className="text-xl md:text-2xl text-[#919191] max-w-3xl mx-auto font-light tracking-wide"
               >
-                Transform your code contributions into quantifiable career metrics.
-                <br />
+                Transform your code contributions into quantifiable career metrics.                
                 Powered by advanced algorithms. Built for developers.
               </motion.p>
               <div className="flex items-center justify-center gap-8 mt-12 text-xs font-mono text-[#666]">
