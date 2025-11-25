@@ -65,9 +65,9 @@ export default function HomePage() {
 
             <Link href="/login">
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                <Button size="sm" className="bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] px-6 py-5 text-sm font-bold rounded-xl transition-colors duration-300">
-                  <Github className="mr-2 h-4 w-4" />
-                  SIGN IN
+                <Button size="sm" className="bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] px-10 py-5 text-sm font-bold rounded-xl transition-colors duration-300">
+                  <Github />
+                  ANALYZ NOW
                 </Button>
               </motion.div>
             </Link>
@@ -77,7 +77,7 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 pt-20">
-        <div className="max-w-7xl mx-auto w-full py-32">
+        <div className="max-w-7xl mx-auto w-full py-16">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -126,6 +126,11 @@ export default function HomePage() {
                 <br />
                 Powered by advanced algorithms. Built for developers.
               </motion.p>
+              <div className="flex items-center justify-center gap-8 mt-12 text-xs font-mono text-[#666]">
+                  <span>✓ 2MIN SETUP</span>
+                  <span>✓ INSTANT RESULTS</span>
+                  <span>✓ FREE FOREVER</span>
+                </div>
             </div>
 
             <motion.div
@@ -161,21 +166,11 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 cursor-pointer group"
-        >
-          <span className="text-xs font-mono text-[#666] group-hover:text-[#919191] transition-colors">SCROLL</span>
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-            <ChevronDown className="h-5 w-5 text-[#666] group-hover:text-[#919191] transition-colors" />
-          </motion.div>
-        </motion.div>
+       
       </section>
 
       {/* Features */}
-      <section className="relative py-32 px-4">
+      <section className="relative py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 30 }} 
@@ -244,52 +239,48 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-32 px-4">
-        <div className="max-w-4xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="relative group"
-          >
-            <div className="relative bg-[#252525] border border-[#2a2a2a] rounded-3xl p-16 text-center overflow-hidden">
-              <div className="absolute inset-0 opacity-[0.02]">
-                <div style={{
-                  backgroundImage: `linear-gradient(to right, #919191 1px, transparent 1px), linear-gradient(to bottom, #919191 1px, transparent 1px)`,
-                  backgroundSize: '40px 40px',
-                }} className="absolute inset-0" />
-              </div>
-
-              <div className="relative z-10">
-                <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="inline-block mb-8">
-                  <div className="w-16 h-16 rounded-full border border-[#333] flex items-center justify-center">
-                    <Sparkles className="h-8 w-8 text-[#919191]" />
-                  </div>
-                </motion.div>
-
-                <h2 className="text-5xl md:text-6xl font-black text-[#e0e0e0] mb-6 tracking-tighter">START TODAY</h2>
-                <p className="text-xl text-[#919191] mb-12 font-light">No credit card. No commitment. Just insights.</p>
-
-                <Link href="/login">
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                    <Button size="lg" className="bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] px-16 py-8 text-xl font-black rounded-2xl tracking-wider transition-colors duration-300">
-                      <Github className="mr-3 h-7 w-7" />
-                      CONNECT GITHUB
-                    </Button>
-                  </motion.div>
-                </Link>
-
-                <div className="flex items-center justify-center gap-8 mt-12 text-xs font-mono text-[#666]">
-                  <span>✓ 2MIN SETUP</span>
-                  <span>✓ INSTANT RESULTS</span>
-                  <span>✓ FREE FOREVER</span>
+      <section className="relative py-16 px-4">
+          <div className="max-w-7xl mx-auto">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }} 
+              whileInView={{ opacity: 1, y: 0 }} 
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+              className="relative group"
+            >
+              <div className="relative  border border-[#2a2a2a] rounded-3xl p-16 text-center overflow-hidden">
+                <div className="absolute inset-0 opacity-[0.02]">
+                  <div style={{
+                    backgroundImage: `linear-gradient(to right, #919191 1px, transparent 1px), linear-gradient(to bottom, #919191 1px, transparent 1px)`,
+                    backgroundSize: '40px 40px',
+                  }} className="absolute inset-0" />
                 </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+
+                <div className="relative z-10">
+                  <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="inline-block mb-8">
+                    <div className="w-16 h-16 rounded-full border border-[#333] flex items-center justify-center">
+                      <Sparkles className="h-8 w-8 text-[#919191]" />
+                    </div>
+                  </motion.div>
+
+                  {/* New Headline & Description */}
+                  <h2 className=" md:text-6xl font-black text-[#e0e0e0] mb-6 tracking-tighter">
+                    Supercharge Your GitHub Presence
+                  </h2>
+                  <p className=" text-[#919191] mb-6 max-w-3xl mx-auto font-light leading-relaxed">
+                    Unlock the full potential of your GitHub profile. Gain instant insights into your contributions, activity patterns, and coding strengths. Track your growth over time, identify your most productive habits, and visualize your technical skills—all in a single, easy-to-understand dashboard.
+                  </p>
+                  <p className="text-[#919191] mb-12 max-w-3xl mx-auto font-light leading-relaxed">
+                    No setup, no hassle, just actionable analytics designed for developers like you. Make informed decisions, improve your coding efficiency, and showcase your achievements effortlessly.
+                  </p>
+                
+
+                </div>
+      </div>
+    </motion.div>
+  </div>
+</section>
+
 
       {/* Footer */}
       <footer className="relative border-t border-[#2a2a2a] py-16 px-4">
@@ -314,7 +305,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="text-center text-xs font-mono text-[#666] mt-12">
-            © 2024 • BUILT FOR DEVELOPERS BY DEVELOPERS
+            © 2025 • BUILT FOR DEVELOPERS BY DEVELOPERS
           </div>
         </div>
       </footer>
