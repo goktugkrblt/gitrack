@@ -1,6 +1,5 @@
 import { Plan } from "@prisma/client";
 
-
 // NextAuth type augmentation for v5
 declare module "next-auth" {
   interface Session {
@@ -20,10 +19,17 @@ export interface GitHubUser {
   name: string | null;
   email: string | null;
   bio: string | null;
+  location: string | null;
+  company: string | null;
+  blog: string | null;
+  hireable: boolean | null;
+  twitter_username?: string | null;
   public_repos: number;
+  public_gists: number;
   followers: number;
   following: number;
   created_at: string;
+  updated_at: string;
 }
 
 export interface GitHubRepo {
@@ -89,6 +95,7 @@ export interface TopRepo {
   language: string | null;
   description: string | null;
   qualityScore: number;
+  url?: string;
 }
 
 export interface ContributionData {
@@ -128,9 +135,6 @@ export interface UserProfile {
   subscriptionEnd: Date | null;
 }
 
-// types/index.ts dosyasının SONUNA ekle (mevcut kodları silme):
-
-// Yeni eklenecek tipler:
 export interface GitHubContributions {
   totalCommits: number;
   totalPRs: number;
@@ -185,14 +189,31 @@ export interface ActivityMetrics {
   weekendActivity: number; // percentage
 }
 
-export interface DeveloperProfile extends ProfileData {
-  contributions: GitHubContributions;
+export interface DeveloperProfile {
+  // Core metrics
+  score: number;
+  percentile?: number;
+  totalCommits: number;
+  totalRepos: number;
+  totalStars: number;
+  totalForks: number;
+  
+  // Data
+  languages: LanguageStats;
+  topRepos: TopRepo[];
+  contributionData: ContributionData[];
+  
+  // Enhanced metrics
   pullRequests: PullRequestMetrics;
   activity: ActivityMetrics;
+  
+  // Community
   organizations: string[];
   gistsCount: number;
   followersCount: number;
   followingCount: number;
+  
+  // Profile info
   accountAge: number; // in years
   hireable: boolean;
   bio?: string;
@@ -200,4 +221,9 @@ export interface DeveloperProfile extends ProfileData {
   company?: string;
   blog?: string;
   twitter?: string;
+  
+  strengths?: string[];
+  weaknesses?: string[];
+  roadmap?: RoadmapItem[];
+  marketValue?: MarketValue;
 }
