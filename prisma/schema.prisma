@@ -89,6 +89,14 @@ model Profile {
   accountAge            Int       @default(0)
   accountCreatedAt      DateTime?
   
+  // Extended metrics 
+  totalIssuesOpened     Int       @default(0)
+  totalReviews          Int       @default(0)
+  totalContributions    Int       @default(0)
+  totalWatchers         Int       @default(0)
+  totalOpenIssues       Int       @default(0)
+  averageRepoSize       Float     @default(0)
+  
   // Analysis
   strengths       Json?
   weaknesses      Json?

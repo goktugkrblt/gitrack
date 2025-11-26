@@ -5,6 +5,10 @@ import { StatsCard } from "@/components/dashboard/stats-card";
 import { ScoreDisplay } from "@/components/dashboard/score-display";
 import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
 // import { ProTab } from "@/components/dashboard/pro-tab";
+import { CompareTab } from "@/components/dashboard/compare-tab";
+import { RepositoriesTab } from "@/components/dashboard/repositories-tab";
+import { ActivityTab } from "@/components/dashboard/activity-tab";
+import { SkillsTab } from "@/components/dashboard/skills-tab";
 import { 
   Star, 
   Package, 
@@ -101,6 +105,16 @@ export default function DashboardPage() {
     username: profileData.username || "Developer",
     avatarUrl: profileData.avatarUrl || `https://github.com/${profileData.username}.png`,
     bio: profileData.bio || null,
+    
+    // YENİ FIELD'LAR - EKLE
+    totalIssuesOpened: profileData.totalIssuesOpened || 0,
+    totalReviews: profileData.totalReviews || 0,
+    totalContributions: profileData.totalContributions || 0,
+    totalWatchers: profileData.totalWatchers || 0,
+    totalOpenIssues: profileData.totalOpenIssues || 0,
+    averageRepoSize: profileData.averageRepoSize || 0,
+    gistsCount: profileData.gistsCount || 0,
+    accountAge: profileData.accountAge || 0,
   } : {
     score: 0,
     percentile: 0,
@@ -122,6 +136,15 @@ export default function DashboardPage() {
     username: "Developer",
     avatarUrl: "",
     bio: null,
+    
+    totalIssuesOpened: 0,
+    totalReviews: 0,
+    totalContributions: 0,
+    totalWatchers: 0,
+    totalOpenIssues: 0,
+    averageRepoSize: 0,
+    gistsCount: 0,
+    accountAge: 0,
   };
 
   return (
@@ -227,108 +250,144 @@ export default function DashboardPage() {
 
           {/* Tabs Section */}
           <Tabs defaultValue="overview" className="w-full">
-            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              <TabsList className="bg-[#1a1a1a] border border-[#2a2a2a] p-1.5 w-full min-w-max md:min-w-0 grid grid-cols-5 rounded-xl h-auto">
-              <TabsTrigger 
-                  value="pro" 
-                  className="cursor-pointer data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border data-[state=active]:border-purple-500/40 data-[state=active]:text-purple-300 text-purple-400/60 hover:text-purple-400 font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  PRO
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="overview" 
-                  className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
-                >
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  OVERVIEW
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="activity" 
-                  className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
-                >
-                  <Activity className="w-4 h-4 mr-2" />
-                  ACTIVITY
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="skills" 
-                  className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
-                >
-                  <Code className="w-4 h-4 mr-2" />
-                  SKILLS
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="compare" 
-                  className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
-                >
-                  <Target className="w-4 h-4 mr-2" />
-                  COMPARE
-                </TabsTrigger>               
-              </TabsList>
-            </div>
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+  <TabsList className="bg-[#1a1a1a] border border-[#2a2a2a] p-1.5 w-full min-w-max md:min-w-0 grid grid-cols-6 rounded-xl h-auto">
+    <TabsTrigger 
+      value="overview" 
+      className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+    >
+      <BarChart3 className="w-4 h-4 mr-1.5" />
+      OVERVIEW
+    </TabsTrigger>
+    <TabsTrigger 
+      value="activity" 
+      className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+    >
+      <Activity className="w-4 h-4 mr-1.5" />
+      ACTIVITY
+    </TabsTrigger>
+    <TabsTrigger 
+      value="skills" 
+      className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+    >
+      <Code className="w-4 h-4 mr-1.5" />
+      SKILLS
+    </TabsTrigger>
+    <TabsTrigger 
+      value="repositories" 
+      className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+    >
+      <Package className="w-4 h-4 mr-1.5" />
+      REPOS
+    </TabsTrigger>
+    <TabsTrigger 
+      value="compare" 
+      className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+    >
+      <Target className="w-4 h-4 mr-1.5" />
+      COMPARE
+    </TabsTrigger>
+    <TabsTrigger 
+      value="pro" 
+      className="cursor-pointer data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border data-[state=active]:border-purple-500/40 data-[state=active]:text-purple-300 text-purple-400/60 hover:text-purple-400 font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+    >
+      <Sparkles className="w-4 h-4 mr-1.5" />
+      PRO
+    </TabsTrigger>
+  </TabsList>
+</div>
 
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-6 mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                  { title: "REPOSITORIES", value: displayData.totalRepos, icon: Package, description: "Public repos" },
-                  { title: "TOTAL STARS", value: displayData.totalStars, icon: Star, description: "Stars received" },
-                  { title: "TOTAL COMMITS", value: displayData.totalCommits, icon: GitBranch, description: `${displayData.averageCommitsPerDay}/day avg` },
-                  { title: "PULL REQUESTS", value: displayData.totalPRs, icon: GitPullRequest, description: `${displayData.mergedPRs} merged` },
-                  { 
-                    title: "CURRENT STREAK", 
-                    value: `${displayData.currentStreak} days`, 
-                    icon: Zap, 
-                    description: `Longest: ${displayData.longestStreak} days`
-                  },
-                  { 
-                    title: "COMMUNITY", 
-                    value: displayData.followersCount, 
-                    icon: Users, 
-                    description: `${displayData.organizationsCount} organizations`
-                  },
-                  { 
-                    title: "MOST ACTIVE", 
-                    value: displayData.mostActiveDay, 
-                    icon: Calendar, 
-                    description: `${displayData.weekendActivity}% weekend`
-                  },
-                  { 
-                    title: "LANGUAGES", 
-                    value: Object.keys(displayData.languages).length, 
-                    icon: Code, 
-                    description: "Technologies used"
-                  }
-                ].map((stat, i) => (
-                  <StatsCard
-                    key={i}
-                    title={stat.title}
-                    value={stat.value}
-                    icon={stat.icon}
-                    description={stat.description}
-                  />
-                ))}
-              </div>                            
+              {/* Header */}
+              <div>
+                <h2 className="text-3xl font-black text-[#e0e0e0] tracking-tighter mb-2">
+                  Overview
+                </h2>
+                <p className="text-[#666]">
+                  Your core GitHub metrics at a glance
+                </p>
+              </div>
 
-              <TopRepos repos={displayData.topRepos} />
+              {/* Stats Grid - 6 kart */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold text-[#666] tracking-wider">TOTAL COMMITS</h3>
+                    <GitBranch className="h-4 w-4 text-[#666]" />
+                  </div>
+                  <p className="text-2xl font-black text-[#e0e0e0] mb-1">{displayData.totalCommits}</p>
+                  <p className="text-xs text-[#666]">{displayData.averageCommitsPerDay}/day average</p>
+                </div>
+
+                <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold text-[#666] tracking-wider">PULL REQUESTS</h3>
+                    <GitPullRequest className="h-4 w-4 text-[#666]" />
+                  </div>
+                  <p className="text-2xl font-black text-[#e0e0e0] mb-1">{displayData.totalPRs}</p>
+                  <p className="text-xs text-[#666]">{displayData.mergedPRs} merged</p>
+                </div>
+
+                <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold text-[#666] tracking-wider">CURRENT STREAK</h3>
+                    <Zap className="h-4 w-4 text-[#666]" />
+                  </div>
+                  <p className="text-2xl font-black text-[#e0e0e0] mb-1">{displayData.currentStreak} days</p>
+                  <p className="text-xs text-[#666]">Longest: {displayData.longestStreak} days</p>
+                </div>
+
+                <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold text-[#666] tracking-wider">COMMUNITY</h3>
+                    <Users className="h-4 w-4 text-[#666]" />
+                  </div>
+                  <p className="text-2xl font-black text-[#e0e0e0] mb-1">{displayData.followersCount}</p>
+                  <p className="text-xs text-[#666]">{displayData.organizationsCount} organizations</p>
+                </div>
+
+                {/* YENİ KART 1: Issues Opened */}
+                <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold text-[#666] tracking-wider">ISSUES OPENED</h3>
+                    <Activity className="h-4 w-4 text-[#666]" />
+                  </div>
+                  <p className="text-2xl font-black text-[#e0e0e0] mb-1">{displayData.totalIssuesOpened || 0}</p>
+                  <p className="text-xs text-[#666]">Contributions made</p>
+                </div>
+
+                {/* YENİ KART 2: Code Reviews */}
+                <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold text-[#666] tracking-wider">CODE REVIEWS</h3>
+                    <Code className="h-4 w-4 text-[#666]" />
+                  </div>
+                  <p className="text-2xl font-black text-[#e0e0e0] mb-1">{displayData.totalReviews || 0}</p>
+                  <p className="text-xs text-[#666]">Reviews given</p>
+                </div>
+              </div>
             </TabsContent>
 
             {/* Activity Tab */}
             <TabsContent value="activity" className="space-y-6 mt-6">
-              <ActivityHeatmap />
+              <ActivityTab profileData={profileData} />
             </TabsContent>
 
             {/* Skills Tab */}
             <TabsContent value="skills" className="space-y-6 mt-6">
-              <LanguageChart languages={displayData.languages} />
+            <SkillsTab profileData={profileData} />
+          </TabsContent>
+
+            <TabsContent value="repositories" className="space-y-6 mt-6">
+              <RepositoriesTab profileData={profileData} />
             </TabsContent>
+
 
             {/* Compare Tab */}
             <TabsContent value="compare" className="space-y-6 mt-6">
               <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8 text-center">
-                <Target className="w-12 h-12 text-[#666] mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">COMPARISON COMING SOON</h3>
-                <p className="text-[#666] text-sm">Compare your metrics with other developers.</p>
+              <CompareTab userProfile={profileData} />
               </div>
             </TabsContent>
 

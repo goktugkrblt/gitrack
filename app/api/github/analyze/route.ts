@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user from database
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: { scans: true },
@@ -26,7 +25,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check if user has GitHub token
     if (!user.githubToken) {
       return NextResponse.json(
         { error: "GitHub token not found" },
@@ -34,58 +32,34 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Initialize GitHub service
     const github = new GitHubService(user.githubToken);
 
-    // Fetch ALL GitHub data
     console.log('Fetching comprehensive GitHub data...');
     
-    // Basic user data
     const userData = await github.getUserData(user.githubUsername);
-    
-    // Repositories
     const repos = await github.getRepositories(user.githubUsername);
-    
-    // Contributions (GraphQL)
     const contributions = await github.getContributions(user.githubUsername);
-    
-    // Pull Requests
     const pullRequests = await github.getPullRequestMetrics(user.githubUsername);
-    
-    // Activity Metrics
     const activity = await github.getActivityMetrics(contributions);
-    
-    // Organizations
     const organizations = await github.getOrganizations(user.githubUsername);
-    
-    // Gists
     const gistsCount = await github.getGistsCount(user.githubUsername);
-    
-    // Language stats
     const languages = await github.getLanguageStats(repos);
-    
-    // Stars and forks
     const totalStars = await github.getTotalStars(repos);
     const totalForks = await github.getTotalForks(repos);
     
-    // Calculate account age
     const accountAge = Math.floor(
       (Date.now() - new Date(userData.created_at).getTime()) / (1000 * 60 * 60 * 24 * 365)
     );
 
-    // Enhanced scoring metrics
     const avgRepoQuality = calculateAverageQuality(repos);
     
     const enhancedMetrics = {
-      // Basic metrics
       totalCommits: contributions.totalCommits,
       totalRepos: repos.length,
       totalStars,
       totalForks,
       avgRepoQuality,
       languageCount: Object.keys(languages).length,
-      
-      // New metrics for enhanced scoring
       totalPRs: pullRequests.totalPRs,
       mergedPRs: pullRequests.mergedPRs,
       totalIssues: contributions.totalIssues,
@@ -98,10 +72,8 @@ export async function POST(req: NextRequest) {
       accountAge,
     };
 
-    // Calculate enhanced score
     const score = calculateEnhancedScore(enhancedMetrics);
 
-    // Get percentile
     const allProfiles = await prisma.profile.findMany({
       select: { score: true },
     });
@@ -110,7 +82,6 @@ export async function POST(req: NextRequest) {
       allProfiles.map(p => p.score)
     );
 
-    // Get top repos with detailed metrics
     const topReposData = repos
       .filter(r => !r.fork)
       .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
@@ -125,7 +96,6 @@ export async function POST(req: NextRequest) {
         qualityScore: 0,
       }));
 
-    // Prepare contributions data
     const contributionsData = contributions.contributionCalendar.weeks
       .flatMap(w => w.contributionDays)
       .map(d => ({
@@ -133,13 +103,19 @@ export async function POST(req: NextRequest) {
         count: d.contributionCount,
       }));
 
-    // Create or update profile
+    // YENİ: Calculate additional metrics
+    const newTotalWatchers = repos.reduce((sum, repo: any) => sum + (repo.watchers_count || repo.watchers || 0), 0);
+    const newTotalOpenIssues = repos.reduce((sum, repo: any) => sum + (repo.open_issues_count || repo.open_issues || 0), 0);
+    const newAverageRepoSize = repos.length > 0 
+      ? Math.round(repos.reduce((sum, repo: any) => sum + (repo.size || 0), 0) / repos.length) 
+      : 0;
+    const newTotalContributions = contributions?.contributionCalendar?.totalContributions || 0;
+
     const profile = await prisma.profile.upsert({
       where: { 
         userId: user.id 
       },
       update: {
-        // Core metrics
         score,
         percentile,
         totalCommits: contributions.totalCommits,
@@ -147,7 +123,6 @@ export async function POST(req: NextRequest) {
         totalStars,
         totalForks,
         
-        // Basic info
         username: user.githubUsername,
         avatarUrl: userData.avatar_url,
         bio: userData.bio,
@@ -156,40 +131,41 @@ export async function POST(req: NextRequest) {
         blog: userData.blog || null,
         hireable: userData.hireable || false,
         
-        // PR metrics
         totalPRs: pullRequests.totalPRs,
         mergedPRs: pullRequests.mergedPRs,
         openPRs: pullRequests.openPRs,
         
-        // Activity metrics
         currentStreak: activity.currentStreak,
         longestStreak: activity.longestStreak,
         averageCommitsPerDay: activity.averageCommitsPerDay,
         mostActiveDay: activity.mostActiveDay,
         weekendActivity: activity.weekendActivity,
         
-        // Community metrics
         followersCount: userData.followers,
         followingCount: userData.following,
         organizationsCount: organizations.length,
         gistsCount,
         
-        // Account info
         accountAge,
         accountCreatedAt: new Date(userData.created_at),
         
-        // JSON fields
+        // YENİ FIELD'LAR
+        totalIssuesOpened: 0,
+        totalReviews: 0,
+        totalContributions: newTotalContributions,
+        totalWatchers: newTotalWatchers,
+        totalOpenIssues: newTotalOpenIssues,
+        averageRepoSize: newAverageRepoSize,
+        
         languages,
         topRepos: topReposData,
         contributions: contributionsData,
         
-        // Update timestamp
         scannedAt: new Date(),
       },
       create: {
         userId: user.id,
         
-        // Core metrics
         score,
         percentile,
         totalCommits: contributions.totalCommits,
@@ -197,7 +173,6 @@ export async function POST(req: NextRequest) {
         totalStars,
         totalForks,
         
-        // Basic info
         username: user.githubUsername,
         avatarUrl: userData.avatar_url,
         bio: userData.bio,
@@ -206,36 +181,38 @@ export async function POST(req: NextRequest) {
         blog: userData.blog || null,
         hireable: userData.hireable || false,
         
-        // PR metrics
         totalPRs: pullRequests.totalPRs,
         mergedPRs: pullRequests.mergedPRs,
         openPRs: pullRequests.openPRs,
         
-        // Activity metrics
         currentStreak: activity.currentStreak,
         longestStreak: activity.longestStreak,
         averageCommitsPerDay: activity.averageCommitsPerDay,
         mostActiveDay: activity.mostActiveDay,
         weekendActivity: activity.weekendActivity,
         
-        // Community metrics
         followersCount: userData.followers,
         followingCount: userData.following,
         organizationsCount: organizations.length,
         gistsCount,
         
-        // Account info
         accountAge,
         accountCreatedAt: new Date(userData.created_at),
         
-        // JSON fields
+        // YENİ FIELD'LAR
+        totalIssuesOpened: 0,
+        totalReviews: 0,
+        totalContributions: newTotalContributions,
+        totalWatchers: newTotalWatchers,
+        totalOpenIssues: newTotalOpenIssues,
+        averageRepoSize: newAverageRepoSize,
+        
         languages,
         topRepos: topReposData,
         contributions: contributionsData,
       },
     });
 
-    // Record scan
     await prisma.scan.create({
       data: {
         userId: user.id,
