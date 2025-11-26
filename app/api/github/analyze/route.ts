@@ -150,8 +150,8 @@ export async function POST(req: NextRequest) {
         accountCreatedAt: new Date(userData.created_at),
         
         // YENİ FIELD'LAR
-        totalIssuesOpened: 0,
-        totalReviews: 0,
+        totalIssuesOpened: contributions.totalIssues || 0, 
+        totalReviews: contributions.totalReviews || 0,     
         totalContributions: newTotalContributions,
         totalWatchers: newTotalWatchers,
         totalOpenIssues: newTotalOpenIssues,
@@ -198,10 +198,9 @@ export async function POST(req: NextRequest) {
         
         accountAge,
         accountCreatedAt: new Date(userData.created_at),
-        
-        // YENİ FIELD'LAR
-        totalIssuesOpened: 0,
-        totalReviews: 0,
+                
+        totalIssuesOpened: contributions.totalIssues || 0,     
+        totalReviews: contributions.totalReviews || 0,         
         totalContributions: newTotalContributions,
         totalWatchers: newTotalWatchers,
         totalOpenIssues: newTotalOpenIssues,
