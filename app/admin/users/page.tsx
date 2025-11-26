@@ -5,8 +5,7 @@ import { redirect } from 'next/navigation';
 export default async function AdminUsersPage() {
   const session = await auth();
   
-  // Email kontrolü - kendi email'inizi yazın
-  if (!session || session.user?.email !== 'goktugsecen15@gmail.com') {
+  if (!session || session.user?.email !== 'goktugkarabulut97@gmail.com') {
     redirect('/');
   }
 
