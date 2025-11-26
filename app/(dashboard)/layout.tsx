@@ -1,11 +1,37 @@
-import { Code2, LayoutDashboard, User, Settings, ArrowLeft } from "lucide-react";
+"use client";
+
+import { Code2, LayoutDashboard, User, Settings, ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch("/api/github/analyze", {
+        method: "POST",
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert(data.error || "Analysis failed");
+      }
+    } catch (error) {
+      console.error("Analysis failed:", error);
+      alert("Analysis failed. Please try again.");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#1f1f1f]">
       {/* Fixed Grid Background */}
@@ -34,13 +60,26 @@ export default function DashboardLayout({
               </div>
             </Link>
 
-            {/* Back to Home Button */}
-            <Link href="/">
-              <button className="flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg bg-[#252525] border border-[#2a2a2a] text-[#919191] hover:text-[#e0e0e0] hover:border-[#333] transition-all duration-300 text-sm font-mono tracking-wider">
-                <ArrowLeft className="h-4 w-4" />
-                BACK TO HOME
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
+              {/* Refresh Button */}
+              <button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg bg-[#252525] border border-[#2a2a2a] text-[#919191] hover:text-[#e0e0e0] hover:border-[#333] transition-all duration-300 text-sm font-mono tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                {refreshing ? 'REFRESHING...' : 'REFRESH'}
               </button>
-            </Link>
+
+              {/* Back to Home Button - Sadece Desktop */}
+              <Link href="/" className="hidden md:block">
+                <button className="flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg bg-[#252525] border border-[#2a2a2a] text-[#919191] hover:text-[#e0e0e0] hover:border-[#333] transition-all duration-300 text-sm font-mono tracking-wider">
+                  <ArrowLeft className="h-4 w-4" />
+                  BACK TO HOME
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </nav>

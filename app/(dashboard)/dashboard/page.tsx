@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { ScoreDisplay } from "@/components/dashboard/score-display";
+import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
 import { 
   Star, 
-  GitFork, 
   Package, 
   TrendingUp, 
   GitPullRequest,
@@ -13,9 +13,13 @@ import {
   Zap,
   Calendar,
   GitBranch,
-  Code
+  Code,
+  BarChart3,
+  Activity,
+  Target
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LanguageChart } from "@/components/dashboard/language-chart";
 import { TopRepos } from "@/components/dashboard/top-repos";
 import { motion } from "framer-motion";
@@ -92,6 +96,9 @@ export default function DashboardPage() {
     weekendActivity: profileData.weekendActivity || 0,
     languages: profileData.languages || {},
     topRepos: profileData.topRepos || [],
+    username: profileData.username || "Developer",
+    avatarUrl: profileData.avatarUrl || `https://github.com/${profileData.username}.png`,
+    bio: profileData.bio || null,
   } : {
     score: 0,
     percentile: 0,
@@ -110,20 +117,23 @@ export default function DashboardPage() {
     weekendActivity: 0,
     languages: {},
     topRepos: [],
+    username: "Developer",
+    avatarUrl: "",
+    bio: null,
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="text-4xl font-black text-[#e0e0e0] tracking-tighter">
+        <h1 className="text-3xl font-black text-[#e0e0e0] tracking-tighter">
           DASHBOARD
         </h1>
-        <p className="text-[#919191] mt-2 font-light">
+        <p className="text-[#666] text-sm mt-1">
           Track your GitHub metrics and developer growth
         </p>
       </motion.div>
@@ -160,127 +170,182 @@ export default function DashboardPage() {
         </motion.div>
       ) : (
         <>
-          {/* Score + Primary Stats */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Profile + Score Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Sol: GitHub Profile */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-6 md:p-8 flex items-center"
+            >
+              <div className="flex items-center gap-4 md:gap-8 w-full">
+                {/* Avatar - Mobilde küçük, desktop'ta büyük */}
+                <div className="relative flex-shrink-0">
+                  <img 
+                    src={displayData.avatarUrl} 
+                    alt={displayData.username}
+                    className="w-20 h-20 md:w-32 lg:w-48 md:h-32 lg:h-48 rounded-full border-2 md:border-4 border-[#2a2a2a]"
+                  />                 
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-[#e0e0e0] tracking-tight mb-1 md:mb-2 truncate">
+                    {displayData.username}
+                  </h2>
+                  <p className="text-xs md:text-sm text-[#666] mb-3 md:mb-6">
+                    GitHub Developer
+                  </p>
+                  
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-xs md:text-sm">
+                    <div className="flex items-center gap-1.5 md:gap-2">
+                      <Users className="w-3 h-3 md:w-4 md:h-4 text-[#666]" />
+                      <span className="text-[#919191] font-medium">{displayData.followersCount} followers</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 md:gap-2">
+                      <Package className="w-3 h-3 md:w-4 md:h-4 text-[#666]" />
+                      <span className="text-[#919191] font-medium">{displayData.totalRepos} repos</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Sağ: Score Display */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="lg:col-span-1"
             >
               <ScoreDisplay
                 score={displayData.score}
                 percentile={displayData.percentile}
               />
             </motion.div>
+          </div>
 
-            <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-1 gap-4">
-              {[
-                { title: "REPOSITORIES", value: displayData.totalRepos, icon: Package, description: "Public repos" },
-                { title: "TOTAL STARS", value: displayData.totalStars, icon: Star, description: "Stars received" },
-                { title: "TOTAL COMMITS", value: displayData.totalCommits, icon: GitBranch, description: `${displayData.averageCommitsPerDay}/day avg` },
-                { title: "PULL REQUESTS", value: displayData.totalPRs, icon: GitPullRequest, description: `${displayData.mergedPRs} merged` },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 + i * 0.1 }}
-                >
+          {/* Tabs Section - Mobilde kaydırılabilir */}
+          <Tabs defaultValue="overview" className="w-full">
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <TabsList className="bg-[#1a1a1a] border border-[#2a2a2a] p-1.5 w-full min-w-max md:min-w-0 grid grid-cols-4 rounded-xl h-auto">
+              <TabsTrigger 
+                value="overview" 
+                className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                OVERVIEW
+              </TabsTrigger>
+              <TabsTrigger 
+                value="activity" 
+                className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
+              >
+                <Activity className="w-4 h-4 mr-2" />
+                ACTIVITY
+              </TabsTrigger>
+              <TabsTrigger 
+                value="skills" 
+                className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
+              >
+                <Code className="w-4 h-4 mr-2" />
+                SKILLS
+              </TabsTrigger>
+              <TabsTrigger 
+                value="compare" 
+                className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs md:text-sm tracking-wider transition-all duration-200 rounded-lg px-4 md:px-6 py-2.5 md:py-3 whitespace-nowrap"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                COMPARE
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-6 mt-6">
+              {/* Primary Stats */}    
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { title: "REPOSITORIES", value: displayData.totalRepos, icon: Package, description: "Public repos" },
+                  { title: "TOTAL STARS", value: displayData.totalStars, icon: Star, description: "Stars received" },
+                  { title: "TOTAL COMMITS", value: displayData.totalCommits, icon: GitBranch, description: `${displayData.averageCommitsPerDay}/day avg` },
+                  { title: "PULL REQUESTS", value: displayData.totalPRs, icon: GitPullRequest, description: `${displayData.mergedPRs} merged` },
+                ].map((stat, i) => (
                   <StatsCard
+                    key={i}
                     title={stat.title}
                     value={stat.value}
                     icon={stat.icon}
                     description={stat.description}
                   />
-                </motion.div>
-              ))}
-            </div>
-          </div>
+                ))}
+              </div>              
 
-          {/* New Metrics Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { 
-                title: "CURRENT STREAK", 
-                value: `${displayData.currentStreak} days`, 
-                icon: Zap, 
-                description: `Longest: ${displayData.longestStreak} days`,
-                color: "text-yellow-500"
-              },
-              { 
-                title: "COMMUNITY", 
-                value: displayData.followersCount, 
-                icon: Users, 
-                description: `${displayData.organizationsCount} organizations`,
-                color: "text-purple-500"
-              },
-              { 
-                title: "MOST ACTIVE", 
-                value: displayData.mostActiveDay, 
-                icon: Calendar, 
-                description: `${displayData.weekendActivity}% weekend`,
-                color: "text-teal-500"
-              },
-              { 
-                title: "LANGUAGES", 
-                value: Object.keys(displayData.languages).length, 
-                icon: Code, 
-                description: "Technologies used",
-                color: "text-cyan-500"
-              },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 + i * 0.1 }}
-              >
-                <div className="bg-[#252525] rounded-xl p-6 border border-[#2a2a2a]">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xs font-bold text-[#666] tracking-wider">{stat.title}</h3>
-                    <stat.icon className={`h-4 w-4 ${stat.color || 'text-[#919191]'}`} />
+              {/* Secondary Stats */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { 
+                    title: "CURRENT STREAK", 
+                    value: `${displayData.currentStreak} days`, 
+                    icon: Zap, 
+                    description: `Longest: ${displayData.longestStreak} days`,
+                    color: "text-yellow-500"
+                  },
+                  { 
+                    title: "COMMUNITY", 
+                    value: displayData.followersCount, 
+                    icon: Users, 
+                    description: `${displayData.organizationsCount} organizations`,
+                    color: "text-purple-500"
+                  },
+                  { 
+                    title: "MOST ACTIVE", 
+                    value: displayData.mostActiveDay, 
+                    icon: Calendar, 
+                    description: `${displayData.weekendActivity}% weekend`,
+                    color: "text-teal-500"
+                  },
+                  { 
+                    title: "LANGUAGES", 
+                    value: Object.keys(displayData.languages).length, 
+                    icon: Code, 
+                    description: "Technologies used",
+                    color: "text-cyan-500"
+                  },
+                ].map((stat, i) => (
+                  <div key={i} className="bg-[#252525] rounded-xl p-6 border border-[#2a2a2a]">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xs font-bold text-[#666] tracking-wider">{stat.title}</h3>
+                      <stat.icon className={`h-4 w-4 ${stat.color || 'text-[#919191]'}`} />
+                    </div>
+                    <p className="text-2xl font-black text-[#e0e0e0]">{stat.value}</p>
+                    <p className="text-xs text-[#666] mt-1">{stat.description}</p>
                   </div>
-                  <p className="text-2xl font-black text-[#e0e0e0]">{stat.value}</p>
-                  <p className="text-xs text-[#666] mt-1">{stat.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                ))}
+              </div>
 
-          {/* Charts Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.9 }}
-            >
-              <LanguageChart languages={displayData.languages} />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.0 }}
-            >
+              {/* Top Repos */}
               <TopRepos repos={displayData.topRepos} />
-            </motion.div>
-          </div>
+            </TabsContent>
 
-          {/* Re-analyze Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-            className="flex justify-center pt-4"
-          >
-            <Button 
-              className="bg-[#2a2a2a] text-[#e0e0e0] hover:bg-[#333] px-8 py-6 text-sm font-bold rounded-xl transition-colors duration-300"
-              onClick={handleAnalyze}
-              disabled={loading}
-            >
-              {loading ? "ANALYZING..." : "REFRESH ANALYSIS"}
-            </Button>
-          </motion.div>
+            {/* Activity Tab */}
+            <TabsContent value="activity" className="space-y-6 mt-6">
+              <ActivityHeatmap />
+            </TabsContent>
+
+            {/* Skills Tab */}
+            <TabsContent value="skills" className="space-y-6 mt-6">
+              <LanguageChart languages={displayData.languages} />
+            </TabsContent>
+
+            {/* Compare Tab */}
+            <TabsContent value="compare" className="space-y-6 mt-6">
+              <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8 text-center">
+                <Target className="w-12 h-12 text-[#666] mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">COMPARISON COMING SOON</h3>
+                <p className="text-[#666] text-sm">Compare your metrics with other developers</p>
+              </div>
+            </TabsContent>
+          </Tabs>                    
         </>
       )}
     </div>
