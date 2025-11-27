@@ -45,6 +45,10 @@ export default function DashboardPage() {
       const res = await fetch("/api/profile");
       const data = await res.json();
       if (data.profile) {
+        console.log('📊 Profile Data:', data.profile);
+        console.log('📊 Total Contributions:', data.profile.totalContributions);
+        console.log('📊 Total Issues:', data.profile.totalIssuesOpened);
+        console.log('📊 Total Reviews:', data.profile.totalReviews);
         setProfileData(data.profile);
         setHasProfile(true);
       }

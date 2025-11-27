@@ -77,6 +77,39 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
           Deep dive into your {profileData.totalRepos || 0} repositories
         </p>
       </div>
+      {/* Most Starred Repo Highlight */}
+      {mostStarred && (
+        <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center flex-shrink-0">
+              <Star className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-bold text-yellow-400 mb-1">⭐ MOST STARRED REPOSITORY</h3>
+              <p className="text-xl font-black text-[#e0e0e0] mb-2 truncate">
+                {mostStarred.name}
+              </p>
+              <div className="flex flex-wrap items-center gap-4 text-sm">
+                <span className="flex items-center gap-1 text-[#919191]">
+                  <Star className="w-4 h-4 text-[#666]" />
+                  {mostStarred.stars || 0} stars
+                </span>
+                {mostStarred.language && (
+                  <span className="flex items-center gap-1 text-[#919191]">
+                    <Code className="w-4 h-4 text-[#666]" />
+                    {mostStarred.language}
+                  </span>
+                )}
+              </div>
+              {mostStarred.description && (
+                <p className="text-[#666] text-sm mt-2 line-clamp-2">
+                  {mostStarred.description}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -123,41 +156,7 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
             {topRepos.length > 0 ? Math.round((licensedCount / topRepos.length) * 100) : 0}% with licenses
           </p>
         </div>
-      </div>
-
-      {/* Most Starred Repo Highlight */}
-      {mostStarred && (
-        <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center flex-shrink-0">
-              <Star className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-bold text-yellow-400 mb-1">⭐ MOST STARRED REPOSITORY</h3>
-              <p className="text-xl font-black text-[#e0e0e0] mb-2 truncate">
-                {mostStarred.name}
-              </p>
-              <div className="flex flex-wrap items-center gap-4 text-sm">
-                <span className="flex items-center gap-1 text-[#919191]">
-                  <Star className="w-4 h-4 text-[#666]" />
-                  {mostStarred.stars || 0} stars
-                </span>
-                {mostStarred.language && (
-                  <span className="flex items-center gap-1 text-[#919191]">
-                    <Code className="w-4 h-4 text-[#666]" />
-                    {mostStarred.language}
-                  </span>
-                )}
-              </div>
-              {mostStarred.description && (
-                <p className="text-[#666] text-sm mt-2 line-clamp-2">
-                  {mostStarred.description}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      </div>      
 
       {/* Language Distribution */}
       {Object.keys(languageRepos).length > 0 && (

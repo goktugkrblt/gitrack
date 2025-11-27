@@ -231,8 +231,12 @@ export function CompareTab({ userProfile }: CompareTabProps) {
         <ResponsiveContainer width="100%" height={400}>
           <RadarChart data={radarData}>
             <PolarGrid stroke="#2a2a2a" />
-            <PolarAngleAxis dataKey="metric" tick={{ fill: '#666', fontSize: 12 }} />
-            <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#666' }} />
+            <PolarAngleAxis dataKey="metric" tick={{ fill: '#666', fontSize: 12 }} />            
+            <PolarRadiusAxis
+                angle={90}
+                domain={[0, 100]}
+                tick={{ fill: '#fff', fontSize: 10, dx:6, dy:5 }} 
+              />
             <Radar name="You" dataKey="You" stroke="#e0e0e0" fill="#e0e0e0" fillOpacity={0.3} strokeWidth={2} />
             <Radar name="Average" dataKey="Average" stroke="#666" fill="#666" fillOpacity={0.2} />
             <Radar name="Top 10%" dataKey="Top 10%" stroke="#a855f7" fill="#a855f7" fillOpacity={0.2} />

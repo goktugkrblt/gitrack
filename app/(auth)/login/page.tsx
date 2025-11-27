@@ -40,7 +40,7 @@ export default function LoginPage() {
       </Link>
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md px-4">
+      <div className="relative z-10 w-full max-w-md px-4 mt-28 sm:mt-0">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
