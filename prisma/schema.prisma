@@ -97,6 +97,9 @@ model Profile {
   totalOpenIssues       Int       @default(0)
   averageRepoSize       Float     @default(0)
   
+  // Framework Detection
+  frameworks            Json?
+  
   // Analysis
   strengths       Json?
   weaknesses      Json?

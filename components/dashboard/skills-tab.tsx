@@ -1,6 +1,6 @@
 "use client";
 
-import { Code, BarChart3 } from "lucide-react";
+import { Code, BarChart3, Boxes } from "lucide-react";
 import { LanguageChart } from "./language-chart";
 
 interface SkillsTabProps {
@@ -19,11 +19,43 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
   }
 
   const languages = profileData.languages || {};
+  const frameworks = profileData.frameworks || {};
+  
   const languageEntries = Object.entries(languages)
     .sort(([, a]: any, [, b]: any) => b - a)
     .slice(0, 10);
 
+  const frameworkEntries = Object.entries(frameworks)
+    .sort(([, a]: any, [, b]: any) => b - a)
+    .slice(0, 8);
+
   const totalBytes = Object.values(languages).reduce((sum: number, bytes: any) => sum + bytes, 0);
+
+  // Framework emoji mapping
+  const frameworkEmojis: Record<string, string> = {
+    'React': '⚛️',
+    'Next.js': '▲',
+    'Vue.js': '💚',
+    'Angular': '🅰️',
+    'Svelte': '🔥',
+    'Django': '🎸',
+    'Flask': '🌶️',
+    'FastAPI': '⚡',
+    'Express': '🚂',
+    'NestJS': '🐱',
+    'Spring Boot': '🍃',
+    'Laravel': '🎨',
+    'Ruby on Rails': '💎',
+    'React Native': '📱',
+    'Electron': '⚛️',
+    'Tailwind CSS': '🎨',
+    'Bootstrap': '🅱️',
+    'Gatsby': '🚀',
+    'Nuxt.js': '💚',
+    'Fastify': '⚡',
+    'Ionic': '📱',
+    'Symfony': '🎵',
+  };
 
   return (
     <div className="space-y-6">
@@ -38,30 +70,66 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">          
-          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-bold text-[#666] tracking-wider">LANGUAGES</h3>
-              <Code className="h-4 w-4 text-[#666]" />
-            </div>
-            <p className="text-3xl font-black text-[#e0e0e0] mb-1">
-              {Object.keys(languages).length}
-            </p>
-            <p className="text-xs text-[#666]">Technologies used</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">          
+        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs font-bold text-[#666] tracking-wider">LANGUAGES</h3>
+            <Code className="h-4 w-4 text-[#666]" />
           </div>
+          <p className="text-3xl font-black text-[#e0e0e0] mb-1">
+            {Object.keys(languages).length}
+          </p>
+          <p className="text-xs text-[#666]">Programming languages</p>
+        </div>
 
-          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-bold text-[#666] tracking-wider">GISTS</h3>
-              <Code className="h-4 w-4 text-[#666]" />
-            </div>
-            <p className="text-3xl font-black text-[#e0e0e0] mb-1">
-              {profileData.gistsCount || 0}
-            </p>
-            <p className="text-xs text-[#666]">Public only</p>
-            <p className="text-xs text-[#666]">Code snippets</p>
+        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs font-bold text-[#666] tracking-wider">FRAMEWORKS</h3>
+            <Boxes className="h-4 w-4 text-[#666]" />
+          </div>
+          <p className="text-3xl font-black text-[#e0e0e0] mb-1">
+            {Object.keys(frameworks).length}
+          </p>
+          <p className="text-xs text-[#666]">Frameworks & libraries</p>
+        </div>
+
+        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs font-bold text-[#666] tracking-wider">GISTS</h3>
+            <Code className="h-4 w-4 text-[#666]" />
+          </div>
+          <p className="text-3xl font-black text-[#e0e0e0] mb-1">
+            {profileData.gistsCount || 0}
+          </p>
+          <p className="text-xs text-[#666]">Code snippets</p>
+        </div>
+      </div>
+
+      {/* Framework Detection */}
+      {frameworkEntries.length > 0 && (
+        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <h3 className="text-xl font-bold text-[#e0e0e0] mb-6 flex items-center gap-2">
+            <Boxes className="h-5 w-5" />
+            Framework Detection
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {frameworkEntries.map(([framework, count]: any) => (
+              <div 
+                key={framework}
+                className="bg-[#1f1f1f] border border-[#2a2a2a] rounded-lg p-4 hover:border-[#666] transition-colors"
+              >
+                <div className="text-2xl mb-2">{frameworkEmojis[framework] || '📦'}</div>
+                <div className="text-sm font-bold text-[#e0e0e0] mb-1 truncate">
+                  {framework}
+                </div>
+                <div className="text-xs text-[#666]">
+                  {count} {count === 1 ? 'repo' : 'repos'}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+      )}
 
       {/* Language Chart */}
       <LanguageChart languages={languages} />
@@ -90,7 +158,6 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
                       />
                     </div>
                   </div>
-                  {/* KB kısmı kaldırıldı */}
                 </div>
               );
             })}

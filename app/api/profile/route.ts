@@ -57,7 +57,7 @@ export async function GET() {
         // Account info
         accountAge: profile.accountAge,
         
-        // YENİ FIELD'LAR - EKLE
+        // Extended metrics
         totalIssuesOpened: profile.totalIssuesOpened,
         totalReviews: profile.totalReviews,
         totalContributions: profile.totalContributions,
@@ -67,6 +67,7 @@ export async function GET() {
         
         // JSON fields
         languages: profile.languages,
+        frameworks: profile.frameworks,
         topRepos: profile.topRepos,
         contributions: profile.contributions,
         

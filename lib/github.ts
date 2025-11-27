@@ -432,4 +432,124 @@ export class GitHubService {
       return 0;
     }
   }
+
+  // YENİ: Framework Detection
+  async detectFrameworks(repos: GitHubRepo[]): Promise<Record<string, number>> {
+    const frameworkCounts: Record<string, number> = {};
+
+    for (const repo of repos) {
+      if (repo.fork) continue;
+
+      const detected = await this.detectRepoFrameworks(repo.owner.login, repo.name);
+      detected.forEach(framework => {
+        frameworkCounts[framework] = (frameworkCounts[framework] || 0) + 1;
+      });
+    }
+
+    return frameworkCounts;
+  }
+
+  private async detectRepoFrameworks(owner: string, repo: string): Promise<string[]> {
+    const frameworks = new Set<string>();
+
+    // Check package.json
+    try {
+      const { data } = await this.octokit.repos.getContent({
+        owner,
+        repo,
+        path: 'package.json',
+      });
+
+      if ('content' in data) {
+        const packageJson = JSON.parse(Buffer.from(data.content, 'base64').toString());
+        const deps = { ...packageJson.dependencies, ...packageJson.devDependencies };
+
+        // Frontend Frameworks
+        if (deps['next']) frameworks.add('Next.js');
+        if (deps['react'] && !deps['next']) frameworks.add('React');
+        if (deps['vue']) frameworks.add('Vue.js');
+        if (deps['@angular/core']) frameworks.add('Angular');
+        if (deps['svelte']) frameworks.add('Svelte');
+        if (deps['nuxt']) frameworks.add('Nuxt.js');
+
+        // Backend Frameworks
+        if (deps['express']) frameworks.add('Express');
+        if (deps['@nestjs/core']) frameworks.add('NestJS');
+        if (deps['fastify']) frameworks.add('Fastify');
+
+        // Mobile
+        if (deps['react-native']) frameworks.add('React Native');
+        if (deps['@ionic/angular']) frameworks.add('Ionic');
+
+        // CSS Frameworks
+        if (deps['tailwindcss']) frameworks.add('Tailwind CSS');
+        if (deps['bootstrap']) frameworks.add('Bootstrap');
+
+        // Other
+        if (deps['electron']) frameworks.add('Electron');
+        if (deps['gatsby']) frameworks.add('Gatsby');
+      }
+    } catch {}
+
+    // Python frameworks
+    try {
+      const { data } = await this.octokit.repos.getContent({
+        owner,
+        repo,
+        path: 'requirements.txt',
+      });
+
+      if ('content' in data) {
+        const content = Buffer.from(data.content, 'base64').toString().toLowerCase();
+        if (content.includes('django')) frameworks.add('Django');
+        if (content.includes('flask')) frameworks.add('Flask');
+        if (content.includes('fastapi')) frameworks.add('FastAPI');
+      }
+    } catch {}
+
+    // Java frameworks
+    const javaFiles = ['pom.xml', 'build.gradle'];
+    for (const file of javaFiles) {
+      try {
+        const { data } = await this.octokit.repos.getContent({ owner, repo, path: file });
+        if ('content' in data) {
+          const content = Buffer.from(data.content, 'base64').toString().toLowerCase();
+          if (content.includes('spring-boot') || content.includes('springframework')) {
+            frameworks.add('Spring Boot');
+          }
+        }
+      } catch {}
+    }
+
+    // PHP frameworks
+    try {
+      const { data } = await this.octokit.repos.getContent({
+        owner,
+        repo,
+        path: 'composer.json',
+      });
+
+      if ('content' in data) {
+        const content = Buffer.from(data.content, 'base64').toString().toLowerCase();
+        if (content.includes('laravel/framework')) frameworks.add('Laravel');
+        if (content.includes('symfony/')) frameworks.add('Symfony');
+      }
+    } catch {}
+
+    // Ruby frameworks
+    try {
+      const { data } = await this.octokit.repos.getContent({
+        owner,
+        repo,
+        path: 'Gemfile',
+      });
+
+      if ('content' in data) {
+        const content = Buffer.from(data.content, 'base64').toString().toLowerCase();
+        if (content.includes('rails')) frameworks.add('Ruby on Rails');
+      }
+    } catch {}
+
+    return Array.from(frameworks);
+  }
 }
