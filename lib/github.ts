@@ -552,4 +552,97 @@ export class GitHubService {
 
     return Array.from(frameworks);
   }
+  // CACHE: Check if we need to re-fetch data
+  shouldRefetchData(cachedRepoCount: number, currentRepoCount: number, lastScan: Date | null, maxAgeHours: number = 24): boolean {
+    // If repo count changed, always refetch
+    if (cachedRepoCount !== currentRepoCount) {
+      console.log('🔄 Repo count changed, refetching...');
+      return true;
+    }
+
+    // If no previous scan, fetch
+    if (!lastScan) {
+      console.log('🔄 No previous scan, fetching...');
+      return true;
+    }
+
+    // Check if cache is expired
+    const hoursSinceLastScan = (Date.now() - new Date(lastScan).getTime()) / (1000 * 60 * 60);
+    if (hoursSinceLastScan > maxAgeHours) {
+      console.log(`🔄 Cache expired (${Math.round(hoursSinceLastScan)}h old), refetching...`);
+      return true;
+    }
+
+    console.log(`✅ Using cached data (${Math.round(hoursSinceLastScan)}h old)`);
+    return false;
+  }
+
+  // CACHED: Get languages with cache support
+  async getLanguageStatsCached(
+    repos: GitHubRepo[], 
+    cachedLanguages: any,
+    cachedRepoCount: number,
+    lastScan: Date | null
+  ): Promise<LanguageStats> {
+    const shouldRefetch = this.shouldRefetchData(cachedRepoCount, repos.length, lastScan, 168); // 7 days
+
+    if (!shouldRefetch && cachedLanguages) {
+      console.log('📦 Using cached languages');
+      return cachedLanguages;
+    }
+
+    console.log('🔍 Fetching fresh language data...');
+    return await this.getLanguageStats(repos);
+  }
+
+  // CACHED: Get frameworks with cache support
+  async detectFrameworksCached(
+    repos: GitHubRepo[],
+    cachedFrameworks: any,
+    cachedRepoCount: number,
+    lastScan: Date | null
+  ): Promise<Record<string, number>> {
+    const shouldRefetch = this.shouldRefetchData(cachedRepoCount, repos.length, lastScan, 168); // 7 days
+
+    if (!shouldRefetch && cachedFrameworks) {
+      console.log('📦 Using cached frameworks');
+      return cachedFrameworks;
+    }
+
+    console.log('🔍 Detecting frameworks...');
+    return await this.detectFrameworks(repos);
+  }
+
+  // CACHED: Get organizations with cache support
+  async getOrganizationsCached(
+    username: string,
+    cachedOrgCount: number,
+    lastScan: Date | null
+  ): Promise<string[]> {
+    const hoursSinceLastScan = lastScan ? (Date.now() - new Date(lastScan).getTime()) / (1000 * 60 * 60) : Infinity;
+    
+    if (hoursSinceLastScan < 168 && cachedOrgCount > 0) { // 7 days
+      console.log('📦 Using cached organization count');
+      return []; // Return empty, we only need the count
+    }
+
+    console.log('🔍 Fetching organizations...');
+    return await this.getOrganizations(username);
+  }
+
+  // Rate limit info
+  async getRateLimitInfo(): Promise<{ limit: number; remaining: number; reset: Date }> {
+    try {
+      const { data } = await this.octokit.rateLimit.get();
+      return {
+        limit: data.rate.limit,
+        remaining: data.rate.remaining,
+        reset: new Date(data.rate.reset * 1000),
+      };
+    } catch (error) {
+      console.error('Error fetching rate limit:', error);
+      return { limit: 5000, remaining: 5000, reset: new Date() };
+    }
+  }
 }
+

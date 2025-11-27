@@ -18,7 +18,13 @@ export async function POST(req: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      include: { scans: true },
+      include: { 
+        scans: true,
+        profiles: {
+          orderBy: { scannedAt: 'desc' },
+          take: 1,
+        }
+      },
     });
 
     if (!user) {
@@ -34,23 +40,56 @@ export async function POST(req: NextRequest) {
 
     const github = new GitHubService(user.githubToken);
 
-    console.log('🚀 Fetching comprehensive GitHub data...');
+    console.log('🚀 Starting GitHub analysis...');
     
+    // Check rate limit
+    const rateLimit = await github.getRateLimitInfo();
+    console.log(`⚡ Rate Limit: ${rateLimit.remaining}/${rateLimit.limit}`);
+    
+    if (rateLimit.remaining < 100) {
+      return NextResponse.json(
+        { error: `Rate limit too low. Remaining: ${rateLimit.remaining}. Resets at ${rateLimit.reset.toLocaleTimeString()}` },
+        { status: 429 }
+      );
+    }
+
+    // Get previous profile for cache
+    const previousProfile = user.profiles[0];
+    
+    // Always fetch fresh data
+    console.log('📊 Fetching core GitHub data...');
     const userData = await github.getUserData(user.githubUsername);
     const repos = await github.getRepositories(user.githubUsername);
     const contributions = await github.getContributions(user.githubUsername);
     const pullRequests = await github.getPullRequestMetrics(user.githubUsername);
     const activity = await github.getActivityMetrics(contributions);
-    const organizations = await github.getOrganizations(user.githubUsername);
     const gistsCount = await github.getGistsCount(user.githubUsername);
-    const languages = await github.getLanguageStats(repos);
     const totalStars = await github.getTotalStars(repos);
     const totalForks = await github.getTotalForks(repos);
     
-    // Framework Detection
-    console.log('🔍 Detecting frameworks...');
-    const frameworks = await github.detectFrameworks(repos);
-    console.log('✅ Detected frameworks:', frameworks);
+    // Use cached data when possible
+    console.log('💾 Checking cache...');
+    const languages = await github.getLanguageStatsCached(
+      repos,
+      previousProfile?.languages,
+      previousProfile?.cachedRepoCount || 0,
+      previousProfile?.lastLanguageScan
+    );
+    
+    const frameworks = await github.detectFrameworksCached(
+      repos,
+      previousProfile?.frameworks,
+      previousProfile?.cachedRepoCount || 0,
+      previousProfile?.lastFrameworkScan
+    );
+    
+    const organizations = await github.getOrganizationsCached(
+      user.githubUsername,
+      previousProfile?.organizationsCount || 0,
+      previousProfile?.lastOrgScan
+    );
+    
+    const organizationsCount = organizations.length > 0 ? organizations.length : previousProfile?.organizationsCount || 0;
     
     const accountAge = Math.floor(
       (Date.now() - new Date(userData.created_at).getTime()) / (1000 * 60 * 60 * 24 * 365)
@@ -71,7 +110,7 @@ export async function POST(req: NextRequest) {
       totalReviews: contributions.totalReviews,
       currentStreak: activity.currentStreak,
       longestStreak: activity.longestStreak,
-      organizationsCount: organizations.length,
+      organizationsCount,
       gistsCount,
       followersCount: userData.followers,
       accountAge,
@@ -118,6 +157,8 @@ export async function POST(req: NextRequest) {
       : 0;
     const newTotalContributions = contributions?.contributionCalendar?.totalContributions || 0;
 
+    const now = new Date();
+
     const profile = await prisma.profile.upsert({
       where: { 
         userId: user.id 
@@ -150,7 +191,7 @@ export async function POST(req: NextRequest) {
         
         followersCount: userData.followers,
         followingCount: userData.following,
-        organizationsCount: organizations.length,
+        organizationsCount,
         gistsCount,
         
         accountAge,
@@ -168,7 +209,13 @@ export async function POST(req: NextRequest) {
         topRepos: topReposData,
         contributions: contributionsData,
         
-        scannedAt: new Date(),
+        // Cache metadata
+        cachedRepoCount: repos.length,
+        lastLanguageScan: now,
+        lastFrameworkScan: now,
+        lastOrgScan: organizations.length > 0 ? now : previousProfile?.lastOrgScan,
+        
+        scannedAt: now,
       },
       create: {
         userId: user.id,
@@ -200,7 +247,7 @@ export async function POST(req: NextRequest) {
         
         followersCount: userData.followers,
         followingCount: userData.following,
-        organizationsCount: organizations.length,
+        organizationsCount,
         gistsCount,
         
         accountAge,
@@ -217,6 +264,12 @@ export async function POST(req: NextRequest) {
         frameworks,
         topRepos: topReposData,
         contributions: contributionsData,
+        
+        // Cache metadata
+        cachedRepoCount: repos.length,
+        lastLanguageScan: now,
+        lastFrameworkScan: now,
+        lastOrgScan: now,
       },
     });
 
@@ -226,11 +279,17 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log('✅ Analysis completed successfully!');
+    const finalRateLimit = await github.getRateLimitInfo();
+    console.log(`✅ Analysis completed! Rate Limit: ${finalRateLimit.remaining}/${finalRateLimit.limit}`);
 
     return NextResponse.json({
       success: true,
       profile,
+      rateLimit: {
+        remaining: finalRateLimit.remaining,
+        limit: finalRateLimit.limit,
+        reset: finalRateLimit.reset,
+      },
     });
 
   } catch (error) {
