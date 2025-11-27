@@ -8,6 +8,9 @@ interface ActivityTabProps {
 }
 
 export function ActivityTab({ profileData }: ActivityTabProps) {
+  console.log('🔥 ActivityTab Rendered');
+  console.log('🔥 ProfileData:', profileData);
+  console.log('🔥 Total Contributions:', profileData?.totalContributions);
   if (!profileData) {
     return (
       <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8 text-center">

@@ -154,8 +154,7 @@ console.log('newTotalContributions:', newTotalContributions);
         
         accountAge,
         accountCreatedAt: new Date(userData.created_at),
-        
-        // YENİ FIELD'LAR
+                
         totalIssuesOpened: contributions.totalIssues || 0, 
         totalReviews: contributions.totalReviews || 0,     
         totalContributions: newTotalContributions,
