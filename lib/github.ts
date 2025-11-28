@@ -935,32 +935,33 @@ async analyzeReadmeQuality(username: string): Promise<{
   }
 }
 // Repository Health Analysis
+// Repository Health Analysis - PRO VERSION
 async analyzeRepositoryHealth(username: string): Promise<{
-  overallScore: number;
+  overallScore: number; // ✅ 0-10 scale
   grade: string;
   metrics: {
     maintenance: {
-      score: number;
-      commitFrequency: number; // commits per week (last 6 months)
+      score: number; // ✅ 0-100 scale
+      commitFrequency: number;
       lastCommitDays: number;
-      activeDaysRatio: number; // % of days with commits
+      activeDaysRatio: number;
     };
     issueManagement: {
-      score: number;
+      score: number; // ✅ 0-100 scale
       averageResolutionDays: number;
       openClosedRatio: number;
       totalIssues: number;
       closedIssues: number;
     };
     pullRequests: {
-      score: number;
-      mergeRate: number; // % of merged PRs
+      score: number; // ✅ 0-100 scale
+      mergeRate: number;
       averageMergeDays: number;
       totalPRs: number;
       mergedPRs: number;
     };
     activity: {
-      score: number;
+      score: number; // ✅ 0-100 scale
       contributorCount: number;
       staleBranches: number;
       stalePRs: number;
@@ -993,7 +994,7 @@ async analyzeRepositoryHealth(username: string): Promise<{
     }
 
     // ==========================================
-    // 1. MAINTENANCE SCORE
+    // 1. MAINTENANCE SCORE (0-100)
     // ==========================================
     
     const sixMonthsAgo = new Date();
@@ -1004,8 +1005,7 @@ async analyzeRepositoryHealth(username: string): Promise<{
     let activeDays = new Set<string>();
     let lastCommitDate = new Date(0);
 
-    // Analyze commits for each repo
-    for (const repo of repos.slice(0, 20)) { // Limit to 20 repos to avoid rate limit
+    for (const repo of repos.slice(0, 20)) {
       try {
         const commitsResponse = await this.octokit.request(
           'GET /repos/{owner}/{repo}/commits',
@@ -1027,11 +1027,9 @@ async analyzeRepositoryHealth(username: string): Promise<{
           const commitDate = new Date(commit.commit.author.date);
           recentCommits++;
           
-          // Track active days
           const dayKey = commitDate.toISOString().split('T')[0];
           activeDays.add(dayKey);
 
-          // Track last commit
           if (commitDate > lastCommitDate) {
             lastCommitDate = commitDate;
           }
@@ -1042,33 +1040,29 @@ async analyzeRepositoryHealth(username: string): Promise<{
       }
     }
 
-    const weeksInPeriod = 26; // 6 months
+    const weeksInPeriod = 26;
     const commitFrequency = recentCommits / weeksInPeriod;
     const lastCommitDays = Math.floor((Date.now() - lastCommitDate.getTime()) / (1000 * 60 * 60 * 24));
-    const activeDaysRatio = (activeDays.size / 180) * 100; // 180 days in 6 months
+    const activeDaysRatio = (activeDays.size / 180) * 100;
 
-    // Maintenance scoring (0-100)
     let maintenanceScore = 0;
     
-    // Commit frequency score (40 points)
     if (commitFrequency >= 10) maintenanceScore += 40;
     else if (commitFrequency >= 5) maintenanceScore += 30;
     else if (commitFrequency >= 2) maintenanceScore += 20;
     else if (commitFrequency >= 1) maintenanceScore += 10;
     
-    // Recency score (30 points)
     if (lastCommitDays <= 7) maintenanceScore += 30;
     else if (lastCommitDays <= 14) maintenanceScore += 25;
     else if (lastCommitDays <= 30) maintenanceScore += 20;
     else if (lastCommitDays <= 60) maintenanceScore += 10;
     
-    // Active days ratio score (30 points)
     if (activeDaysRatio >= 30) maintenanceScore += 30;
     else if (activeDaysRatio >= 20) maintenanceScore += 20;
     else if (activeDaysRatio >= 10) maintenanceScore += 10;
 
     // ==========================================
-    // 2. ISSUE MANAGEMENT SCORE
+    // 2. ISSUE MANAGEMENT SCORE (0-100)
     // ==========================================
     
     let totalIssues = 0;
@@ -1078,7 +1072,6 @@ async analyzeRepositoryHealth(username: string): Promise<{
 
     for (const repo of repos.slice(0, 10)) {
       try {
-        // Get closed issues
         const closedIssuesResponse = await this.octokit.request(
           'GET /repos/{owner}/{repo}/issues',
           {
@@ -1095,7 +1088,6 @@ async analyzeRepositoryHealth(username: string): Promise<{
         const closed = closedIssuesResponse.data.filter((issue: any) => !issue.pull_request);
         closedIssues += closed.length;
 
-        // Calculate resolution time
         closed.forEach((issue: any) => {
           if (issue.closed_at && issue.created_at) {
             const created = new Date(issue.created_at).getTime();
@@ -1106,7 +1098,6 @@ async analyzeRepositoryHealth(username: string): Promise<{
           }
         });
 
-        // Get open issues
         const openIssuesResponse = await this.octokit.request(
           'GET /repos/{owner}/{repo}/issues',
           {
@@ -1135,24 +1126,21 @@ async analyzeRepositoryHealth(username: string): Promise<{
       ? (closedIssues / totalIssues) * 100 
       : 100;
 
-    // Issue management scoring (0-100)
     let issueScore = 0;
     
-    // Resolution time score (50 points)
-    if (averageResolutionDays === 0) issueScore += 25; // No issues or very fast
+    if (averageResolutionDays === 0) issueScore += 25;
     else if (averageResolutionDays <= 7) issueScore += 50;
     else if (averageResolutionDays <= 14) issueScore += 40;
     else if (averageResolutionDays <= 30) issueScore += 30;
     else if (averageResolutionDays <= 60) issueScore += 20;
     
-    // Open/closed ratio score (50 points)
     if (openClosedRatio >= 80) issueScore += 50;
     else if (openClosedRatio >= 60) issueScore += 40;
     else if (openClosedRatio >= 40) issueScore += 30;
     else if (openClosedRatio >= 20) issueScore += 20;
 
     // ==========================================
-    // 3. PULL REQUEST SCORE
+    // 3. PULL REQUEST SCORE (0-100)
     // ==========================================
     
     let totalPRs = 0;
@@ -1197,34 +1185,29 @@ async analyzeRepositoryHealth(username: string): Promise<{
     const mergeRate = totalPRs > 0 ? (mergedPRs / totalPRs) * 100 : 0;
     const averageMergeDays = mergedPRsCount > 0 ? totalMergeTime / mergedPRsCount : 0;
 
-    // PR scoring (0-100)
     let prScore = 0;
     
-    // Merge rate score (60 points)
     if (mergeRate >= 80) prScore += 60;
     else if (mergeRate >= 60) prScore += 50;
     else if (mergeRate >= 40) prScore += 40;
     else if (mergeRate >= 20) prScore += 30;
     
-    // Merge time score (40 points)
-    if (averageMergeDays === 0) prScore += 20; // No PRs
+    if (averageMergeDays === 0) prScore += 20;
     else if (averageMergeDays <= 1) prScore += 40;
     else if (averageMergeDays <= 3) prScore += 35;
     else if (averageMergeDays <= 7) prScore += 30;
     else if (averageMergeDays <= 14) prScore += 20;
 
     // ==========================================
-    // 4. ACTIVITY SCORE
+    // 4. ACTIVITY SCORE (0-100)
     // ==========================================
     
-    // Count unique contributors across repos
     const contributors = new Set<string>();
     let staleBranches = 0;
     let stalePRs = 0;
 
     for (const repo of repos.slice(0, 10)) {
       try {
-        // Get contributors
         const contributorsResponse = await this.octokit.request(
           'GET /repos/{owner}/{repo}/contributors',
           {
@@ -1241,7 +1224,6 @@ async analyzeRepositoryHealth(username: string): Promise<{
           contributors.add(contributor.login);
         });
 
-        // Count stale branches (no commits in 3+ months)
         const branchesResponse = await this.octokit.request(
           'GET /repos/{owner}/{repo}/branches',
           {
@@ -1271,7 +1253,6 @@ async analyzeRepositoryHealth(username: string): Promise<{
               }
             );
         
-            // SAFE ACCESS
             const commitAuthor = (commitResponse.data as any)?.commit?.author;
             if (commitAuthor?.date) {
               const lastCommitDate = new Date(commitAuthor.date);
@@ -1284,7 +1265,6 @@ async analyzeRepositoryHealth(username: string): Promise<{
           }
         }
 
-        // Count stale PRs (open for 3+ months)
         const openPRsResponse = await this.octokit.request(
           'GET /repos/{owner}/{repo}/pulls',
           {
@@ -1312,114 +1292,758 @@ async analyzeRepositoryHealth(username: string): Promise<{
 
     const contributorCount = contributors.size;
 
-    // Activity scoring (0-100)
     let activityScore = 0;
     
-    // Contributor count score (50 points)
     if (contributorCount >= 10) activityScore += 50;
     else if (contributorCount >= 5) activityScore += 40;
     else if (contributorCount >= 3) activityScore += 30;
     else if (contributorCount >= 2) activityScore += 20;
     else activityScore += 10;
     
-    // Stale content penalty (50 points, deduct for stale items)
     let staleScore = 50;
-    staleScore -= Math.min(staleBranches * 5, 25); // Max -25
-    staleScore -= Math.min(stalePRs * 5, 25); // Max -25
+    staleScore -= Math.min(staleBranches * 5, 25);
+    staleScore -= Math.min(stalePRs * 5, 25);
     activityScore += Math.max(staleScore, 0);
 
     // ==========================================
-    // OVERALL SCORE & GRADE
+    // OVERALL SCORE (0-10) ✅
     // ==========================================
+
+    const maintenanceScore10 = Math.round(maintenanceScore / 10 * 10) / 10; // 8.5
+    const issueScore10 = Math.round(issueScore / 10 * 10) / 10; // 7.5
+    const prScore10 = Math.round(prScore / 10 * 10) / 10; // 9.0
+    const activityScore10 = Math.round(activityScore / 10 * 10) / 10; // 6.5
     
+    // Weighted average (0-100), then convert to 0-10
     const overallScore = Math.round(
-      (maintenanceScore * 0.3 + issueScore * 0.25 + prScore * 0.25 + activityScore * 0.2)
-    );
+      (maintenanceScore10 * 0.3 + issueScore10 * 0.25 + prScore10 * 0.25 + activityScore10 * 0.2) * 10
+    ) / 10;
 
     let grade = 'F';
-    if (overallScore >= 90) grade = 'A+';
-    else if (overallScore >= 85) grade = 'A';
-    else if (overallScore >= 80) grade = 'A-';
-    else if (overallScore >= 75) grade = 'B+';
-    else if (overallScore >= 70) grade = 'B';
-    else if (overallScore >= 65) grade = 'B-';
-    else if (overallScore >= 60) grade = 'C+';
-    else if (overallScore >= 55) grade = 'C';
-    else if (overallScore >= 50) grade = 'C-';
-    else if (overallScore >= 40) grade = 'D';
+if (overallScore >= 9.5) grade = 'A+';
+else if (overallScore >= 9.0) grade = 'A';
+else if (overallScore >= 8.5) grade = 'A-';
+else if (overallScore >= 8.0) grade = 'B+';
+else if (overallScore >= 7.5) grade = 'B';
+else if (overallScore >= 7.0) grade = 'B-';
+else if (overallScore >= 6.5) grade = 'C+';
+else if (overallScore >= 6.0) grade = 'C';
+else if (overallScore >= 5.5) grade = 'C-';
+else if (overallScore >= 5.0) grade = 'D+';
+else if (overallScore >= 4.5) grade = 'D';
+else if (overallScore >= 4.0) grade = 'D-';
+
+// ==========================================
+// INSIGHTS & RECOMMENDATIONS
+// ==========================================
+
+const strengths: string[] = [];
+const concerns: string[] = [];
+const recommendations: string[] = [];
+
+if (maintenanceScore >= 80) strengths.push('Excellent maintenance with consistent commit activity');
+if (issueScore >= 80) strengths.push('Strong issue management and quick resolution times');
+if (prScore >= 80) strengths.push('Efficient PR workflow with high merge rates');
+if (contributorCount >= 5) strengths.push('Active community with multiple contributors');
+
+if (lastCommitDays > 30) concerns.push('No recent commits in the last month');
+if (averageResolutionDays > 30) concerns.push('Issues take long to resolve (30+ days average)');
+if (mergeRate < 50) concerns.push('Low PR merge rate indicates workflow issues');
+if (staleBranches > 5) concerns.push(`${staleBranches} stale branches need cleanup`);
+if (stalePRs > 3) concerns.push(`${stalePRs} stale PRs need attention`);
+
+if (commitFrequency < 2) recommendations.push('Increase commit frequency to show active development');
+if (averageResolutionDays > 14) recommendations.push('Set up issue triaging to improve response times');
+if (staleBranches > 0) recommendations.push('Clean up stale branches to maintain repository hygiene');
+if (contributorCount === 1) recommendations.push('Encourage community contributions with good documentation');
+
+let trend: 'improving' | 'stable' | 'declining' = 'stable';
+if (maintenanceScore >= 70 && lastCommitDays <= 14) trend = 'improving';
+else if (lastCommitDays > 60 || maintenanceScore < 40) trend = 'declining';
+
+return {
+  overallScore, // ✅ 8.5/10
+  grade,
+  metrics: {
+    maintenance: {
+      score: maintenanceScore10, // ✅ 8.5/10 (100'den çevrildi)
+      commitFrequency: Math.round(commitFrequency * 10) / 10,
+      lastCommitDays,
+      activeDaysRatio: Math.round(activeDaysRatio * 10) / 10,
+    },
+    issueManagement: {
+      score: issueScore10, // ✅ 7.5/10
+      averageResolutionDays: Math.round(averageResolutionDays * 10) / 10,
+      openClosedRatio: Math.round(openClosedRatio * 10) / 10,
+      totalIssues,
+      closedIssues,
+    },
+    pullRequests: {
+      score: prScore10, // ✅ 9.0/10
+      mergeRate: Math.round(mergeRate * 10) / 10,
+      averageMergeDays: Math.round(averageMergeDays * 10) / 10,
+      totalPRs,
+      mergedPRs,
+    },
+    activity: {
+      score: activityScore10, // ✅ 6.5/10
+      contributorCount,
+      staleBranches,
+      stalePRs,
+    },
+  },
+  insights: {
+    strengths,
+    concerns,
+    recommendations,
+  },
+  trend,
+};
+  } catch (error) {
+    console.error('Repository health analysis error:', error);
+    throw error;
+  }
+}
+
+async analyzeDeveloperPatterns(username: string): Promise<{
+  overallScore: number;
+  grade: string;
+  patterns: {
+    commitPatterns: {
+      score: number;
+      hourlyActivity: number[];
+      weeklyActivity: number[];
+      peakHours: number[];
+      peakDays: string[];
+      commitMessageQuality: number;
+      consistency: number;
+    };
+    codeQuality: {
+      score: number;
+      branchManagement: number;
+      commitSize: number;
+      reviewEngagement: number;
+      documentationHabits: number;
+    };
+    workLifeBalance: {
+      score: number;
+      weekendActivity: number;
+      nightCoding: number;
+      burnoutRisk: number;
+      sustainablePace: number;
+    };
+    collaboration: {
+      score: number;
+      soloVsTeam: number;
+      prResponseTime: number;
+      reviewParticipation: number;
+      crossRepoWork: number;
+    };
+    technology: {
+      score: number;
+      modernFrameworks: number;
+      cuttingEdge: number;
+      legacyMaintenance: number;
+      learningCurve: number;
+    };
+    productivity: {
+      score: number;
+      peakHours: number[];
+      deepWorkSessions: number;
+      contextSwitching: number;
+      flowState: number;
+    };
+  };
+  insights: {
+    strengths: string[];
+    patterns: string[];
+    recommendations: string[];
+  };
+  developerPersona: string;
+}> {
+  try {
+    console.log(`🎨 Analyzing developer patterns for: ${username}`);
+
+    // Get user's repos
+    const reposResponse = await this.octokit.request('GET /users/{username}/repos', {
+      username,
+      per_page: 100,
+      sort: 'updated',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    });
+
+    const repos = reposResponse.data.filter((repo: any) => !repo.fork);
+
+    if (repos.length === 0) {
+      throw new Error('No repositories found');
+    }
 
     // ==========================================
-    // INSIGHTS & RECOMMENDATIONS
+    // 1. COMMIT PATTERNS ANALYSIS
     // ==========================================
     
+    const hourlyActivity = Array(24).fill(0);
+    const weeklyActivity = Array(7).fill(0);
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    
+    let totalCommits = 0;
+    let commitDates = new Set<string>();
+    const commitMessages: string[] = [];
+    
+    for (const repo of repos.slice(0, 20)) {
+      try {
+        const commitsResponse = await this.octokit.request(
+          'GET /repos/{owner}/{repo}/commits',
+          {
+            owner: username,
+            repo: repo.name,
+            author: username,
+            per_page: 100,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          }
+        );
+
+        commitsResponse.data.forEach((commit: any) => {
+          const date = new Date(commit.commit.author.date);
+          const hour = date.getHours();
+          const day = date.getDay();
+          
+          hourlyActivity[hour]++;
+          weeklyActivity[day]++;
+          
+          const dateKey = date.toISOString().split('T')[0];
+          commitDates.add(dateKey);
+          
+          if (commit.commit.message) {
+            commitMessages.push(commit.commit.message);
+          }
+          
+          totalCommits++;
+        });
+      } catch (error) {
+        console.log(`Skipping commits for ${repo.name}`);
+        continue;
+      }
+    }
+
+    const maxHourlyActivity = Math.max(...hourlyActivity);
+    const normalizedHourly = hourlyActivity.map(count => 
+      maxHourlyActivity > 0 ? Math.round((count / maxHourlyActivity) * 100) : 0
+    );
+
+    const maxWeeklyActivity = Math.max(...weeklyActivity);
+    const normalizedWeekly = weeklyActivity.map(count =>
+      maxWeeklyActivity > 0 ? Math.round((count / maxWeeklyActivity) * 100) : 0
+    );
+
+    const hourlyWithIndex = hourlyActivity.map((count, hour) => ({ hour, count }));
+    hourlyWithIndex.sort((a, b) => b.count - a.count);
+    const peakHours = hourlyWithIndex.slice(0, 3).map(h => h.hour);
+
+    const weeklyWithIndex = weeklyActivity.map((count, day) => ({ day, count }));
+    weeklyWithIndex.sort((a, b) => b.count - a.count);
+    const peakDays = weeklyWithIndex.slice(0, 3).map(w => dayNames[w.day]);
+
+    let qualityScore = 0;
+    commitMessages.forEach(msg => {
+      const length = msg.split('\n')[0].length;
+      if (length >= 20 && length <= 72) qualityScore += 10;
+      if (msg.includes(':')) qualityScore += 5;
+      if (msg.length > 50) qualityScore += 5;
+    });
+    const commitMessageQuality = Math.min(100, Math.round((qualityScore / commitMessages.length) * 5));
+
+    const consistency = Math.min(100, Math.round((commitDates.size / 180) * 100));
+
+    let commitPatternsScore = 0;
+    if (consistency >= 80) commitPatternsScore += 3;
+    else if (consistency >= 60) commitPatternsScore += 2.5;
+    else if (consistency >= 40) commitPatternsScore += 2;
+    else commitPatternsScore += 1;
+
+    if (commitMessageQuality >= 80) commitPatternsScore += 3;
+    else if (commitMessageQuality >= 60) commitPatternsScore += 2.5;
+    else if (commitMessageQuality >= 40) commitPatternsScore += 2;
+    else commitPatternsScore += 1;
+
+    if (totalCommits >= 500) commitPatternsScore += 4;
+    else if (totalCommits >= 200) commitPatternsScore += 3;
+    else if (totalCommits >= 100) commitPatternsScore += 2;
+    else commitPatternsScore += 1;
+
+    commitPatternsScore = Math.round(commitPatternsScore * 10) / 10;
+
+    // ==========================================
+    // 2. CODE QUALITY ANALYSIS
+    // ==========================================
+
+    let branchCount = 0;
+    let avgCommitSize = 0;
+    let totalFilesChanged = 0;
+    let commitCount = 0;
+    let hasReadme = 0;
+    let hasTests = 0;
+    let hasDocs = 0;
+
+    for (const repo of repos.slice(0, 15)) {
+      try {
+        const branchesResponse = await this.octokit.request(
+          'GET /repos/{owner}/{repo}/branches',
+          {
+            owner: username,
+            repo: repo.name,
+            per_page: 100,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          }
+        );
+        branchCount += branchesResponse.data.length;
+
+        const commitsResponse = await this.octokit.request(
+          'GET /repos/{owner}/{repo}/commits',
+          {
+            owner: username,
+            repo: repo.name,
+            per_page: 50,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          }
+        );
+
+        for (const commit of commitsResponse.data.slice(0, 20)) {
+          try {
+            const commitDetailResponse = await this.octokit.request(
+              'GET /repos/{owner}/{repo}/commits/{ref}',
+              {
+                owner: username,
+                repo: repo.name,
+                ref: commit.sha,
+                headers: {
+                  'X-GitHub-Api-Version': '2022-11-28',
+                },
+              }
+            );
+            
+            totalFilesChanged += commitDetailResponse.data.files?.length || 0;
+            commitCount++;
+          } catch (error) {
+            continue;
+          }
+        }
+
+        try {
+          await this.octokit.request('GET /repos/{owner}/{repo}/readme', {
+            owner: username,
+            repo: repo.name,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          });
+          hasReadme++;
+        } catch {}
+
+        try {
+          const contentsResponse = await this.octokit.request(
+            'GET /repos/{owner}/{repo}/contents',
+            {
+              owner: username,
+              repo: repo.name,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28',
+              },
+            }
+          );
+          
+          const hasTestFolder = contentsResponse.data.some((item: any) => 
+            item.name.toLowerCase().includes('test') || 
+            item.name.toLowerCase().includes('spec')
+          );
+          if (hasTestFolder) hasTests++;
+
+          const hasDocsFolder = contentsResponse.data.some((item: any) => 
+            item.name.toLowerCase() === 'docs' || 
+            item.name.toLowerCase() === 'documentation'
+          );
+          if (hasDocsFolder) hasDocs++;
+        } catch {}
+
+      } catch (error) {
+        console.log(`Skipping code quality analysis for ${repo.name}`);
+        continue;
+      }
+    }
+
+    avgCommitSize = commitCount > 0 ? totalFilesChanged / commitCount : 0;
+
+    const avgBranchesPerRepo = repos.length > 0 ? branchCount / repos.length : 1;
+    let branchManagement = 50;
+    if (avgBranchesPerRepo >= 2 && avgBranchesPerRepo <= 5) branchManagement = 90;
+    else if (avgBranchesPerRepo > 5 && avgBranchesPerRepo <= 10) branchManagement = 70;
+    else if (avgBranchesPerRepo > 10) branchManagement = 40;
+    else branchManagement = 60;
+
+    let commitSize = 50;
+    if (avgCommitSize >= 3 && avgCommitSize <= 10) commitSize = 90;
+    else if (avgCommitSize > 10 && avgCommitSize <= 20) commitSize = 70;
+    else if (avgCommitSize > 20) commitSize = 40;
+    else if (avgCommitSize < 3) commitSize = 60;
+
+    const reviewEngagement = 75;
+
+    const readmeRatio = repos.length > 0 ? (hasReadme / repos.length) * 100 : 0;
+    const testRatio = repos.length > 0 ? (hasTests / repos.length) * 100 : 0;
+    const docsRatio = repos.length > 0 ? (hasDocs / repos.length) * 100 : 0;
+    const documentationHabits = Math.round((readmeRatio * 0.5 + testRatio * 0.3 + docsRatio * 0.2));
+
+    const codeQualityScore = Math.round(
+      ((branchManagement * 0.25 + commitSize * 0.25 + reviewEngagement * 0.25 + documentationHabits * 0.25) / 10) * 10
+    ) / 10;
+
+    // ==========================================
+    // 3. WORK-LIFE BALANCE ANALYSIS
+    // ==========================================
+
+    const weekendCommits = weeklyActivity[0] + weeklyActivity[6];
+    const weekdayCommits = weeklyActivity.slice(1, 6).reduce((a, b) => a + b, 0);
+    const totalCommitsForBalance = weekendCommits + weekdayCommits;
+    const weekendActivity = totalCommitsForBalance > 0 
+      ? Math.round((weekendCommits / totalCommitsForBalance) * 100) 
+      : 0;
+
+    const nightCommits = hourlyActivity.slice(0, 6).reduce((a, b) => a + b, 0);
+    const nightCoding = totalCommits > 0 
+      ? Math.round((nightCommits / totalCommits) * 100) 
+      : 0;
+
+    let burnoutRisk = 0;
+    if (weekendActivity > 40) burnoutRisk += 30;
+    else if (weekendActivity > 25) burnoutRisk += 15;
+
+    if (nightCoding > 30) burnoutRisk += 30;
+    else if (nightCoding > 20) burnoutRisk += 15;
+
+    if (consistency > 90) burnoutRisk += 20;
+
+    burnoutRisk = Math.min(100, burnoutRisk);
+
+    const sustainablePace = 100 - burnoutRisk;
+
+    let workLifeBalanceScore = 10;
+    if (weekendActivity > 40) workLifeBalanceScore -= 3;
+    else if (weekendActivity > 25) workLifeBalanceScore -= 1.5;
+
+    if (nightCoding > 30) workLifeBalanceScore -= 3;
+    else if (nightCoding > 20) workLifeBalanceScore -= 1.5;
+
+    if (burnoutRisk > 60) workLifeBalanceScore -= 2;
+
+    workLifeBalanceScore = Math.max(0, Math.round(workLifeBalanceScore * 10) / 10);
+
+    // ==========================================
+    // 4. COLLABORATION ANALYSIS
+    // ==========================================
+
+    let ownedRepos = 0;
+    let forkedRepos = 0;
+    let prCount = 0;
+    let contributorCounts: number[] = [];
+
+    for (const repo of repos.slice(0, 15)) {
+      try {
+        if (repo.fork) forkedRepos++;
+        else ownedRepos++;
+
+        const prsResponse = await this.octokit.request(
+          'GET /repos/{owner}/{repo}/pulls',
+          {
+            owner: username,
+            repo: repo.name,
+            state: 'all',
+            per_page: 100,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          }
+        );
+        prCount += prsResponse.data.length;
+
+        const contributorsResponse = await this.octokit.request(
+          'GET /repos/{owner}/{repo}/contributors',
+          {
+            owner: username,
+            repo: repo.name,
+            per_page: 100,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          }
+        );
+        contributorCounts.push(contributorsResponse.data.length);
+
+      } catch (error) {
+        console.log(`Skipping collaboration analysis for ${repo.name}`);
+        continue;
+      }
+    }
+
+    const totalReposForCollab = ownedRepos + forkedRepos;
+    const soloVsTeam = totalReposForCollab > 0 
+      ? Math.round((ownedRepos / totalReposForCollab) * 100) 
+      : 50;
+
+    const avgContributors = contributorCounts.length > 0
+      ? contributorCounts.reduce((a, b) => a + b, 0) / contributorCounts.length
+      : 1;
+
+    const prResponseTime = avgContributors > 2 ? 4 : 12;
+
+    const reviewParticipation = Math.min(100, Math.round(prCount * 2 + avgContributors * 10));
+
+    const crossRepoWork = Math.min(100, Math.round((forkedRepos / Math.max(totalReposForCollab, 1)) * 100));
+
+    let collaborationScore = 5;
+    if (avgContributors >= 3) collaborationScore += 3;
+    else if (avgContributors >= 2) collaborationScore += 2;
+    else collaborationScore += 1;
+
+    if (prCount >= 20) collaborationScore += 2;
+    else if (prCount >= 10) collaborationScore += 1.5;
+    else if (prCount >= 5) collaborationScore += 1;
+
+    if (crossRepoWork >= 30) collaborationScore += 2;
+    else if (crossRepoWork >= 15) collaborationScore += 1;
+
+    collaborationScore = Math.min(10, Math.round(collaborationScore * 10) / 10);
+
+    // ==========================================
+    // 5. TECHNOLOGY ANALYSIS
+    // ==========================================
+
+    const modernTech = new Set<string>();
+    const legacyTech = new Set<string>();
+
+    for (const repo of repos.slice(0, 20)) {
+      try {
+        try {
+          const packageResponse = await this.octokit.request(
+            'GET /repos/{owner}/{repo}/contents/package.json',
+            {
+              owner: username,
+              repo: repo.name,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28',
+              },
+            }
+          );
+
+          if ('content' in packageResponse.data) {
+            const content = Buffer.from(packageResponse.data.content, 'base64').toString();
+            const packageJson = JSON.parse(content);
+            const deps = { ...packageJson.dependencies, ...packageJson.devDependencies };
+
+            if (deps['next']) modernTech.add('Next.js');
+            if (deps['react']) modernTech.add('React');
+            if (deps['vue']) modernTech.add('Vue');
+            if (deps['typescript']) modernTech.add('TypeScript');
+            if (deps['tailwindcss']) modernTech.add('Tailwind');
+            if (deps['vite']) modernTech.add('Vite');
+            if (deps['@prisma/client']) modernTech.add('Prisma');
+
+            if (deps['bun']) modernTech.add('Bun');
+            if (deps['astro']) modernTech.add('Astro');
+            if (deps['solid-js']) modernTech.add('Solid');
+
+            if (deps['jquery'] && !deps['react']) legacyTech.add('jQuery');
+            if (deps['bower']) legacyTech.add('Bower');
+            if (deps['grunt']) legacyTech.add('Grunt');
+          }
+        } catch {}
+
+      } catch (error) {
+        continue;
+      }
+    }
+
+    const modernFrameworks = Math.min(100, modernTech.size * 15);
+
+    const cuttingEdgeTech = ['Bun', 'Astro', 'Solid'];
+    const cuttingEdgeCount = Array.from(modernTech).filter(tech => 
+      cuttingEdgeTech.includes(tech)
+    ).length;
+    const cuttingEdge = Math.min(100, cuttingEdgeCount * 25 + modernFrameworks * 0.3);
+
+    const legacyMaintenance = Math.min(100, legacyTech.size * 20);
+
+    const learningCurve = Math.min(100, modernTech.size * 12);
+
+    const technologyScore = Math.round(
+      ((modernFrameworks * 0.3 + cuttingEdge * 0.3 + (100 - legacyMaintenance) * 0.2 + learningCurve * 0.2) / 10) * 10
+    ) / 10;
+
+    // ==========================================
+    // 6. PRODUCTIVITY ANALYSIS
+    // ==========================================
+
+    let deepWorkSessions = 0;
+    for (let i = 0; i < 22; i++) {
+      const window = hourlyActivity[i] + hourlyActivity[i + 1] + hourlyActivity[i + 2];
+      if (window >= 10) deepWorkSessions++;
+    }
+
+    const activeHours = hourlyActivity.filter(h => h > 0).length;
+    const contextSwitching = Math.min(100, Math.round((activeHours / 24) * 100));
+
+    const topHourActivity = Math.max(...hourlyActivity);
+    const avgHourActivity = hourlyActivity.reduce((a, b) => a + b, 0) / 24;
+    const flowState = avgHourActivity > 0 
+      ? Math.min(100, Math.round((topHourActivity / avgHourActivity) * 20))
+      : 50;
+
+    let productivityScore = 5;
+    if (deepWorkSessions >= 10) productivityScore += 2.5;
+    else if (deepWorkSessions >= 5) productivityScore += 2;
+    else if (deepWorkSessions >= 3) productivityScore += 1;
+
+    if (contextSwitching <= 30) productivityScore += 2;
+    else if (contextSwitching <= 50) productivityScore += 1.5;
+    else if (contextSwitching <= 70) productivityScore += 1;
+
+    if (flowState >= 80) productivityScore += 2.5;
+    else if (flowState >= 60) productivityScore += 2;
+    else if (flowState >= 40) productivityScore += 1;
+
+    productivityScore = Math.min(10, Math.round(productivityScore * 10) / 10);
+
+    // ==========================================
+    // OVERALL SCORE & INSIGHTS
+    // ==========================================
+
+    const overallScore = Math.round(
+      (commitPatternsScore * 0.2 +
+       codeQualityScore * 0.2 +
+       workLifeBalanceScore * 0.15 +
+       collaborationScore * 0.15 +
+       technologyScore * 0.15 +
+       productivityScore * 0.15) * 10
+    ) / 10;
+
+    let grade = 'F';
+    if (overallScore >= 9.5) grade = 'A+';
+    else if (overallScore >= 9.0) grade = 'A';
+    else if (overallScore >= 8.5) grade = 'A-';
+    else if (overallScore >= 8.0) grade = 'B+';
+    else if (overallScore >= 7.5) grade = 'B';
+    else if (overallScore >= 7.0) grade = 'B-';
+    else if (overallScore >= 6.5) grade = 'C+';
+    else if (overallScore >= 6.0) grade = 'C';
+    else if (overallScore >= 5.5) grade = 'C-';
+    else if (overallScore >= 5.0) grade = 'D+';
+    else if (overallScore >= 4.5) grade = 'D';
+    else if (overallScore >= 4.0) grade = 'D-';
+
+    let persona = 'Balanced Developer 🎯';
+    const nightActivitySum = hourlyActivity.slice(0, 6).reduce((a, b) => a + b, 0);
+    const morningActivitySum = hourlyActivity.slice(6, 12).reduce((a, b) => a + b, 0);
+    const afternoonActivitySum = hourlyActivity.slice(12, 18).reduce((a, b) => a + b, 0);
+    
+    if (morningActivitySum > nightActivitySum && morningActivitySum > afternoonActivitySum) {
+      persona = 'Morning Architect 🌅';
+    } else if (nightActivitySum > morningActivitySum && nightActivitySum > afternoonActivitySum) {
+      persona = 'Night Owl Hacker 🦉';
+    } else if (afternoonActivitySum > morningActivitySum && afternoonActivitySum > nightActivitySum) {
+      persona = 'Afternoon Engineer ☀️';
+    }
+
     const strengths: string[] = [];
-    const concerns: string[] = [];
+    const patterns: string[] = [];
     const recommendations: string[] = [];
 
-    // Strengths
-    if (maintenanceScore >= 80) strengths.push('Excellent maintenance with consistent commit activity');
-    if (issueScore >= 80) strengths.push('Strong issue management and quick resolution times');
-    if (prScore >= 80) strengths.push('Efficient PR workflow with high merge rates');
-    if (contributorCount >= 5) strengths.push('Active community with multiple contributors');
+    if (consistency >= 70) strengths.push('Highly consistent commit patterns with regular daily contributions');
+    if (commitMessageQuality >= 70) strengths.push('Well-structured commit messages following best practices');
+    if (totalCommits >= 300) strengths.push('Prolific coder with extensive commit history');
+    if (documentationHabits >= 70) strengths.push('Strong documentation habits across projects');
+    if (modernFrameworks >= 70) strengths.push('Embraces modern technology stack and tools');
 
-    // Concerns
-    if (lastCommitDays > 30) concerns.push('No recent commits in the last month');
-    if (averageResolutionDays > 30) concerns.push('Issues take long to resolve (30+ days average)');
-    if (mergeRate < 50) concerns.push('Low PR merge rate indicates workflow issues');
-    if (staleBranches > 5) concerns.push(`${staleBranches} stale branches need cleanup`);
-    if (stalePRs > 3) concerns.push(`${stalePRs} stale PRs need attention`);
+    if (peakHours[0] < 6) patterns.push('🌙 Night Owl: Most active during late night hours (00:00-06:00)');
+    else if (peakHours[0] < 12) patterns.push('🌅 Early Bird: Most productive in the morning hours (06:00-12:00)');
+    else if (peakHours[0] < 18) patterns.push('☀️ Afternoon Person: Peak productivity in afternoon (12:00-18:00)');
+    else patterns.push('🌆 Evening Coder: Most active during evening hours (18:00-24:00)');
 
-    // Recommendations
-    if (commitFrequency < 2) recommendations.push('Increase commit frequency to show active development');
-    if (averageResolutionDays > 14) recommendations.push('Set up issue triaging to improve response times');
-    if (staleBranches > 0) recommendations.push('Clean up stale branches to maintain repository hygiene');
-    if (contributorCount === 1) recommendations.push('Encourage community contributions with good documentation');
+    patterns.push(`📅 ${peakDays[0]} Warrior: Most commits on ${peakDays[0]}s`);
+    
+    if (deepWorkSessions >= 8) patterns.push('🎯 Deep Work Champion: Maintains long focused coding sessions');
+    if (avgContributors >= 3) patterns.push('🤝 Team Player: Actively collaborates with multiple contributors');
 
-    // Trend detection (simple heuristic)
-    let trend: 'improving' | 'stable' | 'declining' = 'stable';
-    if (maintenanceScore >= 70 && lastCommitDays <= 14) trend = 'improving';
-    else if (lastCommitDays > 60 || maintenanceScore < 40) trend = 'declining';
+    if (consistency < 50) recommendations.push('Build consistent coding habits with regular daily commits');
+    if (commitMessageQuality < 60) recommendations.push('Improve commit message quality with conventional commits (feat:, fix:, docs:)');
+    if (burnoutRisk > 60) recommendations.push('Consider work-life balance - reduce weekend/night coding to prevent burnout');
+    if (documentationHabits < 50) recommendations.push('Add README files and documentation to more projects');
+    if (collaborationScore < 6) recommendations.push('Engage more with open source - contribute to other projects via PRs');
 
     return {
       overallScore,
       grade,
-      metrics: {
-        maintenance: {
-          score: maintenanceScore,
-          commitFrequency: Math.round(commitFrequency * 10) / 10,
-          lastCommitDays,
-          activeDaysRatio: Math.round(activeDaysRatio * 10) / 10,
+      patterns: {
+        commitPatterns: {
+          score: commitPatternsScore,
+          hourlyActivity: normalizedHourly,
+          weeklyActivity: normalizedWeekly,
+          peakHours,
+          peakDays,
+          commitMessageQuality,
+          consistency,
         },
-        issueManagement: {
-          score: issueScore,
-          averageResolutionDays: Math.round(averageResolutionDays * 10) / 10,
-          openClosedRatio: Math.round(openClosedRatio * 10) / 10,
-          totalIssues,
-          closedIssues,
+        codeQuality: {
+          score: codeQualityScore,
+          branchManagement,
+          commitSize,
+          reviewEngagement,
+          documentationHabits,
         },
-        pullRequests: {
-          score: prScore,
-          mergeRate: Math.round(mergeRate * 10) / 10,
-          averageMergeDays: Math.round(averageMergeDays * 10) / 10,
-          totalPRs,
-          mergedPRs,
+        workLifeBalance: {
+          score: workLifeBalanceScore,
+          weekendActivity,
+          nightCoding,
+          burnoutRisk,
+          sustainablePace,
         },
-        activity: {
-          score: activityScore,
-          contributorCount,
-          staleBranches,
-          stalePRs,
+        collaboration: {
+          score: collaborationScore,
+          soloVsTeam,
+          prResponseTime,
+          reviewParticipation,
+          crossRepoWork,
+        },
+        technology: {
+          score: technologyScore,
+          modernFrameworks,
+          cuttingEdge,
+          legacyMaintenance,
+          learningCurve,
+        },
+        productivity: {
+          score: productivityScore,
+          peakHours,
+          deepWorkSessions,
+          contextSwitching,
+          flowState,
         },
       },
       insights: {
         strengths,
-        concerns,
+        patterns,
         recommendations,
       },
-      trend,
+      developerPersona: persona,
     };
   } catch (error) {
-    console.error('Repository health analysis error:', error);
+    console.error('Developer patterns analysis error:', error);
     throw error;
   }
 }

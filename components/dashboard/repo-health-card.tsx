@@ -12,40 +12,37 @@ import {
   Loader2, 
   AlertCircle,
   CheckCircle,
-  Clock,
-  Users,
-  GitBranch,
   Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClientCache, ProCacheKeys } from "@/lib/client-cache";
 
 interface RepoHealthData {
-  overallScore: number;
+  overallScore: number; // 0-10
   grade: string;
   metrics: {
     maintenance: {
-      score: number;
+      score: number; // 0-10
       commitFrequency: number;
       lastCommitDays: number;
       activeDaysRatio: number;
     };
     issueManagement: {
-      score: number;
+      score: number; // 0-10
       averageResolutionDays: number;
       openClosedRatio: number;
       totalIssues: number;
       closedIssues: number;
     };
     pullRequests: {
-      score: number;
+      score: number; // 0-10
       mergeRate: number;
       averageMergeDays: number;
       totalPRs: number;
       mergedPRs: number;
     };
     activity: {
-      score: number;
+      score: number; // 0-10
       contributorCount: number;
       staleBranches: number;
       stalePRs: number;
@@ -69,7 +66,6 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchRepoHealth = async () => {
-    // 🚀 ÖNCE SESSION STORAGE'DAN YÜKLE
     const cached = ClientCache.get<RepoHealthData>(ProCacheKeys.repoHealth(username));
     if (cached) {
       console.log("⚡ INSTANT LOAD: Repo Health from session storage!");
@@ -78,7 +74,6 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
       return;
     }
 
-    // Cache yoksa API'den çek
     setLoading(true);
     setError(null);
     
@@ -91,8 +86,6 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
       }
 
       setData(result.data.repoHealth);
-      
-      // 💾 SESSION STORAGE'A KAYDET
       ClientCache.set(ProCacheKeys.repoHealth(username), result.data.repoHealth);
       
     } catch (err: any) {
@@ -142,20 +135,21 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
     return null;
   }
 
-  const scorePercentage = data.overallScore;
+  // ✅ Score yüzdeye çevir (sadece circular progress için)
+  const scorePercentage = (data.overallScore / 10) * 100;
 
-  // Score color
+  // Score colors (10 üzerinden)
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "from-green-500 to-emerald-500";
-    if (score >= 60) return "from-blue-500 to-cyan-500";
-    if (score >= 40) return "from-yellow-500 to-orange-500";
+    if (score >= 8) return "from-green-500 to-emerald-500";
+    if (score >= 6) return "from-blue-500 to-cyan-500";
+    if (score >= 4) return "from-yellow-500 to-orange-500";
     return "from-red-500 to-pink-500";
   };
 
   const getScoreBgColor = (score: number) => {
-    if (score >= 80) return "from-green-500/10 to-emerald-500/10";
-    if (score >= 60) return "from-blue-500/10 to-cyan-500/10";
-    if (score >= 40) return "from-yellow-500/10 to-orange-500/10";
+    if (score >= 8) return "from-green-500/10 to-emerald-500/10";
+    if (score >= 6) return "from-blue-500/10 to-cyan-500/10";
+    if (score >= 4) return "from-yellow-500/10 to-orange-500/10";
     return "from-red-500/10 to-pink-500/10";
   };
 
@@ -181,7 +175,6 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
     <div className="space-y-6">
       {/* Main Health Score Card */}
       <div className="relative overflow-hidden bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8">
-        {/* Background Gradient */}
         <div className={`absolute inset-0 bg-gradient-to-br ${getScoreBgColor(data.overallScore)} opacity-50`} />
         
         <div className="relative z-10">
@@ -191,7 +184,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
               <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${getScoreColor(data.overallScore)} flex items-center justify-center shadow-lg`}>
                 <Shield className="w-8 h-8 text-white" />
               </div>
-              <div>
+              <div className="text-left">
                 <h3 className="text-2xl font-black text-[#e0e0e0] mb-1">
                   Repository Health
                 </h3>
@@ -223,10 +216,10 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
               <div className={`text-8xl font-black bg-gradient-to-r ${getScoreColor(data.overallScore)} bg-clip-text text-transparent`}>
                 {data.overallScore}
               </div>
-              <div className="text-4xl text-[#666] mb-4">/100</div>
+              <div className="text-4xl text-[#666] mb-4">/10</div>
             </div>
 
-            {/* Circular Progress */}
+            {/* Circular Progress - SADECE BURASI YÜZDE */}
             <div className="relative w-32 h-32">
               <svg className="transform -rotate-90 w-32 h-32">
                 <circle
@@ -251,13 +244,13 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
                 />
                 <defs>
                   <linearGradient id="gradient-health" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" className={`${data.overallScore >= 80 ? 'text-green-500' : data.overallScore >= 60 ? 'text-blue-500' : data.overallScore >= 40 ? 'text-yellow-500' : 'text-red-500'}`} stopColor="currentColor" />
-                    <stop offset="100%" className={`${data.overallScore >= 80 ? 'text-emerald-500' : data.overallScore >= 60 ? 'text-cyan-500' : data.overallScore >= 40 ? 'text-orange-500' : 'text-pink-500'}`} stopColor="currentColor" />
+                    <stop offset="0%" className={`${data.overallScore >= 8 ? 'text-green-500' : data.overallScore >= 6 ? 'text-blue-500' : data.overallScore >= 4 ? 'text-yellow-500' : 'text-red-500'}`} stopColor="currentColor" />
+                    <stop offset="100%" className={`${data.overallScore >= 8 ? 'text-emerald-500' : data.overallScore >= 6 ? 'text-cyan-500' : data.overallScore >= 4 ? 'text-orange-500' : 'text-pink-500'}`} stopColor="currentColor" />
                   </linearGradient>
                 </defs>
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-black text-[#e0e0e0]">{scorePercentage}%</span>
+                <span className="text-2xl font-black text-[#e0e0e0]">{Math.round(scorePercentage)}%</span>
               </div>
             </div>
           </div>
@@ -274,7 +267,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
         </div>
       </div>
 
-      {/* Metrics Grid */}
+      {/* Metrics Grid - HER ŞEY /10 */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Maintenance */}
         <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
@@ -285,7 +278,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
             </div>
             <div className="flex items-center gap-1">
               <span className="text-2xl font-black text-[#e0e0e0]">{data.metrics.maintenance.score}</span>
-              <span className="text-sm text-[#666]">/100</span>
+              <span className="text-sm text-[#666]">/10</span>
             </div>
           </div>
 
@@ -307,7 +300,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
           <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.metrics.maintenance.score)} transition-all duration-1000`}
-              style={{ width: `${data.metrics.maintenance.score}%` }}
+              style={{ width: `${(data.metrics.maintenance.score / 10) * 100}%` }}
             />
           </div>
         </div>
@@ -321,7 +314,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
             </div>
             <div className="flex items-center gap-1">
               <span className="text-2xl font-black text-[#e0e0e0]">{data.metrics.issueManagement.score}</span>
-              <span className="text-sm text-[#666]">/100</span>
+              <span className="text-sm text-[#666]">/10</span>
             </div>
           </div>
 
@@ -343,7 +336,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
           <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.metrics.issueManagement.score)} transition-all duration-1000`}
-              style={{ width: `${data.metrics.issueManagement.score}%` }}
+              style={{ width: `${(data.metrics.issueManagement.score / 10) * 100}%` }}
             />
           </div>
         </div>
@@ -357,7 +350,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
             </div>
             <div className="flex items-center gap-1">
               <span className="text-2xl font-black text-[#e0e0e0]">{data.metrics.pullRequests.score}</span>
-              <span className="text-sm text-[#666]">/100</span>
+              <span className="text-sm text-[#666]">/10</span>
             </div>
           </div>
 
@@ -379,7 +372,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
           <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.metrics.pullRequests.score)} transition-all duration-1000`}
-              style={{ width: `${data.metrics.pullRequests.score}%` }}
+              style={{ width: `${(data.metrics.pullRequests.score / 10) * 100}%` }}
             />
           </div>
         </div>
@@ -393,7 +386,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
             </div>
             <div className="flex items-center gap-1">
               <span className="text-2xl font-black text-[#e0e0e0]">{data.metrics.activity.score}</span>
-              <span className="text-sm text-[#666]">/100</span>
+              <span className="text-sm text-[#666]">/10</span>
             </div>
           </div>
 
@@ -415,7 +408,7 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
           <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.metrics.activity.score)} transition-all duration-1000`}
-              style={{ width: `${data.metrics.activity.score}%` }}
+              style={{ width: `${(data.metrics.activity.score / 10) * 100}%` }}
             />
           </div>
         </div>
@@ -423,7 +416,6 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
 
       {/* Insights */}
       <div className="grid md:grid-cols-3 gap-6">
-        {/* Strengths */}
         {data.insights.strengths.length > 0 && (
           <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
@@ -441,7 +433,6 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
           </div>
         )}
 
-        {/* Concerns */}
         {data.insights.concerns.length > 0 && (
           <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
@@ -459,7 +450,6 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
           </div>
         )}
 
-        {/* Recommendations */}
         {data.insights.recommendations.length > 0 && (
           <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">

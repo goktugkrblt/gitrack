@@ -36,9 +36,10 @@ export async function POST() {
     // 🔥 CHECK CACHE - Ayrı ayrı kontrol et
     const hasCodeQualityCache = CacheService.has(CacheKeys.readmeQuality(username));
     const hasRepoHealthCache = CacheService.has(CacheKeys.repoHealth(username));
+    const hasDevPatternsCache = CacheService.has(CacheKeys.devPatterns(username)); // ✅ YENİ
 
-    if (hasCodeQualityCache && hasRepoHealthCache) {
-      console.log(`✅ Both cached for: ${username}, skipping analysis`);
+    if (hasCodeQualityCache && hasRepoHealthCache && hasDevPatternsCache) {
+      console.log(`✅ All cached for: ${username}, skipping analysis`);
       return NextResponse.json({ 
         success: true, 
         message: "Using cached data" 
@@ -105,6 +106,25 @@ async function analyzeInBackground(username: string, token: string) {
       );
     } else {
       console.log(`✅ Repo health already cached for: ${username}`);
+    }
+
+    // Developer Patterns cache yoksa analiz et ✅ YENİ
+    if (!CacheService.has(CacheKeys.devPatterns(username))) {
+      console.log(`📊 Analyzing developer patterns for: ${username}`);
+      promises.push(
+        githubService.analyzeDeveloperPatterns(username)
+          .then(data => {
+            CacheService.set(CacheKeys.devPatterns(username), data);
+            console.log(`✅ Developer patterns cached for: ${username}`);
+            return data;
+          })
+          .catch(err => {
+            console.error('Developer patterns analysis failed:', err);
+            return null;
+          })
+      );
+    } else {
+      console.log(`✅ Developer patterns already cached for: ${username}`);
     }
 
     // Sadece gerekli analizleri çalıştır

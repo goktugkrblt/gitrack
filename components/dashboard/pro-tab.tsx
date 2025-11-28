@@ -9,10 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { CodeQualityCard } from "@/components/dashboard/code-quality-card";
 import { RepoHealthCard } from "@/components/dashboard/repo-health-card";
+import { DevPatternsCard } from "@/components/dashboard/dev-patterns-card"; // ✅ YENİ
 
 interface ProTabProps {
   isPro?: boolean;
-  username?: string; // ✅ USERNAME PROP EKLE
+  username?: string;
   onPurchaseComplete?: () => void;
 }
 
@@ -115,8 +116,7 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
               
               <TabsTrigger 
                 value="dev-patterns"
-                disabled
-                className="cursor-not-allowed opacity-50 text-[#666] font-bold text-xs tracking-wider rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+                className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
               >
                 <Activity className="w-4 h-4 mr-1.5" />
                 PATTERNS
@@ -134,7 +134,7 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
             </TabsList>
           </div>
 
-          {/* Code Quality Tab - USERNAME PROP GEÇ */}
+          {/* Code Quality Tab */}
           <TabsContent value="code-quality" className="space-y-6 mt-6">
             {username ? (
               <CodeQualityCard username={username} />
@@ -145,7 +145,7 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
             )}
           </TabsContent>
 
-          {/* Repository Health Tab - USERNAME PROP GEÇ */}
+          {/* Repository Health Tab */}
           <TabsContent value="repo-health" className="space-y-6 mt-6">
             {username ? (
               <RepoHealthCard username={username} />
@@ -156,13 +156,15 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
             )}
           </TabsContent>
 
-          {/* Developer Patterns Tab */}
+          {/* Developer Patterns Tab ✅ YENİ */}
           <TabsContent value="dev-patterns" className="space-y-6 mt-6">
-            <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-12 text-center">
-              <Activity className="w-16 h-16 text-[#666] mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">Developer Patterns</h3>
-              <p className="text-[#666]">Coming soon...</p>
-            </div>
+            {username ? (
+              <DevPatternsCard username={username} />
+            ) : (
+              <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-12 text-center">
+                <p className="text-[#666]">No username provided</p>
+              </div>
+            )}
           </TabsContent>
 
           {/* Career Tab */}

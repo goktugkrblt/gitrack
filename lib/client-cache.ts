@@ -53,7 +53,10 @@ interface CacheEntry<T> {
   }
   
   export const ProCacheKeys = {
-    codeQuality: (username: string) => `code_quality_${username}`,
-    repoHealth: (username: string) => `repo_health_${username}`,
-    devPatterns: (username: string) => `dev_patterns_${username}`,
+    codeQuality: (username: string) => `code_quality:${username}`,
+    repoHealth: (username: string) => `repo_health:${username}`,
+    devPatterns: (username: string) => `dev_patterns:${username}`, 
+    cicdAnalysis: (username: string) => `cicd_analysis:${username}`,
+    testCoverage: (username: string) => `test_coverage:${username}`,
+    careerInsights: (username: string) => `career_insights:${username}`,
   };
