@@ -1,50 +1,62 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Github, ArrowRight, Sparkles, Code2, Activity, Layers, Shield, Target } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function HomePage() {
+  const [profileCount, setProfileCount] = useState(6); // Fallback 6
+
+  useEffect(() => {
+    fetch('/api/profile-count')
+      .then(res => res.json())
+      .then(data => setProfileCount(data.count))
+      .catch(() => setProfileCount(6));
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#1f1f1f] relative overflow-hidden">
+    <div className="min-h-screen bg-[#1f1f1f] relative overflow-hidden">      
       {/* Fixed Grid Background */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div 
-          className="absolute inset-0 opacity-[0.004]"
-          style={{
-            backgroundImage: `radial-gradient(circle, #919191 1px, transparent 1px)`,
-            backgroundSize: '250px 250px',
-          }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,transparent_0%,#1f1f1f_100%)]" />
-      </div>
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-px opacity-30"
-                style={{
-                  left: `${(i * 12.5)}%`,
-                  height: "100%",
-                  background: "linear-gradient(to bottom, transparent, #919191 50%, transparent)"
-                }}
-                animate={{
-                  y: ["-100%", "100%"]
-                }}
-                transition={{
-                  duration: 4 + Math.random() * 2,
-                  repeat: Infinity,
-                  delay: Math.random() * 4,
-                  ease: "linear"
-                }}
-              />
-            ))}
-          </div>
+<div className="fixed inset-0 pointer-events-none z-0">
+  <div 
+    className="absolute inset-0 opacity-[0.004]"
+    style={{
+      backgroundImage: `radial-gradient(circle, #919191 1px, transparent 1px)`,
+      backgroundSize: '250px 250px',
+    }}
+  />
+  <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,transparent_0%,#1f1f1f_100%)]" />
+</div>
+
+{/* Animated Lines - LESS & SLOWER */}
+<div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+  {Array.from({ length: 8 }).map((_, i) => (
+    <motion.div
+      key={i}
+      className="absolute w-px opacity-20"
+      style={{
+        left: `${(i * 25)}%`,
+        height: "100%",
+        background: "linear-gradient(to bottom, transparent, #919191 50%, transparent)"
+      }}
+      animate={{
+        y: ["-100%", "100%"]
+      }}
+      transition={{
+        duration: 6 + Math.random() * 3,
+        repeat: Infinity,
+        delay: Math.random() * 6,
+        ease: "linear"
+      }}
+    />
+  ))}
+</div>
 
       {/* Hero Section */}
-      <section className="relative flex items-center justify-center px-4 pt-12">
-        <div className="max-w-7xl mx-auto w-full py-8 lg:py-16">
+      <section className="relative flex items-center justify-center px-4 pt-12 z-10">
+        <div className="max-w-5xl mx-auto w-full py-8 lg:py-16">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -145,7 +157,7 @@ export default function HomePage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex items-center justify-center gap-12 text-sm font-mono text-[#666]">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-[#919191] rounded-full animate-pulse" />
-                <span>427 SCANS</span>
+                <span>{profileCount} SCANS</span>
               </div>              
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-[#919191] rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
@@ -157,8 +169,8 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="relative py-16 px-4">
-        <div className="max-w-7xl mx-auto">
+      <section className="relative py-16 px-4 z-10">
+        <div className="max-w-5xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 30 }} 
             whileInView={{ opacity: 1, y: 0 }} 
@@ -226,132 +238,223 @@ export default function HomePage() {
       </section>
 
       {/* PRO Features Section */}
-      <section className="relative py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/20 bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-xs font-mono tracking-widest mb-8">
-              <Sparkles className="w-3 h-3 text-purple-400" />
-              <span className="text-purple-400">PREMIUM ANALYTICS</span>
-            </div>
-            <h2 className="text-4xl mb-8 md:text-7xl lg:text-6xl font-black text-[#e0e0e0] leading-none tracking-tighter">
-              Unlock<br className="md:hidden lg:hidden" /> Deep Insights
-            </h2>
-            <p className="text-[#919191] text-lg max-w-2xl mx-auto">
-              Advanced analysis with<br className="md:hidden lg:hidden" /> lifetime access for <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 font-bold">$4.99</span>
-            </p>
-          </motion.div>
+<section className="relative py-16 px-4 z-10">
+  <div className="max-w-5xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0, y: 30 }} 
+      whileInView={{ opacity: 1, y: 0 }} 
+      viewport={{ once: true, margin: "-100px" }} 
+      transition={{ duration: 0.6 }}
+      className="text-center mb-12"
+    >
+      <div className="inline-block px-4 py-2 rounded-full border border-[#2a2a2a] bg-[#252525] text-xs text-[#666] font-mono tracking-widest mb-8">
+        PREMIUM ANALYTICS
+      </div>
+      <h2 className="text-4xl mb-8 md:text-7xl lg:text-6xl font-black text-[#e0e0e0] leading-none tracking-tighter">
+        Unlock<br className="md:hidden lg:hidden" /> Deep Insights
+      </h2>
+      <p className="text-[#919191] text-lg max-w-2xl mx-auto">
+        Advanced analysis with<br className="md:hidden lg:hidden" /> lifetime access for <span className="text-[#e0e0e0] font-bold">$4.99</span>
+      </p>
+    </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {[
-              { 
-                icon: Code2, 
-                title: "README Quality Analysis", 
-                description: "Comprehensive documentation scoring based on structure, completeness, and professional presentation",
-                weight: "20%",
-                color: "from-blue-500 to-cyan-500"
-              },
-              { 
-                icon: Shield, 
-                title: "Repository Health", 
-                description: "Maintenance frequency, issue response times, security checks, and community engagement metrics",
-                weight: "25%",
-                color: "from-green-500 to-emerald-500"
-              },
-              { 
-                icon: Activity, 
-                title: "Developer Patterns", 
-                description: "Commit patterns by hour, productivity peaks, collaboration style, and consistency analysis",
-                weight: "30%",
-                color: "from-purple-500 to-pink-500"
-              },
-              { 
-                icon: Target, 
-                title: "Career Insights", 
-                description: "Experience level indicators, specialization scoring, and professional growth trajectory",
-                weight: "25%",
-                color: "from-orange-500 to-red-500"
-              },
-            ].map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ 
-                  delay: i * 0.15,
-                  duration: 0.6,
-                }}
-                className="group"
-              >
-                <div className="relative bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8 hover:border-purple-500/30 transition-all duration-500 h-full">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center flex-shrink-0`}>
-                      <feature.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-xl font-bold text-[#e0e0e0]">
-                          {feature.title}
-                        </h3>
-                        <span className="text-xs font-mono text-purple-400 bg-purple-500/10 px-2 py-1 rounded">
-                          {feature.weight}
-                        </span>
-                      </div>
-                      <p className="text-[#919191] text-sm leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      {[
+        { 
+          icon: Code2, 
+          title: "README Quality Analysis", 
+          description: "Comprehensive documentation scoring based on structure, completeness, and professional presentation",
+          weight: "20%",
+          number: "01"
+        },
+        { 
+          icon: Shield, 
+          title: "Repository Health", 
+          description: "Maintenance frequency, issue response times, security checks, and community engagement metrics",
+          weight: "25%",
+          number: "02"
+        },
+        { 
+          icon: Activity, 
+          title: "Developer Patterns", 
+          description: "Commit patterns by hour, productivity peaks, collaboration style, and consistency analysis",
+          weight: "30%",
+          number: "03"
+        },
+        { 
+          icon: Target, 
+          title: "Career Insights", 
+          description: "Experience level indicators, specialization scoring, and professional growth trajectory",
+          weight: "25%",
+          number: "04"
+        },
+      ].map((feature, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ 
+            delay: i * 0.15,
+            duration: 0.6,
+          }}
+          whileHover={{ y: -5 }}
+          className="group"
+        >
+          <div className="relative bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8 hover:border-[#333] transition-all duration-500 h-full">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="text-5xl font-black text-[#919191] mb-4 group-hover:text-[#fff] transition-colors duration-300">
+                  {feature.number}
                 </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* PRO CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <div className="inline-block bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-8">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="text-left">
-                  <h3 className="text-2xl font-black text-[#e0e0e0] mb-2">
-                    Get Lifetime PRO Access
+                <div className="w-12 h-12 rounded-xl bg-[#2a2a2a] flex items-center justify-center group-hover:bg-[#303030] transition-colors duration-300">
+                  <feature.icon className="w-6 h-6 text-[#919191] group-hover:text-[#b0b0b0] transition-colors duration-300" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-bold text-[#e0e0e0]">
+                    {feature.title}
                   </h3>
-                  <p className="text-[#919191]">
-                    One-time payment • No subscription<br className="inline md:hidden lg:hidden" /> • Instant unlock
-                  </p>
+                  <span className="text-xs font-mono text-[#666] bg-[#2a2a2a] px-2 py-1 rounded">
+                    {feature.weight}
+                  </span>
                 </div>
-                <Link href="/login">
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button 
-                      size="lg" 
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold px-8 py-6 text-base rounded-xl shadow-lg shadow-purple-500/50"
-                    >
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      Upgrade for $4.99
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
-                  </motion.div>
-                </Link>
+                <p className="text-[#919191] text-sm leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+
+    {/* PRO CTA */}
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+      className="text-center"
+    >
+      <div className="bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8 hover:border-[#333] transition-all duration-500">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="text-left">
+            <h3 className="text-2xl font-black text-[#e0e0e0] mb-2">
+              Get Lifetime PRO Access
+            </h3>
+            <p className="text-[#919191]">
+              One-time payment • No subscription<br className="inline md:hidden lg:hidden" /> • Instant unlock
+            </p>
+          </div>
+          <Link href="/login">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button 
+                size="lg" 
+                className="bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] font-bold px-8 py-6 text-base rounded-xl transition-colors duration-300"
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                Upgrade for $4.99
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </motion.div>
+          </Link>
         </div>
-      </section>
+      </div>
+    </motion.div>
+  </div>
+</section>
+
+      {/* FAQ Section */}
+<section className="relative py-16 px-4 z-10">
+  <div className="max-w-5xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0, y: 30 }} 
+      whileInView={{ opacity: 1, y: 0 }} 
+      viewport={{ once: true, margin: "-100px" }} 
+      transition={{ duration: 0.6 }}
+      className="text-center mb-16"
+    >
+      <div className="inline-block px-4 py-2 rounded-full border border-[#2a2a2a] bg-[#252525] text-xs text-[#666] font-mono tracking-widest mb-8">
+        QUESTIONS
+      </div>
+      <h2 className="text-4xl md:text-6xl font-black text-[#e0e0e0] leading-none tracking-tighter">
+        Frequently Asked
+      </h2>
+    </motion.div>
+
+    <div className="space-y-4">
+      {[
+        {
+          q: "Is my GitHub data secure?",
+          a: "Yes. We only access public repository data via GitHub OAuth. We never request write permissions or access to private repos. All data is transmitted over encrypted connections."
+        },
+        {
+          q: "What's included in the PRO plan?",
+          a: "PRO includes 4 advanced analytics modules: README Quality Analysis (20%), Repository Health (25%), Developer Patterns (30%), and Career Insights (25%). You get a comprehensive developer score with detailed breakdowns."
+        },
+        {
+          q: "Is this a subscription or one-time payment?",
+          a: "It's a one-time payment of $4.99 for lifetime access. No recurring charges, no hidden fees. Pay once, keep PRO features forever."
+        },
+        {
+          q: "Can I cancel my PRO access?",
+          a: "Since it's a one-time purchase with lifetime access, there's no subscription to cancel. You own PRO features permanently after purchase."
+        },
+        {
+          q: "How is my developer score calculated?",
+          a: "Your score is calculated from 4 weighted components: README Quality (20%), Repository Health (25%), Developer Patterns (30%), and Career Insights (25%). Each analyzes different aspects of your GitHub presence."
+        },
+        {
+          q: "Do I need to reconnect my GitHub account regularly?",
+          a: "No. Once you sign in with GitHub OAuth, you stay authenticated. You can revoke access anytime from your GitHub Settings if needed."
+        },
+        {
+          q: "What programming languages are supported?",
+          a: "GitCheck analyzes all programming languages that GitHub recognizes. We track language usage, detect your primary tech stack, and show language evolution over time."
+        },
+        {
+          q: "How often is my data updated?",
+          a: "FREE users can re-analyze anytime. PRO analysis results are cached for 1 hour for performance, then auto-refresh. You can manually refresh anytime via the dashboard."
+        }
+      ].map((faq, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ delay: i * 0.1, duration: 0.5 }}
+        >
+          <details className="group bg-[#252525] border border-[#2a2a2a] rounded-xl overflow-hidden hover:border-[#333] transition-all duration-300 [&_summary::-webkit-details-marker]:hidden">
+            <summary className="cursor-pointer p-6 flex items-center justify-between list-none">
+              <h3 className="text-lg font-bold text-[#e0e0e0] pr-4">
+                {faq.q}
+              </h3>
+              <motion.div
+                className="flex-shrink-0 w-6 h-6 rounded-full border border-[#2a2a2a] flex items-center justify-center text-[#919191] font-bold group-open:rotate-45 transition-all duration-500"
+                whileHover={{ scale: 1.1 }}
+              >
+                +
+              </motion.div>
+            </summary>
+            <div className="grid grid-rows-[0fr] group-open:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
+              <div className="overflow-hidden">
+                <div className="px-6 pb-6 text-[#919191] leading-relaxed opacity-0 group-open:opacity-100 transition-opacity duration-500 delay-100">
+                  {faq.a}
+                </div>
+              </div>
+            </div>
+          </details>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* CTA Section */}
-      <section className="relative py-16 px-4">
-        <div className="max-w-7xl mx-auto">
+      <section className="relative py-16 px-4 z-10">
+        <div className="max-w-5xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 50 }} 
             whileInView={{ opacity: 1, y: 0 }} 
@@ -378,7 +481,7 @@ export default function HomePage() {
                 Supercharge<br className="inline md:inline lg:hidden" /> Your GitHub Presence
               </h2>
               <p className="text-sm md:text-base text-[#919191] mb-4 md:mb-6 max-w-3xl mx-auto font-light leading-relaxed">
-                Unlock the full potential of your GitHub profile. Gain instant insights into your contributions, activity patterns, and coding strengths. Track your growth over time, identify your most productive habits, and visualize your technical skills—all in a single, easy-to-understand dashboard.
+                Unlock the full potential of your GitHub profile. Gain instant insights into your contributions, activity patterns, and coding strengths. Track your growth over time, identify your most productive habits, and visualize your technical skills—all in a single, easy-to-understand dashboard.
               </p>
               <p className="text-sm md:text-base text-[#919191] mb-8 md:mb-12 max-w-3xl mx-auto font-light leading-relaxed">
                 No setup, no hassle, just actionable analytics designed for developers like you. Make informed decisions, improve your coding efficiency, and showcase your achievements effortlessly.
@@ -390,8 +493,8 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative border-t border-[#2a2a2a] py-16 px-4">
-        <div className="max-w-7xl mx-auto">
+      <footer className="relative border-t border-[#2a2a2a] py-16 px-4 z-10">
+        <div className="max-w-5xl mx-auto">
           <div className="flex flex-col items-center gap-8">
             <Link href="/">
               <div className="flex items-center gap-2 cursor-pointer group">

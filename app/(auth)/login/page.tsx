@@ -2,11 +2,20 @@
 
 import { handleSignIn } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
-import { Github, Code2, Sparkles } from "lucide-react";
+import { Github, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useState, useTransition } from "react";
 
 export default function LoginPage() {
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = () => {
+    startTransition(async () => {
+      await handleSignIn();
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#1f1f1f] relative overflow-hidden flex items-center justify-center">
       {/* Fixed Grid Background */}
@@ -74,23 +83,42 @@ export default function LoginPage() {
               {/* Title */}
               <div className="space-y-3">
                 <h1 className="text-4xl font-black text-[#e0e0e0] tracking-tighter">
-                  WELCOME BACK
+                  {isPending ? "AUTHENTICATING..." : "WELCOME BACK"}
                 </h1>
                 <p className="text-[#919191] font-light">
-                  Sign in to access your GitHub analytics dashboard and track your developer growth.
+                  {isPending 
+                    ? "Connecting to GitHub OAuth..." 
+                    : "Sign in to access your GitHub analytics dashboard and track your developer growth."
+                  }
                 </p>
               </div>
 
               {/* Sign In Button */}
-              <form action={handleSignIn} className="space-y-6">
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <div className="space-y-6">
+                <motion.div whileHover={{ scale: isPending ? 1 : 1.02 }} whileTap={{ scale: isPending ? 1 : 0.98 }}>
                   <Button
-                    type="submit"
+                    onClick={handleSubmit}
                     size="lg"
-                    className="w-full bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] py-7 text-base font-bold rounded-2xl transition-colors duration-300"
+                    disabled={isPending}
+                    className="w-full bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] py-7 text-base font-bold rounded-2xl transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                   <Github style={{ width: '18px', height: '18px' }} />
-                    SIGN IN WITH GITHUB
+                    {isPending ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="mr-2"
+                        >
+                          <div className="w-5 h-5 border-2 border-[#1f1f1f] border-t-transparent rounded-full" />
+                        </motion.div>
+                        AUTHENTICATING...
+                      </>
+                    ) : (
+                      <>
+                        <Github style={{ width: '18px', height: '18px' }} />
+                        SIGN IN WITH GITHUB
+                      </>
+                    )}
                   </Button>
                 </motion.div>
 
@@ -126,7 +154,7 @@ export default function LoginPage() {
                     </motion.div>
                   ))}
                 </div>
-              </form>                           
+              </div>                           
             </div>
           </div>
         </motion.div>
