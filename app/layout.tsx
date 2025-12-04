@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "GitCheck - Your GitHub Checked",
+    default: "GitCheck - GitHub Checked",
     template: "%s | GitCheck"
   },
   description: "Analyze your GitHub profile with advanced developer analytics. Real-time metrics, developer scoring, and comprehensive insights powered by intelligent algorithms.",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://gitcheck.me",
-    title: "GitCheck - Your GitHub Checked",
+    title: "GitCheck - GitHub Checked",
     description: "Analyze your GitHub profile with advanced developer analytics. Real-time metrics, scoring, and comprehensive insights.",
     siteName: "GitCheck",
     images: [
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "GitCheck - Your GitHub Checked",
+    title: "GitCheck - GitHub Checked",
     description: "Analyze your GitHub profile with advanced developer analytics and real-time insights.",
     images: ["/og-image.png"], 
     creator: "@goktugkrblt"
