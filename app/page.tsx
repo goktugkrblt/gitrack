@@ -43,8 +43,8 @@ export default function HomePage() {
           </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 pt-12">
-        <div className="max-w-7xl mx-auto w-full py-16">
+      <section className="relative flex items-center justify-center px-4 pt-12">
+        <div className="max-w-7xl mx-auto w-full py-8 lg:py-16">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -86,7 +86,7 @@ export default function HomePage() {
 
             <div className="space-y-8">
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.8 }}>
-  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-[#e0e0e0] leading-none tracking-tighter">
+  <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-[#e0e0e0] leading-none tracking-tighter">
      GITHUB
     <br />
     <span className="inline-flex items-center gap-4">     
@@ -119,8 +119,7 @@ export default function HomePage() {
                 transition={{ delay: 0.5 }}
                 className="text-xl md:text-2xl text-[#919191] max-w-3xl mx-auto font-light tracking-wide"
               >
-                Transform your code contributions into quantifiable career metrics.                
-                Powered by advanced algorithms. Built for developers.
+                Transform your code contributions into<br className="hidden md:inline lg:hidden" /> quantifiable career metrics.<br className="hidden md:inline lg:hidden" /> Powered by advanced algorithms.<br className="hidden md:inline lg:hidden" /> Built for developers.
               </motion.p>             
             </div>
 
@@ -329,7 +328,7 @@ export default function HomePage() {
                     Get Lifetime PRO Access
                   </h3>
                   <p className="text-[#919191]">
-                    One-time payment • No subscription • Instant unlock
+                    One-time payment • No subscription<br className="inline md:hidden lg:hidden" /> • Instant unlock
                   </p>
                 </div>
                 <Link href="/login">
@@ -376,10 +375,10 @@ export default function HomePage() {
               </motion.div>
 
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#e0e0e0] mb-6 tracking-tighter leading-tight">
-                Supercharge Your GitHub Presence
+                Supercharge<br className="inline md:inline lg:hidden" /> Your GitHub Presence
               </h2>
               <p className="text-sm md:text-base text-[#919191] mb-4 md:mb-6 max-w-3xl mx-auto font-light leading-relaxed">
-                Unlock the full potential of your GitHub profile. Gain instant insights into your contributions, activity patterns, and coding strengths. Track your growth over time, identify your most productive habits, and visualize your technical skills—all in a single, easy-to-understand dashboard.
+                Unlock the full potential of your GitHub profile. Gain instant insights into your contributions, activity patterns, and coding strengths. Track your growth over time, identify your most productive habits, and visualize your technical skills—all in a single, easy-to-understand dashboard.
               </p>
               <p className="text-sm md:text-base text-[#919191] mb-8 md:mb-12 max-w-3xl mx-auto font-light leading-relaxed">
                 No setup, no hassle, just actionable analytics designed for developers like you. Make informed decisions, improve your coding efficiency, and showcase your achievements effortlessly.
