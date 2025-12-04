@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { 
   Shield, 
   GitCommit, 
@@ -9,40 +8,37 @@ import {
   TrendingUp, 
   TrendingDown, 
   Minus,
-  Loader2, 
   AlertCircle,
   CheckCircle,
   Activity
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ClientCache, ProCacheKeys } from "@/lib/client-cache";
 
 interface RepoHealthData {
-  overallScore: number; // 0-10
+  overallScore: number;
   grade: string;
   metrics: {
     maintenance: {
-      score: number; // 0-10
+      score: number;
       commitFrequency: number;
       lastCommitDays: number;
       activeDaysRatio: number;
     };
     issueManagement: {
-      score: number; // 0-10
+      score: number;
       averageResolutionDays: number;
       openClosedRatio: number;
       totalIssues: number;
       closedIssues: number;
     };
     pullRequests: {
-      score: number; // 0-10
+      score: number;
       mergeRate: number;
       averageMergeDays: number;
       totalPRs: number;
       mergedPRs: number;
     };
     activity: {
-      score: number; // 0-10
+      score: number;
       contributorCount: number;
       staleBranches: number;
       stalePRs: number;
@@ -57,88 +53,14 @@ interface RepoHealthData {
 }
 
 interface RepoHealthCardProps {
-  username: string;
+  data: RepoHealthData;  // ✅ username → data
 }
 
-export function RepoHealthCard({ username }: RepoHealthCardProps) {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<RepoHealthData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchRepoHealth = async () => {
-    const cached = ClientCache.get<RepoHealthData>(ProCacheKeys.repoHealth(username));
-    if (cached) {
-      console.log("⚡ INSTANT LOAD: Repo Health from session storage!");
-      setData(cached);
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch('/api/pro/repo-health');
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to fetch repository health');
-      }
-
-      setData(result.data.repoHealth);
-      ClientCache.set(ProCacheKeys.repoHealth(username), result.data.repoHealth);
-      
-    } catch (err: any) {
-      setError(err.message);
-      console.error('Repository health fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (username) {
-      fetchRepoHealth();
-    }
-  }, [username]);
-
-  if (loading) {
-    return (
-      <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-12">
-        <div className="flex flex-col items-center justify-center py-12">
-          <Loader2 className="w-12 h-12 text-green-400 animate-spin mb-4" />
-          <p className="text-[#666] text-sm">Analyzing repository health...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-[#252525] border border-red-500/20 rounded-xl p-12">
-        <div className="text-center py-12">
-          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">Analysis Failed</h3>
-          <p className="text-[#666] mb-6">{error}</p>
-          <Button 
-            onClick={fetchRepoHealth}
-            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold"
-          >
-            Retry Analysis
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return null;
-  }
-
-  // ✅ Score yüzdeye çevir (sadece circular progress için)
+export function RepoHealthCard({ data }: RepoHealthCardProps) {
+  // ✅ REMOVE ALL: useState, useEffect, fetchRepoHealth, loading, error
+  
   const scorePercentage = (data.overallScore / 10) * 100;
 
-  // Score colors (10 üzerinden)
   const getScoreColor = (score: number) => {
     if (score >= 8) return "from-green-500 to-emerald-500";
     if (score >= 6) return "from-blue-500 to-cyan-500";
@@ -152,7 +74,6 @@ export function RepoHealthCard({ username }: RepoHealthCardProps) {
     if (score >= 4) return "from-yellow-500/10 to-orange-500/10";
     return "from-red-500/10 to-pink-500/10";
   };
-
   const getTrendIcon = () => {
     if (data.trend === 'improving') return <TrendingUp className="w-5 h-5 text-green-400" />;
     if (data.trend === 'declining') return <TrendingDown className="w-5 h-5 text-red-400" />;

@@ -59,4 +59,7 @@ interface CacheEntry<T> {
     cicdAnalysis: (username: string) => `cicd_analysis:${username}`,
     testCoverage: (username: string) => `test_coverage:${username}`,
     careerInsights: (username: string) => `career_insights:${username}`,
+    
+    // 🆕 NEW: Combined analysis (all PRO features in one call)
+    allAnalysis: (username: string) => `all_analysis:${username}`,
   };

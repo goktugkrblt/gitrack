@@ -5,7 +5,7 @@ export async function analyzeReadmeQuality(
   octokit: Octokit,
   username: string
 ): Promise<{
-  score: number;
+    overallScore: number;
   grade: string;
   details: {
     length: number;
@@ -83,7 +83,7 @@ export async function analyzeReadmeQuality(
       console.log(`✅ [README] Complete in ${duration}s - Score: 0/10`);
       
       return {
-        score: 0,
+        overallScore: 0,
         grade: "F",
         details: {
           length: 0,
@@ -230,7 +230,7 @@ export async function analyzeReadmeQuality(
     console.log(`✅ [README] Complete in ${duration}s - Score: ${finalScore}/10`);
     
     return {
-      score: finalScore,
+        overallScore: finalScore,
       grade,
       details: {
         length,

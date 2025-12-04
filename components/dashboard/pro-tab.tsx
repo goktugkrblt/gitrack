@@ -6,10 +6,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { CodeQualityCard } from "@/components/dashboard/code-quality-card";
 import { RepoHealthCard } from "@/components/dashboard/repo-health-card";
-import { DevPatternsCard } from "@/components/dashboard/dev-patterns-card"; // ✅ YENİ
+import { DevPatternsCard } from "@/components/dashboard/dev-patterns-card";
+import { CareerInsightsCard } from "@/components/dashboard/career-insights-card";
+import { ClientCache, ProCacheKeys } from "@/lib/client-cache";
 
 interface ProTabProps {
   isPro?: boolean;
@@ -20,6 +22,16 @@ interface ProTabProps {
 export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabProps) {
   const [showFeaturesModal, setShowFeaturesModal] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  
+  // 🆕 SINGLE STATE for all PRO data with proper typing
+  const [proData, setProData] = useState<{
+    readmeQuality: any;
+    repoHealth: any;
+    devPatterns: any;
+    careerInsights: any;
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handlePurchase = async () => {
     setIsPurchasing(true);
@@ -43,6 +55,64 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
     }
   };
 
+  // 🆕 SINGLE API CALL for all PRO features
+  const fetchAllProData = useCallback(async () => {
+    if (!username) return;
+  
+    // Check session storage first
+    const cached = ClientCache.get<{    // ✅ BURAYA EKLE
+      readmeQuality: any;
+      repoHealth: any;
+      devPatterns: any;
+      careerInsights: any;
+    }>(ProCacheKeys.allAnalysis(username));
+    
+    if (cached) {
+      console.log("⚡ INSTANT LOAD: All PRO data from session storage!");
+      setProData(cached);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/pro/analyze-all');
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to fetch PRO analysis');
+      }
+
+      setProData(result.data);
+      
+      // Save to session storage
+      ClientCache.set(ProCacheKeys.allAnalysis(username), result.data);
+      console.log("💾 All PRO data cached in session storage");
+
+    } catch (err: any) {
+      setError(err.message);
+      console.error('PRO analysis error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [username]);
+
+  // Handle refresh
+  const handleRefresh = useCallback(() => {
+    if (username) {
+      ClientCache.remove(ProCacheKeys.allAnalysis(username));
+      fetchAllProData();
+    }
+  }, [username, fetchAllProData]);
+
+  // Fetch on mount
+  useEffect(() => {
+    if (isPro && username) {
+      fetchAllProData();
+    }
+  }, [isPro, username, fetchAllProData]);
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -61,7 +131,7 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
     };
   }, [showFeaturesModal]);
 
-  // PRO user görünümü
+  // PRO user view
   if (isPro) {
     return (
       <div className="space-y-6">
@@ -84,103 +154,106 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
               </div>
             </div>
             
-            <div className="px-4 md:px-5 py-1.5 md:py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/50">
-              <span className="text-xs md:text-sm font-black text-white tracking-wider">
-                ✨ PRO MEMBER
-              </span>
+            <div className="flex items-center gap-3">
+              {/* Cache indicator */}
+                           
+              
+              <div className="px-4 md:px-5 py-1.5 md:py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/50">
+                <span className="text-xs md:text-sm font-black text-white tracking-wider">
+                  ✨ PRO MEMBER
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Sub-Tabs */}
-        <Tabs defaultValue="code-quality" className="w-full">
-          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <TabsList className="bg-[#1a1a1a] border border-[#2a2a2a] p-1.5 w-full min-w-max md:min-w-0 grid grid-cols-4 rounded-xl h-auto">
-              
-              <TabsTrigger 
-                value="code-quality" 
-                className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
-              >
-                <Code className="w-4 h-4 mr-1.5" />
-                CODE QUALITY
-              </TabsTrigger>
-              
-              <TabsTrigger 
-                value="repo-health"
-                className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
-              >
-                <Shield className="w-4 h-4 mr-1.5" />
-                <span className="hidden sm:inline">REPO HEALTH</span>
-                <span className="sm:hidden">HEALTH</span>
-              </TabsTrigger>
-              
-              <TabsTrigger 
-                value="dev-patterns"
-                className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
-              >
-                <Activity className="w-4 h-4 mr-1.5" />
-                PATTERNS
-              </TabsTrigger>
-              
-              <TabsTrigger 
-                value="career"
-                disabled
-                className="cursor-not-allowed opacity-50 text-[#666] font-bold text-xs tracking-wider rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
-              >
-                <Target className="w-4 h-4 mr-1.5" />
-                CAREER
-              </TabsTrigger>
-              
-            </TabsList>
+        {/* Loading State */}
+        {loading && !proData && (
+          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-12 text-center">
+            <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-[#666]">Analyzing your GitHub data...</p>
+            <p className="text-xs text-[#444] mt-2">This may take 15-30 seconds</p>
           </div>
+        )}
 
-          {/* Code Quality Tab */}
-          <TabsContent value="code-quality" className="space-y-6 mt-6">
-            {username ? (
-              <CodeQualityCard username={username} />
-            ) : (
-              <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-12 text-center">
-                <p className="text-[#666]">No username provided</p>
-              </div>
-            )}
-          </TabsContent>
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-center">
+            <p className="text-red-400 mb-4">{error}</p>
+            <Button onClick={handleRefresh} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        )}
 
-          {/* Repository Health Tab */}
-          <TabsContent value="repo-health" className="space-y-6 mt-6">
-            {username ? (
-              <RepoHealthCard username={username} />
-            ) : (
-              <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-12 text-center">
-                <p className="text-[#666]">No username provided</p>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Developer Patterns Tab ✅ YENİ */}
-          <TabsContent value="dev-patterns" className="space-y-6 mt-6">
-            {username ? (
-              <DevPatternsCard username={username} />
-            ) : (
-              <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-12 text-center">
-                <p className="text-[#666]">No username provided</p>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Career Tab */}
-          <TabsContent value="career" className="space-y-6 mt-6">
-            <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-12 text-center">
-              <Target className="w-16 h-16 text-[#666] mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">Career Insights</h3>
-              <p className="text-[#666]">Coming soon...</p>
+        {/* Data loaded - Show tabs */}
+        {proData && (
+          <Tabs defaultValue="code-quality" className="w-full">
+            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <TabsList className="bg-[#1a1a1a] border border-[#2a2a2a] p-1.5 w-full min-w-max md:min-w-0 grid grid-cols-4 rounded-xl h-auto">
+                
+                <TabsTrigger 
+                  value="code-quality" 
+                  className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+                >
+                  <Code className="w-4 h-4 mr-1.5" />
+                  CODE QUALITY
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="repo-health"
+                  className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+                >
+                  <Shield className="w-4 h-4 mr-1.5" />
+                  <span className="hidden sm:inline">REPO HEALTH</span>
+                  <span className="sm:hidden">HEALTH</span>
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="dev-patterns"
+                  className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+                >
+                  <Activity className="w-4 h-4 mr-1.5" />
+                  PATTERNS
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="career"
+                  className="cursor-pointer data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-[#e0e0e0] text-[#666] hover:text-[#919191] font-bold text-xs tracking-wider transition-all duration-200 rounded-lg px-3 md:px-4 py-2.5 whitespace-nowrap"
+                >
+                  <Target className="w-4 h-4 mr-1.5" />
+                  CAREER
+                </TabsTrigger>
+                
+              </TabsList>
             </div>
-          </TabsContent>
-        </Tabs>
+
+            {/* Code Quality Tab */}
+            <TabsContent value="code-quality" className="space-y-6 mt-6">
+              <CodeQualityCard data={proData.readmeQuality} />
+            </TabsContent>
+
+            {/* Repository Health Tab */}
+            <TabsContent value="repo-health" className="space-y-6 mt-6">
+            <RepoHealthCard data={proData.repoHealth} />
+            </TabsContent>
+
+            {/* Developer Patterns Tab */}
+            <TabsContent value="dev-patterns" className="space-y-6 mt-6">
+            <DevPatternsCard data={proData.devPatterns} />
+            </TabsContent>
+
+            {/* Career Tab */}
+            <TabsContent value="career" className="space-y-6 mt-6">
+              <CareerInsightsCard data={proData.careerInsights} />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
     );
   }
 
-  // FREE user görünümü
+  // FREE user view
   return (
     <>
       <div className="relative min-h-[600px]">

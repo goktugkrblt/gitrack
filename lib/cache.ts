@@ -59,6 +59,9 @@ const analysisCache = new Map<string, {
     cicdAnalysis: (username: string) => `cicd_analysis:${username}`,
     testCoverage: (username: string) => `test_coverage:${username}`,
     careerInsights: (username: string) => `career_insights:${username}`,
+    
+    // 🆕 NEW: Combined PRO analysis
+    proAnalysis: (username: string) => `pro_analysis:${username}`,
   };
   
   // Cache TTL constants
