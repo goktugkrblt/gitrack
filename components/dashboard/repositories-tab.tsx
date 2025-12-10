@@ -11,7 +11,7 @@ interface RepositoriesTabProps {
 export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
   if (!profileData) {
     return (
-      <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8 text-center">
+      <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-1 text-center">
         <Package className="w-12 h-12 text-[#666] mx-auto mb-4" />
         <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">No Repository Data</h3>
         <p className="text-[#666] text-sm">Please analyze your profile first</p>

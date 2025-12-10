@@ -100,8 +100,8 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
         
         <div className="relative z-10">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
+          <div className="flex items-start justify-between mb-8 sm:items-center">
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${getScoreColor(data.overallScore)} flex items-center justify-center shadow-lg`}>
                 <Shield className="w-8 h-8 text-white" />
               </div>
@@ -115,14 +115,14 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row items-center">
               <div className={`px-6 py-3 rounded-full bg-gradient-to-r ${getScoreBgColor(data.overallScore)} border border-[#2a2a2a]`}>
                 <span className={`text-2xl font-black bg-gradient-to-r ${getScoreColor(data.overallScore)} bg-clip-text text-transparent`}>
                   {data.grade}
                 </span>
               </div>
 
-              <div className={`flex items-center gap-2 px-4 py-2 rounded-full bg-[#252525] border border-[#2a2a2a]`}>
+              <div className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-[#252525] border border-[#2a2a2a]`}>
                 {getTrendIcon()}
                 <span className={`text-sm font-bold ${getTrendColor()}`}>
                   {getTrendText()}
@@ -141,7 +141,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
             </div>
 
             {/* Circular Progress - SADECE BURASI YÜZDE */}
-            <div className="relative w-32 h-32">
+            <div className="hidden sm:block relative w-32 h-32">
               <svg className="transform -rotate-90 w-32 h-32">
                 <circle
                   cx="64"
@@ -365,7 +365,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
             </div>
             <div className="space-y-2">
               {data.insights.concerns.map((item, i) => (
-                <div key={i} className="flex items-start gap-2 text-sm text-[#919191]">
+                <div key={i} className="flex items-start gap-2 text-sm text-[#919191] text-left">
                   <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
                   <span>{item}</span>
                 </div>

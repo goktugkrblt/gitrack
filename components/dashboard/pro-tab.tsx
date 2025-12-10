@@ -262,7 +262,7 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
     <>
       <div className="relative min-h-[600px]">
         {/* Upgrade Overlay */}
-        <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
+        <div className="absolute inset-0 z-20 flex items-center justify-center ">
           <div className="w-full max-w-2xl bg-[#1f1f1f] border-2 border-purple-500/30 rounded-2xl p-8 shadow-2xl">
             {/* Header */}
             <div className="text-center mb-6">
@@ -306,10 +306,14 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
                 <div className="flex items-baseline justify-center gap-2 mb-1">
                   <span className="text-5xl font-black text-[#e0e0e0]">$4.99</span>
                 </div>
-                <p className="text-xs text-[#666]">Lifetime access • Pay once, use forever</p>
+                <p className="text-xs text-[#666]">
+  Lifetime access 
+  <br className="block sm:hidden" />
+  Pay once, use forever
+</p>
               </div>
 
-              <div className="space-y-2 mb-4">
+              <div className="space-y-2 mb-4 text-left">
                 {[
                   "All premium features included",
                   "Unlimited profile analysis",
@@ -344,7 +348,9 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
               </Button>
               
               <p className="text-xs text-center text-[#666] mt-3">
-                💳 Secure payment via Stripe • ❌ No recurring charges
+              💳 Secure payment via Stripe 
+              <br className="block sm:hidden" />
+  ❌ No recurring charges
               </p>
             </div>
 

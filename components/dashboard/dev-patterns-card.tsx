@@ -99,8 +99,8 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
         
         <div className="relative z-10">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
+          <div className="flex items-start justify-between mb-8 sm:items-center">
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${getScoreColor(data.overallScore)} flex items-center justify-center shadow-lg`}>
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
@@ -114,14 +114,14 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row items-center">
               <div className={`px-6 py-3 rounded-full bg-gradient-to-r ${getScoreBgColor(data.overallScore)} border border-[#2a2a2a]`}>
                 <span className={`text-2xl font-black bg-gradient-to-r ${getScoreColor(data.overallScore)} bg-clip-text text-transparent`}>
                   {data.grade}
                 </span>
               </div>
 
-              <div className="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-[#2a2a2a]">
+              <div className="hidden sm:block px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-[#2a2a2a]">
                 <span className="text-sm font-bold text-purple-400">
                   {data.developerPersona}
                 </span>
@@ -139,7 +139,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             </div>
 
             {/* Circular Progress */}
-            <div className="relative w-32 h-32">
+            <div className="hidden sm:block relative w-32 h-32">
               <svg className="transform -rotate-90 w-32 h-32">
                 <circle
                   cx="64"

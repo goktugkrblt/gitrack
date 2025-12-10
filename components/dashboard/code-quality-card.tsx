@@ -65,7 +65,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
         <div className="relative z-10">
           {/* Header */}
           <div className="flex items-start justify-between mb-8">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${getScoreColor(data.overallScore)} flex items-center justify-center shadow-lg`}>
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
@@ -73,7 +73,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
                 <h3 className="text-2xl text-left font-black text-[#e0e0e0] mb-1">
                   README Quality
                 </h3>
-                <p className="text-sm text-[#666]">
+                <p className="text-sm text-[#666] text-left">
                   Documentation score based on completeness and structure
                 </p>
               </div>
@@ -96,7 +96,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
             </div>
 
             {/* Circular Progress */}
-            <div className="relative w-32 h-32">
+            <div className="hidden sm:block relative w-32 h-32">
               <svg className="transform -rotate-90 w-32 h-32">
                 <circle
                   cx="64"
@@ -275,7 +275,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
             </div>
             <ul className="space-y-2">
               {data.strengths.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-[#919191]">
+                <li key={i} className="flex items-start gap-2 text-sm text-[#919191] text-left">
                   <CheckCircle2 className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
                   <span>{item}</span>
                 </li>
@@ -293,7 +293,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
             </div>
             <ul className="space-y-2">
               {data.improvements.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-[#919191]">
+                <li key={i} className="flex items-start gap-2 text-sm text-[#919191] text-left">
                   <TrendingUp className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
                   <span>{item}</span>
                 </li>
