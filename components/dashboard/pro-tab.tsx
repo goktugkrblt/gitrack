@@ -263,7 +263,10 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
   // FREE user view
   return (
     <>
-      <div className="relative min-h-[600px]">
+      <div className="relative min-h-[600px]
+                      mt-0 mb-0
+                      md:mt-[50px] md:mb-[50px]
+                      lg:mt-[100px] lg:mb-[100px]">
         {/* Upgrade Overlay */}
         <div className="absolute inset-0 z-20 flex items-center justify-center ">
           <div className="w-full max-w-2xl bg-[#1f1f1f] border-2 border-purple-500/30 rounded-2xl p-8 shadow-2xl">
@@ -275,7 +278,7 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
               </div>
               
               <h2 className="text-3xl md:text-4xl font-black text-[#e0e0e0] tracking-tighter mb-2">
-                Unlock Deep Insights
+                Get Your PRO Analysis
               </h2>
               <p className="text-[#919191]">
                 Advanced analytics powered by your GitHub data
@@ -288,9 +291,10 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
                 { icon: Code, title: "Code Quality Score", desc: "README, tests, CI/CD analysis" },
                 { icon: Shield, title: "Repository Health", desc: "Maintenance & community metrics" },
                 { icon: Activity, title: "Developer Patterns", desc: "Commit patterns & productivity" },
-                { icon: Target, title: "Career Insights", desc: "Experience & specialization" }
+                { icon: Target, title: "Career Insights", desc: "Experience & specialization" },
+                { icon: Brain, title: "AI Career Analysis", desc: "Personalized AI recommendations" }
               ].map((feature, i) => (
-                <div key={i} className="flex items-start gap-3 bg-[#252525] rounded-lg p-4">
+                <div key={i} className={`flex items-start gap-3 bg-[#252525] rounded-lg p-4 ${i === 4 ? 'md:col-span-2' : ''}`}>
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
                     <feature.icon className="w-5 h-5 text-white" />
                   </div>
@@ -305,26 +309,25 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
             {/* Pricing */}
             <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl p-6 mb-6">
               <div className="text-center mb-4">
-                <p className="text-xs text-purple-400 font-bold mb-2">ONE-TIME PURCHASE</p>
+                <p className="text-xs text-purple-400 font-bold mb-2">ONE-TIME PAYMENT</p>
                 <div className="flex items-baseline justify-center gap-2 mb-1">
-                  <span className="text-5xl font-black text-[#e0e0e0]">$4.99</span>
+                  <span className="text-5xl font-black text-[#e0e0e0]">$2.99</span>
                 </div>
                 <p className="text-xs text-[#666]">
-                  Lifetime access 
+                  One-time payment 
                   <br className="block sm:hidden" />
-                  Pay once, use forever
+                  Unlock your PRO analysis
                 </p>
               </div>
 
-              <div className="space-y-2 mb-4 text-left">
+              <div className="space-y-2 mb-4 text-center">
                 {[
                   "All premium features included",
-                  "Unlimited profile analysis",
+                  "Complete profile analysis",
                   "Advanced code quality metrics",
-                  "Career readiness insights",
-                  "Lifetime access - no subscription"
+                  "AI-powered career insights"
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm text-[#919191]">
+                  <div key={i} className="flex items-center justify-center gap-2 text-sm text-[#919191]">
                     <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
                     <span>{item}</span>
                   </div>
@@ -344,16 +347,14 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
                   </>
                 ) : (
                   <>
-                    Get Lifetime Access
+                    Unlock PRO – $2.99
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </>
                 )}
               </Button>
               
               <p className="text-xs text-center text-[#666] mt-3">
-                💳 Secure payment via Stripe 
-                <br className="block sm:hidden" />
-                ❌ No recurring charges
+                💳 Secure payment via Stripe<br className="block sm:hidden" />   ❌ No recurring charges               
               </p>
             </div>
 
@@ -437,7 +438,7 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
               </div>
               <button
                 onClick={() => setShowFeaturesModal(false)}
-                className="w-10 h-10 rounded-lg bg-[#252525] hover:bg-[#2a2a2a] flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-lg bg-[#252525] hover:bg-[#2a2a2a] flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5 text-[#666]" />
               </button>
@@ -495,6 +496,20 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
                   <li>• Learning curve tracking to visualize skill development over time</li>
                 </ul>
               </div>
+
+              <div>
+                <h4 className="font-bold text-[#e0e0e0] mb-3 flex items-center gap-2 text-lg">
+                  <Brain className="w-5 h-5 text-pink-400" />
+                  AI Career Analysis
+                </h4>
+                <ul className="space-y-2 ml-7 text-[#919191] text-left">
+                  <li>• Personalized career roadmap generated by Claude AI analyzing your profile</li>
+                  <li>• Actionable growth strategies tailored to your current skill level and goals</li>
+                  <li>• Technical strengths identification highlighting your best competencies</li>
+                  <li>• 90-day improvement plan with specific monthly milestones and objectives</li>
+                  <li>• This week action items with 5 concrete steps you can take immediately</li>
+                </ul>
+              </div>
             </div>
 
             <div className="sticky bottom-0 bg-[#1f1f1f] border-t border-[#2a2a2a] p-6 z-10">
@@ -514,7 +529,7 @@ export function ProTab({ isPro = false, username, onPurchaseComplete }: ProTabPr
                   </>
                 ) : (
                   <>
-                    Get Started for $4.99
+                    Unlock PRO – $2.99
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </>
                 )}

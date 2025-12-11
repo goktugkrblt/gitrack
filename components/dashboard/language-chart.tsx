@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 interface LanguageChartProps {
   languages: Record<string, number>;
@@ -50,7 +50,7 @@ export function LanguageChart({ languages }: LanguageChartProps) {
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, value }) => `${name}: ${value}%`}
+            label={false}
             outerRadius={100}
             fill="#8884d8"
             dataKey="value"
@@ -61,16 +61,21 @@ export function LanguageChart({ languages }: LanguageChartProps) {
           </Pie>
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: '#252525', 
+              backgroundColor: '#1f1f1f', 
               border: '1px solid #2a2a2a',
               borderRadius: '8px',
-              color: '#ededed' 
+              color: '#e0e0e0',
+              fontSize: '14px',
+              fontWeight: 'bold'
             }}
             itemStyle={{
-              color: '#ededed' 
+              color: '#e0e0e0',
+              fontFamily: 'monospace'
             }}
             labelStyle={{
-              color: '#ededed' 
+              color: '#919191',
+              fontFamily: 'monospace',
+              fontSize: '12px'
             }}
           />
           <Legend 

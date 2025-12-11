@@ -41,11 +41,11 @@ export function ActivityHeatmap() {
   };
 
   const getColor = (count: number) => {
-    if (count === 0) return 'bg-[#1a1a1a]';
-    if (count < 3) return 'bg-[#2a2a2a]';
-    if (count < 6) return 'bg-[#3a3a3a]';
-    if (count < 9) return 'bg-[#5a5a5a]';
-    return 'bg-[#e0e0e0]';
+    if (count === 0) return 'bg-[#161b22]'; // Koyu gri (no activity)
+    if (count < 3) return 'bg-[#0e4429]'; // Koyu yeşil
+    if (count < 6) return 'bg-[#006d32]'; // Orta yeşil
+    if (count < 9) return 'bg-[#26a641]'; // Parlak yeşil
+    return 'bg-[#39d353]'; // Çok parlak yeşil
   };
 
   const dayLabels = ['Mon', 'Wed', 'Fri'];
@@ -100,7 +100,7 @@ export function ActivityHeatmap() {
               {week.contributionDays.map((day) => (
                 <motion.div
                   key={day.date}
-                  className={`w-3 h-3 ${getColor(day.contributionCount)} cursor-pointer transition-all duration-200`}
+                  className={`w-3 h-3 rounded-sm ${getColor(day.contributionCount)} cursor-pointer transition-all duration-200`}
                   whileHover={{ scale: 1.3, zIndex: 10 }}
                   onMouseEnter={(e) => {
                     setHoveredDay(day);
@@ -121,11 +121,11 @@ export function ActivityHeatmap() {
       <div className="flex items-center gap-3 mt-6 text-[10px] text-[#666] font-mono">
         <span>Less</span>
         <div className="flex gap-[2px]">
-          <div className="w-3 h-3 bg-[#1a1a1a]"></div>
-          <div className="w-3 h-3 bg-[#2a2a2a]"></div>
-          <div className="w-3 h-3 bg-[#3a3a3a]"></div>
-          <div className="w-3 h-3 bg-[#5a5a5a]"></div>
-          <div className="w-3 h-3 bg-[#e0e0e0]"></div>
+          <div className="w-3 h-3 bg-[#161b22] rounded-sm"></div>
+          <div className="w-3 h-3 bg-[#0e4429] rounded-sm"></div>
+          <div className="w-3 h-3 bg-[#006d32] rounded-sm"></div>
+          <div className="w-3 h-3 bg-[#26a641] rounded-sm"></div>
+          <div className="w-3 h-3 bg-[#39d353] rounded-sm"></div>
         </div>
         <span>More</span>
       </div>
