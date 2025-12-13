@@ -1,11 +1,11 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Github, ArrowRight, Sparkles, Code2, Activity, Layers, Shield, Target, Brain } from "lucide-react";
-import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
+import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -13,6 +13,15 @@ export default function HomePage() {
   const isLoading = status === "loading";
 
   const [profileCount, setProfileCount] = useState(6);
+  const [mounted, setMounted] = useState(false); // ✅ CLIENT-SIDE CHECK
+  
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll();
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+
+  const headerY = useTransform(smoothProgress, [0, 0.3], [0, -100]);
+  const headerOpacity = useTransform(smoothProgress, [0, 0.2], [1, 0]);
+  const headerScale = useTransform(smoothProgress, [0, 0.2], [1, 0.95]);
 
   useEffect(() => {
     fetch('/api/profile-count')
@@ -21,587 +30,591 @@ export default function HomePage() {
       .catch(() => setProfileCount(6));
   }, []);
 
+  // ✅ CLIENT-SIDE MOUNT
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#1f1f1f] relative overflow-hidden">      
-      {/* Fixed Grid Background */}
-<div className="fixed inset-0 pointer-events-none z-0">
-  <div 
-    className="absolute inset-0 opacity-[0.004]"
-    style={{
-      backgroundImage: `radial-gradient(circle, #919191 1px, transparent 1px)`,
-      backgroundSize: '250px 250px',
-    }}
-  />
-  <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,transparent_0%,#1f1f1f_100%)]" />
-</div>
+    <div ref={containerRef} className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">
+      {/* Advanced Grid Background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Main Grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)
+            `,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        
+        {/* Radial Gradient Overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(20,20,20,0.8),transparent)]" />
+        
+        {/* Noise Texture */}
+        <div 
+          className="absolute inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+        />
 
-{/* Animated Lines - LESS & SLOWER */}
-<div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-  {Array.from({ length: 8 }).map((_, i) => (
-    <motion.div
-      key={i}
-      className="absolute w-px opacity-20"
-      style={{
-        left: `${(i * 25)}%`,
-        height: "100%",
-        background: "linear-gradient(to bottom, transparent, #919191 50%, transparent)"
-      }}
-      animate={{
-        y: ["-100%", "100%"]
-      }}
-      transition={{
-        duration: 6 + Math.random() * 3,
-        repeat: Infinity,
-        delay: Math.random() * 6,
-        ease: "linear"
-      }}
-    />
-  ))}
-</div>
+        {/* Animated Gradient Orbs */}
+        <motion.div
+          className="absolute w-[800px] h-[800px] rounded-full opacity-20 blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+            left: '20%',
+            top: '10%',
+          }}
+          animate={{
+            x: [0, 100, 0],
+            y: [0, 50, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+        
+        <motion.div
+          className="absolute w-[600px] h-[600px] rounded-full opacity-15 blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)',
+            right: '10%',
+            bottom: '20%',
+          }}
+          animate={{
+            x: [0, -80, 0],
+            y: [0, -60, 0],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear",
+            delay: 5
+          }}
+        />
+      </div>
 
-      {/* Hero Section */}
-      <section className="relative flex items-center justify-center px-4 pt-12 z-10">
-        <div className="max-w-5xl mx-auto w-full py-8 lg:py-16">
+      {/* Animated Vertical Lines */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="text-center space-y-12"
-          >
-            {/* Logo at top */}
-            <motion.div
-              initial={{ opacity: 0, y: -30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.6 }}
-              className="flex justify-center mb-8"
-            >
-              <Link href="/">
-                <motion.div 
-                  className="flex items-center gap-3 cursor-pointer group"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                >              
-                  <svg fill="#ededed" width={50} height={50} className="gitcheck-logo" xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 245 245"><path d="M185.8,232.75c9.45-10.21,14.43-20.71,10.61-35.01-3.06-11.43-16.92-24.07-17.7-32.75-.63-6.99,4.82-11.41,11.39-10.36,3.39.54,7.83,6.36,10.94,1.42,2.68-4.25-2.55-8.92-6.08-10.4-13.81-5.82-28.46,6.66-25.94,21.63,1.6,9.54,10.16,16.72,14.56,24.99,3.82,7.17,7.21,17.59.1,23.85l-.74-.57c-3.08-19.66-14.33-38.23-26.34-53.5-1.01-1.28-7.78-8.71-7.78-9.33,0-.46.35-.74.67-.99,1.18-.91,4.66-2.18,6.32-3.16,5.5-3.27,9.63-7.39,13.21-12.74,14.05,2.14,27.19-7.72,29.33-22.13,2.18-14.68-6.37-25.09-20.84-24.72-.71.02-1.89.65-2.27.03-4.48-29.93-33.71-44.47-61.11-38.79-17.89,3.71-32.53,17.11-37.76,35.12-1.66.48-3.3.38-5.04.82-5.22,1.33-9.45,6.28-10.86,11.48-2.74,10.11,1.79,21.25,11.35,25.29-.48,13.41,9.63,23,20.87,27.66.05.29.11.67-.03.91-.31.54-9.44,5.46-10.74,6.1-2.12,1.05-7.03,3.62-9.15,2.96-4.11-1.28-13.8-13.56-14.39-17.86-.35-2.55.49-5.15.62-7.63.17-3.33.54-12.69-4.38-12.16-2.65.28-2.93,3.72-3.57,5.68-.09.29-.12.93-.64.66-.43-.22-3.10-4.45-3.89-5.33-9.26-10.38-17.82-.52-16.66,10.78.72,6.98,6.47,13.72,12.06,17.24.79.5,2.74,1.1,3.15,1.51.69.68,3.03,6.49,3.82,7.97,3.61,6.79,10.03,15.86,17.07,19.08,5.63,2.58,11.55.6,17.02-1.51,1.22-.47,6.1-3.05,6.71-3.11.42-.04.49.17.75.45-6.25,17.06-10.31,35.22-8.09,53.58l2.76,14.82c-.36.56-.55.08-.96-.01-8.95-2.11-21.45-9.12-29.2-14.29C-4.7,190.53-17.92,106.22,25.83,48.42c49.53-65.43,145.86-64.24,194.47,1.67,42.04,57.01,29.09,139.38-28.69,179.14-.63.43-5.56,3.75-5.81,3.52Z"/></svg>               
-                </motion.div>
-              </Link>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-[#2a2a2a] bg-[#252525] backdrop-blur-sm group cursor-pointer"
-              whileHover={{ scale: 1.03, borderColor: "#333" }}
-            >
-              <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}>
-                <Sparkles className="h-4 w-4 text-[#666]" />
-              </motion.div>
-              <span className="text-[13px] sm:text-sm text-[#919191] font-mono tracking-wider">
-                  NEXT-GEN DEVELOPER ANALYTICS
-                </span>
-            </motion.div>
-
-            <div className="space-y-8">
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.8 }}>
-  <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-[#e0e0e0] leading-none tracking-tighter">
-     GITHUB
-    <br />
-    <span className="inline-flex items-center gap-4">     
-      <motion.span className="inline-block relative" whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }}>
-        {"CHECKED".split("").map((char, i) => (
-          <motion.span
             key={i}
-            className="inline-block"
+            className="absolute w-px"
+            style={{
+              left: `${12 * (i + 1)}%`,
+              height: "100%",
+              background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.08) 70%, transparent)"
+            }}
             animate={{
-              y: [0, -10, 0]
+              y: ["-100%", "100%"],
+              opacity: [0.1, 0.3, 0.1]
             }}
             transition={{
-              duration: 0.6,
-              delay: 0.5 + (i * 0.08),
+              duration: 8 + (i % 3) * 2,
               repeat: Infinity,
-              repeatDelay: 5
+              delay: i * 0.8,
+              ease: "linear"
             }}
-          >
-            {char}
-          </motion.span>
+          />
         ))}
-      </motion.span>
-    </span>
-  </h1>
-</motion.div>
+      </div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="text-xl md:text-2xl text-[#919191] max-w-3xl mx-auto font-light tracking-wide"
-              >
-                Transform your code contributions into<br className="hidden md:inline lg:hidden" /> quantifiable career metrics.<br className="hidden md:inline lg:hidden" /> Powered by advanced algorithms.<br className="hidden md:inline lg:hidden" /> Built for developers.
-              </motion.p>             
-            </div>
-
+      {/* Floating Particles - OPTIMIZED ✅ */}
+      {mounted && (
+        <div className="fixed inset-0 pointer-events-none z-0">
+          {Array.from({ length: 20 }).map((_, i) => (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="pt-8"
-            >
-              {isAuthenticated ? (
-                <Link href="/dashboard">
-                  <motion.div className="relative inline-block group" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                    <Button size="lg" className="relative bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] px-12 py-8 text-lg font-bold rounded-xl tracking-wide transition-colors duration-300">
-                      <Target style={{ width: '18px', height: '18px' }} />
-                      VIEW MY ANALYSIS
-                      <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                        <ArrowRight style={{ width: '16px', height: '16px' }} />
-                      </motion.div>
-                    </Button>
-                  </motion.div>
-                </Link>
-              ) : (
-                <Link href="/login">
-                  <motion.div className="relative inline-block group" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                    <Button 
-                      size="lg"
-                      disabled={isLoading}
-                      className="relative bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] px-12 py-8 text-lg font-bold rounded-xl tracking-wide transition-colors duration-300 disabled:opacity-50"
-                    >
-                      <Github style={{ width: '18px', height: '18px' }} />
-                      {isLoading ? "LOADING..." : "SIGN IN WITH GITHUB"}
-                      <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                        <ArrowRight style={{ width: '16px', height: '16px' }} />
-                      </motion.div>
-                    </Button>
-                  </motion.div>
-                </Link>
-              )}
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex items-center justify-center gap-12 text-sm font-mono text-[#666]">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-[#919191] rounded-full animate-pulse" />
-                <span>{profileCount} SCANS</span>
-              </div>              
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-[#919191] rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
-                <span>REAL-TIME</span>
-              </div>
-            </motion.div>
-          </motion.div>
+              key={i}
+              className="absolute rounded-full will-change-transform"
+              initial={{
+                width: Math.random() * 4 + 1,
+                height: Math.random() * 4 + 1,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: 'rgba(255,255,255,0.2)',
+              }}
+              animate={{
+                y: [0, -30, 0],
+                x: [0, Math.random() * 20 - 10, 0],
+                opacity: [0.1, 0.4, 0.1],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 5 + Math.random() * 5,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
         </div>
-      </section>
+      )}
 
-      {/* Features */}
-      <section className="relative py-16 px-4 z-10">
-        <div className="max-w-5xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+      {/* Scroll Progress Indicator */}
+      <motion.div 
+        className="fixed top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-white/20 via-white/40 to-white/20 origin-left z-50"
+        style={{ scaleX: smoothProgress }}
+      />
+
+      {/* Main Content */}
+      <main className="relative z-10 max-w-4xl mx-auto px-6 py-12">
+        
+        {/* Header */}
+        <motion.header 
+          className="min-h-[80vh] flex flex-col justify-center mb-20"
+          style={{ 
+            y: headerY,
+            opacity: headerOpacity,
+            scale: headerScale
+          }}
+        >
+          {/* Logo with Monkey Animation */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1, type: "spring" }}
           >
-            <div className="inline-block px-4 py-2 rounded-full border border-[#2a2a2a] bg-[#252525] text-xs text-[#666] font-mono tracking-widest mb-8">
-              CORE FEATURES
-            </div>
-            <h2 className="text-4xl mb-8 md:text-7xl lg:text-6xl font-black text-[#e0e0e0] leading-none tracking-tighter">
-              Precision Metrics
-            </h2>
+            <Link href="/" className="inline-flex items-center gap-2 group mb-12">
+              <motion.div
+                whileHover={{ 
+                  rotate: [0, -10, 10, -10, 10, 0],
+                  scale: 1.3,
+                  y: [0, -5, 0, -3, 0]
+                }}
+                transition={{ duration: 0.6 }}
+                className="relative"
+              >
+                <svg fill="#ffffff" width={36} height={36} xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 245 245">
+                  <motion.path
+                    d="M185.8,232.75c9.45-10.21,14.43-20.71,10.61-35.01-3.06-11.43-16.92-24.07-17.7-32.75-.63-6.99,4.82-11.41,11.39-10.36,3.39.54,7.83,6.36,10.94,1.42,2.68-4.25-2.55-8.92-6.08-10.4-13.81-5.82-28.46,6.66-25.94,21.63,1.6,9.54,10.16,16.72,14.56,24.99,3.82,7.17,7.21,17.59.1,23.85l-.74-.57c-3.08-19.66-14.33-38.23-26.34-53.5-1.01-1.28-7.78-8.71-7.78-9.33,0-.46.35-.74.67-.99,1.18-.91,4.66-2.18,6.32-3.16,5.5-3.27,9.63-7.39,13.21-12.74,14.05,2.14,27.19-7.72,29.33-22.13,2.18-14.68-6.37-25.09-20.84-24.72-.71.02-1.89.65-2.27.03-4.48-29.93-33.71-44.47-61.11-38.79-17.89,3.71-32.53,17.11-37.76,35.12-1.66.48-3.3.38-5.04.82-5.22,1.33-9.45,6.28-10.86,11.48-2.74,10.11,1.79,21.25,11.35,25.29-.48,13.41,9.63,23,20.87,27.66.05.29.11.67-.03.91-.31.54-9.44,5.46-10.74,6.1-2.12,1.05-7.03,3.62-9.15,2.96-4.11-1.28-13.8-13.56-14.39-17.86-.35-2.55.49-5.15.62-7.63.17-3.33.54-12.69-4.38-12.16-2.65.28-2.93,3.72-3.57,5.68-.09.29-.12.93-.64.66-.43-.22-3.10-4.45-3.89-5.33-9.26-10.38-17.82-.52-16.66,10.78.72,6.98,6.47,13.72,12.06,17.24.79.5,2.74,1.1,3.15,1.51.69.68,3.03,6.49,3.82,7.97,3.61,6.79,10.03,15.86,17.07,19.08,5.63,2.58,11.55.6,17.02-1.51,1.22-.47,6.1-3.05,6.71-3.11.42-.04.49.17.75.45-6.25,17.06-10.31,35.22-8.09,53.58l2.76,14.82c-.36.56-.55.08-.96-.01-8.95-2.11-21.45-9.12-29.2-14.29C-4.7,190.53-17.92,106.22,25.83,48.42c49.53-65.43,145.86-64.24,194.47,1.67,42.04,57.01,29.09,139.38-28.69,179.14-.63.43-5.56,3.75-5.81,3.52Z"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 2, ease: "easeInOut" }}
+                  />
+                </svg>
+                {/* Floating emoji on hover */}
+                <motion.span
+                  className="absolute -top-8 left-1/2 -translate-x-1/2 text-2xl opacity-0 group-hover:opacity-100"
+                  initial={{ y: 0, opacity: 0 }}
+                  whileHover={{ y: -10, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  🐵
+                </motion.span>
+              </motion.div>
+            </Link>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Badge - NO ANIMATION */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 mb-8 backdrop-blur-sm w-fit"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-white/60" />
+            <span className="text-xs text-white/60 font-mono uppercase tracking-widest">
+              Developer Analytics
+            </span>
+          </motion.div>
+
+          {/* Title - NO LETTER ANIMATION */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="text-6xl md:text-8xl font-bold text-white mb-6"
+          >
+            GitHub
+            <br />
+            Checked
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.8 }}
+            className="text-lg text-white/60 mb-10 max-w-xl leading-relaxed"
+          >
+            Quantifiable metrics from your GitHub activity. Advanced analysis for developers who care about data.
+          </motion.p>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.8 }}
+            className="flex items-center gap-6"
+          >
+            {isAuthenticated ? (
+              <Link href="/dashboard">
+                <motion.div 
+                  whileHover={{ scale: 1.05 }} 
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-white/20 rounded-lg blur-xl"
+                    animate={{ opacity: [0.5, 0.8, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                  <Button className="relative bg-white text-black hover:bg-white/90 text-sm px-6 py-6 overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      animate={{ x: ["-200%", "200%"] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    />
+                    <span className="relative z-10 flex items-center gap-2">
+                      View Dashboard
+                      <motion.span
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        →
+                      </motion.span>
+                    </span>
+                  </Button>
+                </motion.div>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <motion.div 
+                  whileHover={{ scale: 1.05 }} 
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-white/20 rounded-lg blur-xl"
+                    animate={{ opacity: [0.5, 0.8, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                  <Button 
+                    disabled={isLoading}
+                    className="relative bg-white text-black hover:bg-white/90 text-sm px-6 py-6 disabled:opacity-50 overflow-hidden"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      animate={{ x: ["-200%", "200%"] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    />
+                    <span className="relative z-10 flex items-center gap-2">
+                      {isLoading ? "Loading..." : "Analyze Profile"}
+                      <motion.span
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        →
+                      </motion.span>
+                    </span>
+                  </Button>
+                </motion.div>
+              </Link>
+            )}
+            
+            <motion.span 
+              className="text-sm text-white/40 font-mono"
+              animate={{ opacity: [0.4, 0.7, 0.4] }}
+              transition={{ duration: 3, repeat: Infinity }}
+            >
+              {profileCount} analyzed
+            </motion.span>
+          </motion.div>
+        </motion.header>
+
+        {/* About Section */}
+        <ScrollRevealSection>
+          <h2 className="text-xs font-mono text-white/40 uppercase tracking-widest mb-8">
+            About GitCheck
+          </h2>
+
+          <div className="space-y-4 text-white/60 leading-relaxed">
+            <p>
+              GitCheck transforms your GitHub profile into a comprehensive analytics dashboard. We analyze your repositories, contributions, and coding patterns to provide actionable insights that help you understand and improve your developer journey.
+            </p>
+            <p>
+              Built with modern web technologies and powered by advanced algorithms, GitCheck processes millions of data points from your GitHub activity to generate detailed reports on code quality, collaboration patterns, and technical expertise.
+            </p>
+            <p>
+              Our platform serves developers, technical recruiters, and engineering teams who need quantifiable metrics to make informed decisions. Whether you're tracking personal growth, evaluating candidates, or assessing team performance, GitCheck provides the data-driven insights you need.
+            </p>
+            <p className="text-white/80 font-medium">
+              Join thousands of developers who trust GitCheck to measure what matters.
+            </p>
+          </div>
+        </ScrollRevealSection>
+
+        {/* Features Section */}
+        <ScrollRevealSection>
+          <h2 className="text-xs font-mono text-white/40 uppercase tracking-widest mb-10">
+            Core Features
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: Code2, title: "CODE ANALYSIS", description: "Deep algorithmic assessment of repository quality, structure, and impact", number: "01" },
-              { icon: Activity, title: "LIVE TRACKING", description: "Real-time performance metrics updated with every commit you make", number: "02" },
-              { icon: Layers, title: "SKILL MAPPING", description: "Comprehensive breakdown of your technical stack and expertise areas", number: "03" },
+              { title: "Code Analysis", desc: "Repository quality assessment and documentation scoring" },
+              { title: "Live Tracking", desc: "Real-time metrics with contribution pattern analysis" },
+              { title: "Skill Mapping", desc: "Technical stack breakdown and expertise visualization" },
             ].map((feature, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ 
-                  delay: i * 0.2,
+                  delay: i * 0.15, 
                   duration: 0.6,
-                  type: "spring",
-                  stiffness: 100
+                  type: "spring"
                 }}
-                whileHover={{ y: -5 }}
-                className="group relative cursor-pointer"
+                whileHover={{ 
+                  y: -5,
+                  transition: { duration: 0.2 }
+                }}
+                className="p-6 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:border-white/15 transition-all duration-200"
               >
-                <div className="relative bg-[#252525] border border-[#2a2a2a] rounded-2xl p-10 hover:border-[#333] transition-all duration-500 h-full overflow-hidden">
-                  <div className="relative z-10">
-                    <div className="text-6xl font-black text-[#919191] mb-6 group-hover:text-[#fff] transition-colors duration-300">
-                      {feature.number}
-                    </div>
-
-                    <motion.div className="w-14 h-14 rounded-xl bg-[#2a2a2a] flex items-center justify-center mb-8 group-hover:bg-[#303030] transition-colors duration-300">
-                      <feature.icon className="h-7 w-7 text-[#919191] group-hover:text-[#b0b0b0] transition-colors duration-300" />
-                    </motion.div>
-
-                    <h3 className="text-2xl font-black text-[#e0e0e0] mb-4 tracking-tight">
-                      {feature.title}
-                    </h3>
-                    <p className="text-[#919191] leading-relaxed font-light">
-                      {feature.description}
-                    </p>
-                  </div>
-
-                  <motion.div
-                    className="absolute bottom-0 left-0 h-[1px] bg-gradient-to-r from-transparent via-[#919191] to-transparent"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                </div>
+                <h3 className="text-base font-bold text-white/90 mb-3">{feature.title}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
+        </ScrollRevealSection>
 
-      {/* PRO Features Section */}
-<section className="relative py-16 px-4 z-10">
-  <div className="max-w-5xl mx-auto">
-    <motion.div 
-      initial={{ opacity: 0, y: 30 }} 
-      whileInView={{ opacity: 1, y: 0 }} 
-      viewport={{ once: true, margin: "-100px" }} 
-      transition={{ duration: 0.6 }}
-      className="text-center mb-12"
-    >
-      <div className="inline-block px-4 py-2 rounded-full border border-[#2a2a2a] bg-[#252525] text-xs text-[#666] font-mono tracking-widest mb-8">
-        PREMIUM ANALYTICS
-      </div>
-      <h2 className="text-4xl mb-8 md:text-7xl lg:text-6xl font-black text-[#e0e0e0] leading-none tracking-tighter">
-        Unlock<br className="md:hidden lg:hidden" /> Deep Insights
-      </h2>
-      <p className="text-[#919191] text-lg max-w-2xl mx-auto">
-        Advanced analysis for<br className="md:hidden lg:hidden" /> <span className="text-[#e0e0e0] font-bold">$2.99</span>
-      </p>
-      <p className="text-[#666] text-sm mt-2">
-        One-time payment • Unlock your PRO analysis
-      </p>
-    </motion.div>
+        {/* PRO Section */}
+        <ScrollRevealSection delay={0.2}>
+          <h2 className="text-xs font-mono text-white/40 uppercase tracking-widest mb-8">
+            Premium Analytics
+          </h2>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-      {[
-        { 
-          icon: Code2, 
-          title: "README Quality Analysis", 
-          description: "Comprehensive documentation scoring based on structure, completeness, and professional presentation",
-          weight: "20%",
-          number: "01"
-        },
-        { 
-          icon: Shield, 
-          title: "Repository Health", 
-          description: "Maintenance frequency, issue response times, security checks, and community engagement metrics",
-          weight: "25%",
-          number: "02"
-        },
-        { 
-          icon: Activity, 
-          title: "Developer Patterns", 
-          description: "Commit patterns by hour, productivity peaks, collaboration style, and consistency analysis",
-          weight: "30%",
-          number: "03"
-        },
-        { 
-          icon: Target, 
-          title: "Career Insights", 
-          description: "Experience level indicators, specialization scoring, and professional growth trajectory",
-          weight: "25%",
-          number: "04"
-        },
-        { 
-          icon: Brain, 
-          title: "AI Career Analysis", 
-          description: "Personalized career roadmap powered by Claude AI with actionable recommendations and growth strategies",
-          weight: "BONUS",
-          number: "05",
-          isBonus: true
-        },
-      ].map((feature, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ 
-            delay: i * 0.15,
-            duration: 0.6,
-          }}
-          whileHover={{ y: -5 }}
-          className={`group ${feature.isBonus ? 'md:col-span-2' : ''}`}
-        >
-          <div className={`relative bg-[#252525] border ${feature.isBonus ? 'border-[#333] bg-gradient-to-br from-[#252525] to-[#2a2a2a]' : 'border-[#2a2a2a]'} rounded-2xl p-8 hover:border-[#333] transition-all duration-500 h-full`}>
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <div className={`text-5xl font-black ${feature.isBonus ? 'text-[#b0b0b0]' : 'text-[#919191]'} mb-4 group-hover:text-[#fff] transition-colors duration-300`}>
-                  {feature.number}
-                </div>
-                <div className={`w-12 h-12 rounded-xl ${feature.isBonus ? 'bg-[#303030]' : 'bg-[#2a2a2a]'} flex items-center justify-center group-hover:bg-[#303030] transition-colors duration-300`}>
-                  <feature.icon className={`w-6 h-6 ${feature.isBonus ? 'text-[#b0b0b0]' : 'text-[#919191]'} group-hover:text-[#b0b0b0] transition-colors duration-300`} />
-                </div>
+          <motion.div 
+            className="flex items-baseline gap-4 mb-10"
+            initial={{ opacity: 0, scale: 0.5 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, type: "spring" }}
+          >
+            <motion.span 
+              className="text-6xl font-bold text-white"
+              whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 0.4 }}
+            >
+              $2.99
+            </motion.span>
+            <span className="text-sm text-white/40 font-mono">ONE-TIME</span>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-4 mb-8">
+            {[
+              { name: "README Quality", weight: "20%" },
+              { name: "Repository Health", weight: "25%" },
+              { name: "Developer Patterns", weight: "30%" },
+              { name: "Career Insights", weight: "25%" },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="flex items-center justify-between p-4 border border-white/[0.08] rounded-xl bg-white/[0.02] transition-colors duration-200"
+              >
+                <span className="text-sm text-white/90">{item.name}</span>
+                <span className="text-xs font-mono text-white/40">{item.weight}</span>
+              </motion.div>
+            ))}
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="md:col-span-2 flex items-center justify-between p-4 border-2 border-white/20 rounded-xl bg-white/[0.05]"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-white/90 font-bold">AI Career Analysis</span>
+                <span className="text-xs font-mono text-white/50 bg-white/10 px-2 py-1 rounded">BONUS</span>
               </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-bold text-[#e0e0e0] flex items-center gap-2">
-                    {feature.title}
-                    {feature.isBonus && (
-                      <span className="text-xs font-mono text-[#b0b0b0] bg-[#303030] px-2 py-1 rounded">
-                        AI-POWERED
-                      </span>
-                    )}
-                  </h3>
-                  <span className={`text-xs font-mono ${feature.isBonus ? 'text-[#b0b0b0] bg-[#303030]' : 'text-[#666] bg-[#2a2a2a]'} px-2 py-1 rounded`}>
-                    {feature.weight}
-                  </span>
-                </div>
-                <p className="text-[#919191] text-sm leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            </div>
+            </motion.div>
           </div>
-        </motion.div>
-      ))}
-    </div>
 
-    {/* PRO CTA */}
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="text-center"
-    >
-      <div className="bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8 hover:border-[#333] transition-all duration-500">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-left">
-            <h3 className="text-2xl font-black text-[#e0e0e0] mb-2">
-              Get Your PRO Analysis
-            </h3>
-            <p className="text-[#919191]">
-              One-time payment of <span className="text-[#e0e0e0] font-bold">$2.99</span><br className="inline md:hidden lg:hidden" /> • Instant unlock • Comprehensive insights
-            </p>
-          </div>
           {isAuthenticated ? (
             <Link href="/dashboard">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button 
-                  size="lg" 
-                  className="bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] font-bold px-8 py-6 text-base rounded-xl transition-colors duration-300"
-                >
-                  <Target className="w-5 h-5 mr-2" />
-                  View Dashboard
-                  <ArrowRight className="w-5 h-5 ml-2" />
+              <motion.div 
+                whileHover={{ scale: 1.05 }} 
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="relative group w-fit"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-white/20 rounded-lg blur-xl"
+                  animate={{ opacity: [0.5, 0.8, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <Button className="relative bg-white text-black hover:bg-white/90 text-sm px-6 py-6">
+                  View Dashboard →
                 </Button>
               </motion.div>
             </Link>
           ) : (
             <Link href="/login">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div 
+                whileHover={{ scale: 1.05 }} 
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="relative group w-fit"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-white/20 rounded-lg blur-xl"
+                  animate={{ opacity: [0.5, 0.8, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
                 <Button 
-                  size="lg"
                   disabled={isLoading}
-                  className="bg-[#e0e0e0] text-[#1f1f1f] hover:bg-[#d0d0d0] font-bold px-8 py-6 text-base rounded-xl transition-colors duration-300 disabled:opacity-50"
+                  className="relative bg-white text-black hover:bg-white/90 text-sm px-6 py-6 disabled:opacity-50"
                 >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  {isLoading ? "Loading..." : "Unlock PRO for $2.99"}
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  {isLoading ? "Loading..." : "Unlock PRO for $2.99 →"}
                 </Button>
               </motion.div>
             </Link>
           )}
-        </div>
-      </div>
-    </motion.div>
-  </div>
-</section>
+        </ScrollRevealSection>
 
-      {/* FAQ Section */}
-<section className="relative py-16 px-4 z-10">
-  <div className="max-w-5xl mx-auto">
-    <motion.div 
-      initial={{ opacity: 0, y: 30 }} 
-      whileInView={{ opacity: 1, y: 0 }} 
-      viewport={{ once: true, margin: "-100px" }} 
-      transition={{ duration: 0.6 }}
-      className="text-center mb-16"
-    >
-      <div className="inline-block px-4 py-2 rounded-full border border-[#2a2a2a] bg-[#252525] text-xs text-[#666] font-mono tracking-widest mb-8">
-        QUESTIONS
-      </div>
-      <h2 className="text-4xl md:text-6xl font-black text-[#e0e0e0] leading-none tracking-tighter">
-        Frequently Asked
-      </h2>
-    </motion.div>
+        {/* FAQ - NO ANIMATIONS */}
+        <ScrollRevealSection delay={0.3}>
+          <h2 className="text-xs font-mono text-white/40 uppercase tracking-widest mb-10">
+            Frequently Asked Questions
+          </h2>
 
-    <div className="space-y-4">
-      {[
-        {
-          q: "Is my GitHub data secure?",
-          a: "Yes. We only access public repository data via GitHub OAuth. We never request write permissions or access to private repos. All data is transmitted over encrypted connections."
-        },
-        {
-          q: "What's included in the PRO plan?",
-          a: "PRO includes 5 advanced analytics modules: README Quality Analysis (20%), Repository Health (25%), Developer Patterns (30%), Career Insights (25%), and AI Career Analysis (bonus). You get a comprehensive developer score with detailed breakdowns plus personalized AI-powered career recommendations."
-        },
-        {
-          q: "How does the payment work?",
-          a: "It's a one-time payment of $2.99 to unlock your PRO analysis. After payment, you'll have instant access to all advanced features and insights for your profile."
-        },
-        {
-          q: "Can I request a refund?",
-          a: "Yes. If you're not satisfied with your PRO analysis, contact us within 7 days of purchase for a full refund."
-        },
-        {
-          q: "How is my developer score calculated?",
-          a: "Your score is calculated from 4 weighted components: README Quality (20%), Repository Health (25%), Developer Patterns (30%), and Career Insights (25%). Each analyzes different aspects of your GitHub presence."
-        },
-        {
-          q: "Do I need to reconnect my GitHub account regularly?",
-          a: "No. Once you sign in with GitHub OAuth, you stay authenticated. You can revoke access anytime from your GitHub Settings if needed."
-        },
-        {
-          q: "What programming languages are supported?",
-          a: "GitCheck analyzes all programming languages that GitHub recognizes. We track language usage, detect your primary tech stack, and show language evolution over time."
-        },
-        {
-          q: "How often is my data updated?",
-          a: "FREE users can re-analyze anytime. PRO analysis results are cached for 1 hour for performance, then auto-refresh. You can manually refresh anytime via the dashboard."
-        }
-      ].map((faq, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ delay: i * 0.1, duration: 0.5 }}
-        >
-          <details className="group bg-[#252525] border border-[#2a2a2a] rounded-xl overflow-hidden hover:border-[#333] transition-all duration-300 [&_summary::-webkit-details-marker]:hidden">
-            <summary className="cursor-pointer p-6 flex items-center justify-between list-none">
-              <h3 className="text-lg font-bold text-[#e0e0e0] pr-4">
-                {faq.q}
-              </h3>
-              <motion.div
-                className="flex-shrink-0 w-6 h-6 rounded-full border border-[#2a2a2a] flex items-center justify-center text-[#919191] font-bold group-open:rotate-45 transition-all duration-500"
-                whileHover={{ scale: 1.1 }}
+          <div className="space-y-6">
+            {[
+              { 
+                q: "Is my GitHub data secure?", 
+                a: "Yes. We only access public repository data via GitHub OAuth. We never request write permissions or access to private repos. All data is transmitted over encrypted connections and we don't store your GitHub credentials." 
+              },
+              { 
+                q: "What's included in the PRO plan?", 
+                a: "PRO includes 5 advanced analytics modules: README Quality Analysis (20%), Repository Health (25%), Developer Patterns (30%), Career Insights (25%), and AI Career Analysis (bonus). You get comprehensive scoring, detailed breakdowns, and personalized AI-powered career recommendations." 
+              },
+              { 
+                q: "How does the payment work?", 
+                a: "It's a simple one-time payment of $2.99 to unlock your PRO analysis. No subscriptions, no recurring charges. After payment via Stripe, you'll have instant access to all advanced features and insights for your profile." 
+              },
+              { 
+                q: "Can I request a refund?", 
+                a: "Yes. If you're not satisfied with your PRO analysis, contact us within 7 days of purchase for a full refund, no questions asked." 
+              },
+              { 
+                q: "How is my developer score calculated?", 
+                a: "Your score is calculated from 4 weighted components analyzing different aspects of your GitHub presence: README Quality (20%), Repository Health (25%), Developer Patterns (30%), and Career Insights (25%). Each component uses multiple metrics and advanced algorithms." 
+              },
+              { 
+                q: "Do I need to reconnect my GitHub account regularly?", 
+                a: "No. Once you sign in with GitHub OAuth, you stay authenticated. You can revoke access anytime from your GitHub Settings under Applications if needed." 
+              },
+              { 
+                q: "What programming languages are supported?", 
+                a: "GitCheck analyzes all programming languages that GitHub recognizes. We track language usage across your repositories, detect your primary tech stack, and show language evolution over time with detailed statistics." 
+              },
+              { 
+                q: "How often is my data updated?", 
+                a: "FREE users can re-analyze their profile anytime by clicking the analyze button. PRO analysis results are cached for 1 hour for performance, then auto-refresh. You can manually refresh anytime via the dashboard." 
+              },
+              { 
+                q: "Can I analyze other developers' profiles?", 
+                a: "You can only analyze your own authenticated GitHub profile. This ensures privacy and prevents misuse of the platform." 
+              },
+              { 
+                q: "What browsers are supported?", 
+                a: "GitCheck works on all modern browsers including Chrome, Firefox, Safari, and Edge. We recommend using the latest version for the best experience." 
+              },
+              { 
+                q: "Is there an API available?", 
+                a: "Currently, GitCheck is only available through our web interface. We're considering API access for enterprise customers in the future." 
+              },
+              { 
+                q: "How can I contact support?", 
+                a: "You can reach our support team through the contact form on our website or email us directly. We typically respond within 24 hours on business days." 
+              },
+            ].map((faq, i) => (
+              <div
+                key={i}
+                className="border-l-2 border-white/10 pl-6"
               >
-                +
-              </motion.div>
-            </summary>
-            <div className="grid grid-rows-[0fr] group-open:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
-              <div className="overflow-hidden">
-                <div className="px-6 pb-6 text-[#919191] leading-relaxed opacity-0 group-open:opacity-100 transition-opacity duration-500 delay-100">
-                  {faq.a}
-                </div>
+                <h3 className="text-sm font-bold text-white/90 mb-2">{faq.q}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{faq.a}</p>
               </div>
-            </div>
-          </details>
-        </motion.div>
-      ))}
-    </div>
-  </div>
-</section>
+            ))}
+          </div>
+        </ScrollRevealSection>
 
-      {/* CTA Section */}
-      <section className="relative py-16 px-4 z-10">
-        <div className="max-w-5xl mx-auto">
+        {/* Footer - ONLY HOVER COLOR */}
+        <footer className="pt-20 border-t border-white/[0.06] mt-20">
           <motion.div 
-            initial={{ opacity: 0, y: 50 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="relative group"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
           >
-           <div className="relative border border-[#2a2a2a] rounded-3xl p-6 md:p-12 lg:p-16 text-center overflow-hidden">
-            <div className="absolute inset-0 opacity-[0.02]">
-              <div style={{
-                backgroundImage: `linear-gradient(to right, #919191 1px, transparent 1px), linear-gradient(to bottom, #919191 1px, transparent 1px)`,
-                backgroundSize: '40px 40px',
-              }} className="absolute inset-0" />
+            <div className="flex items-center gap-6 text-xs text-white/40">
+              {[
+                { label: "Privacy", href: "/privacy" },
+                { label: "Terms", href: "/terms" },
+                { label: "Data Usage", href: "/data-usage" },
+              ].map((link, i) => (
+                <Link
+                  key={i}
+                  href={link.href}
+                  className="hover:text-white/70 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
 
-            <div className="relative z-10">
-              <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="inline-block mb-8">
-                <div className="w-16 h-16 rounded-full border border-[#333] flex items-center justify-center">
-                  <Sparkles className="h-8 w-8 text-[#919191]" />
-                </div>
-              </motion.div>
-
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#e0e0e0] mb-6 tracking-tighter leading-tight">
-                Supercharge<br className="inline md:inline lg:hidden" /> Your GitHub Presence
-              </h2>
-              <p className="text-sm md:text-base text-[#919191] mb-4 md:mb-6 max-w-3xl mx-auto font-light leading-relaxed">
-                Unlock the full potential of your GitHub profile. Gain instant insights into your contributions, activity patterns, and coding strengths. Track your growth over time, identify your most productive habits, and visualize your technical skills—all in a single, easy-to-understand dashboard.
-              </p>
-              <p className="text-sm md:text-base text-[#919191] mb-8 md:mb-12 max-w-3xl mx-auto font-light leading-relaxed">
-                No setup, no hassle, just actionable analytics designed for developers like you. Make informed decisions, improve your coding efficiency, and showcase your achievements effortlessly.
-              </p>
-            </div>
-          </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="relative border-t border-[#2a2a2a] py-16 px-4 z-10">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col items-center gap-8">
-            <Link href="/">
-              <div className="flex items-center gap-2 cursor-pointer group">
-                <div className="w-8 h-8 rounded-lg bg-[#252525] border border-[#2a2a2a] flex items-center justify-center group-hover:border-[#333] transition-colors">
-                  <svg fill="#ededed" width={40} height={40} className="gitcheck-logo" xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 245 245"><path d="M185.8,232.75c9.45-10.21,14.43-20.71,10.61-35.01-3.06-11.43-16.92-24.07-17.7-32.75-.63-6.99,4.82-11.41,11.39-10.36,3.39.54,7.83,6.36,10.94,1.42,2.68-4.25-2.55-8.92-6.08-10.4-13.81-5.82-28.46,6.66-25.94,21.63,1.6,9.54,10.16,16.72,14.56,24.99,3.82,7.17,7.21,17.59.1,23.85l-.74-.57c-3.08-19.66-14.33-38.23-26.34-53.5-1.01-1.28-7.78-8.71-7.78-9.33,0-.46.35-.74.67-.99,1.18-.91,4.66-2.18,6.32-3.16,5.5-3.27,9.63-7.39,13.21-12.74,14.05,2.14,27.19-7.72,29.33-22.13,2.18-14.68-6.37-25.09-20.84-24.72-.71.02-1.89.65-2.27.03-4.48-29.93-33.71-44.47-61.11-38.79-17.89,3.71-32.53,17.11-37.76,35.12-1.66.48-3.3.38-5.04.82-5.22,1.33-9.45,6.28-10.86,11.48-2.74,10.11,1.79,21.25,11.35,25.29-.48,13.41,9.63,23,20.87,27.66.05.29.11.67-.03.91-.31.54-9.44,5.46-10.74,6.1-2.12,1.05-7.03,3.62-9.15,2.96-4.11-1.28-13.8-13.56-14.39-17.86-.35-2.55.49-5.15.62-7.63.17-3.33.54-12.69-4.38-12.16-2.65.28-2.93,3.72-3.57,5.68-.09.29-.12.93-.64.66-.43-.22-3.10-4.45-3.89-5.33-9.26-10.38-17.82-.52-16.66,10.78.72,6.98,6.47,13.72,12.06,17.24.79.5,2.74,1.1,3.15,1.51.69.68,3.03,6.49,3.82,7.97,3.61,6.79,10.03,15.86,17.07,19.08,5.63,2.58,11.55.6,17.02-1.51,1.22-.47,6.1-3.05,6.71-3.11.42-.04.49.17.75.45-6.25,17.06-10.31,35.22-8.09,53.58l2.76,14.82c-.36.56-.55.08-.96-.01-8.95-2.11-21.45-9.12-29.2-14.29C-4.7,190.53-17.92,106.22,25.83,48.42c49.53-65.43,145.86-64.24,194.47,1.67,42.04,57.01,29.09,139.38-28.69,179.14-.63.43-5.56,3.75-5.81,3.52Z"/></svg>               
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          {/* Legal Links */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-[#666] mt-12 mb-6">
-            <Link href="/privacy" className="hover:text-[#919191] transition-colors">
-              Privacy Policy
-            </Link>
-            <span className="text-[#444]">•</span>
-            <Link href="/terms" className="hover:text-[#919191] transition-colors">
-              Terms of Service
-            </Link>
-            <span className="text-[#444]">•</span>
-            <Link href="/data-usage" className="hover:text-[#919191] transition-colors">
-              Data Usage
-            </Link>
-          </div>
-
-          {/* Copyright */}
-          <div className="text-center text-xs font-mono text-[#666]">
-            © 2025 • BUILT FOR{" "}
-            <a 
-              href="https://goktug.info" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block group relative"
-            >
-              <motion.span
-                className="text-[#919191] font-bold relative z-10"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400 }}
+            <div className="text-xs text-white/40 font-mono">
+              © 2025 • Built for{" "}
+              <a 
+                href="https://goktug.info" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-white/60 hover:text-white transition-colors"
               >
-                DEVELOPER
-              </motion.span>
-              <motion.span
-                className="absolute inset-0 bg-[#919191] blur-md opacity-0 group-hover:opacity-20"
-                initial={{ scale: 0.8 }}
-                whileHover={{ scale: 1.2 }}
-                transition={{ duration: 0.3 }}
-              />
-            </a>
-            {" "}BY DEVELOPERS
-          </div>
-        </div>
-      </footer>
+                developer
+              </a>
+              {" "}by developers
+            </div>
+          </motion.div>
+        </footer>
+
+
+      </main>
     </div>
+  );
+}
+
+// Reusable Scroll Reveal Component
+function ScrollRevealSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0, y: 100 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+      transition={{ duration: 0.8, delay, type: "spring", stiffness: 50 }}
+      className="mb-20 pt-20 border-t border-white/[0.06]"
+    >
+      {children}
+    </motion.section>
   );
 }

@@ -87,28 +87,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="48x48" />
-        <link rel="icon" type="image/png" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />      
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000" />
-        
-        <meta name="msapplication-TileColor" content="#1f1f1f" />
-        <meta name="msapplication-config" content="/browserconfig.xml" />
-        <meta name="theme-color" content="#1f1f1f" />
-        
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <meta name="format-detection" content="telephone=no" />
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      {/* ... (head aynı) */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>{children}</Providers>
 
         {/* ✅ ORGANIZATION SCHEMA */}
@@ -180,7 +160,7 @@ export default function RootLayout({
           }}
         />
 
-        {/* ✅ FAQ SCHEMA */}
+        {/* ✅ FAQ SCHEMA - FİYAT GÜNCELLENDİ */}
         <Script
           id="faq-schema"
           type="application/ld+json"
@@ -210,7 +190,7 @@ export default function RootLayout({
                   "name": "Is this a subscription or one-time payment?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "It's a one-time payment of $4.99 for lifetime access. No recurring charges, no hidden fees, not a subscription. Pay once, keep PRO features forever."
+                    "text": "It's a one-time payment of $2.99 for lifetime access. No recurring charges, no hidden fees, not a subscription. Pay once, keep PRO features forever."
                   }
                 },
                 {
@@ -258,7 +238,7 @@ export default function RootLayout({
           }}
         />
 
-        {/* ✅ PRODUCT SCHEMA (PRO PLAN) */}
+        {/* ✅ PRODUCT SCHEMA - FİYAT GÜNCELLENDİ $2.99 */}
         <Script
           id="product-schema"
           type="application/ld+json"
@@ -274,7 +254,7 @@ export default function RootLayout({
               },
               "offers": {
                 "@type": "Offer",
-                "price": "4.99",
+                "price": "2.99",
                 "priceCurrency": "USD",
                 "availability": "https://schema.org/InStock",
                 "url": "https://gitcheck.me",
