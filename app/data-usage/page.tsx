@@ -42,7 +42,7 @@ export default function DataUsagePage() {
             className="flex items-center gap-2 text-white/40 hover:text-white/70 mb-12 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-mono cursor-pointer">Back to Home</span>
+            <span className="text-sm cursor-pointer">Back to Home</span>
           </motion.button>
         </Link>
 
@@ -56,7 +56,7 @@ export default function DataUsagePage() {
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
             Data Usage Policy
           </h1>
-          <p className="text-white/40 font-mono text-sm">
+          <p className="text-white/40 text-sm">
             Last updated: December 4, 2025
           </p>
         </motion.div>
@@ -176,7 +176,7 @@ export default function DataUsagePage() {
               
               <h3 className="text-xl font-semibold text-white/90 mb-3 mt-6">Overall Developer Score (0-100)</h3>
               <p>The comprehensive score is calculated as:</p>
-              <div className="bg-white/[0.02] border border-white/10 rounded-lg p-6 my-4 font-mono text-sm text-white/80">
+              <div className="bg-white/[0.02] border border-white/10 rounded-lg p-6 my-4 text-sm text-white/80">
                 <p>Score = (README × 0.20) + (Repo Health × 0.25) + (Dev Patterns × 0.30) + (Career × 0.25)</p>
               </div>
 
@@ -362,7 +362,7 @@ export default function DataUsagePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="mt-16 pt-8 border-t border-white/[0.06] flex flex-wrap gap-4 justify-center text-sm font-mono text-white/40"
+          className="mt-16 pt-8 border-t border-white/[0.06] flex flex-wrap gap-4 justify-center text-sm  text-white/40"
         >
           <Link href="/privacy" className="hover:text-white/70 transition-colors">
             Privacy Policy

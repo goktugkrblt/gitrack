@@ -42,7 +42,7 @@ export default function TermsPage() {
             className="flex items-center gap-2 text-white/40 hover:text-white/70 mb-12 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-mono cursor-pointer">Back to Home</span>
+            <span className="text-sm  cursor-pointer">Back to Home</span>
           </motion.button>
         </Link>
 
@@ -56,7 +56,7 @@ export default function TermsPage() {
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
             Terms of Service
           </h1>
-          <p className="text-white/40 font-mono text-sm">
+          <p className="text-white/40  text-sm">
             Last updated: December 4, 2025
           </p>
         </motion.div>
@@ -344,7 +344,7 @@ export default function TermsPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="mt-16 pt-8 border-t border-white/[0.06] flex flex-wrap gap-4 justify-center text-sm font-mono text-white/40"
+          className="mt-16 pt-8 border-t border-white/[0.06] flex flex-wrap gap-4 justify-center text-sm  text-white/40"
         >
           <Link href="/privacy" className="hover:text-white/70 transition-colors">
             Privacy Policy
