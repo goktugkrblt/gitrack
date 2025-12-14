@@ -100,7 +100,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
       className="space-y-6"
     >
       {/* Main Header Card */}
-      <div className="relative overflow-hidden bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8">
+      <div className="relative overflow-hidden bg-[#050307] border border-[#131c26] rounded-2xl p-8">
         <div className={`absolute inset-0 bg-gradient-to-br ${getLevelColor(safeData.experienceLevel)} opacity-5`} />
         
         <div className="relative z-10">
@@ -120,7 +120,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
             </div>
 
             <div className="flex flex-col gap-2 items-end">
-              <div className={`px-6 py-3 rounded-full bg-gradient-to-r ${getLevelColor(safeData.experienceLevel)} border border-[#2a2a2a]`}>
+              <div className={`px-6 py-3 rounded-full bg-gradient-to-r ${getLevelColor(safeData.experienceLevel)} border border-[#131c26]`}>
                 <span className="text-2xl font-black text-white">
                   {safeData.grade}
                 </span>
@@ -147,7 +147,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="none"
-                  className="text-[#1f1f1f]"
+                  className="text-[#050307]"
                 />
                 <circle
                   cx="64"
@@ -174,7 +174,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-[#050307] rounded-full overflow-hidden">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(safeData.overallScore)} transition-all duration-1000 ease-out relative`}
               style={{ width: `${scorePercentage}%` }}
@@ -187,7 +187,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
       
 
       {/* Skills Grid - ALL 6 SKILLS */}
-      <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-8">
+      <div className="bg-[#050307] border border-[#131c26] rounded-xl p-8">
         <div className="flex items-center gap-3 mb-6">
           <Zap className="w-6 h-6 text-yellow-400" />
           <h3 className="text-2xl font-black text-[#e0e0e0]">Skill Assessment</h3>
@@ -205,7 +205,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.skills.technicalBreadth.toFixed(1)}/10
               </span>
             </div>
-            <div className="h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+            <div className="h-3 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-1000"
                 style={{ width: `${(safeData.skills.technicalBreadth / 10) * 100}%` }}
@@ -224,7 +224,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.skills.documentation.toFixed(1)}/10
               </span>
             </div>
-            <div className="h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+            <div className="h-3 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-1000"
                 style={{ width: `${(safeData.skills.documentation / 10) * 100}%` }}
@@ -243,7 +243,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.skills.collaboration.toFixed(1)}/10
               </span>
             </div>
-            <div className="h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+            <div className="h-3 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-1000"
                 style={{ width: `${(safeData.skills.collaboration / 10) * 100}%` }}
@@ -262,7 +262,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.skills.projectManagement.toFixed(1)}/10
               </span>
             </div>
-            <div className="h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+            <div className="h-3 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-yellow-500 to-orange-500 transition-all duration-1000"
                 style={{ width: `${(safeData.skills.projectManagement / 10) * 100}%` }}
@@ -281,7 +281,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.skills.codeQuality.toFixed(1)}/10
               </span>
             </div>
-            <div className="h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+            <div className="h-3 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-red-500 to-orange-500 transition-all duration-1000"
                 style={{ width: `${(safeData.skills.codeQuality / 10) * 100}%` }}
@@ -300,7 +300,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.skills.productivity.toFixed(1)}/10
               </span>
             </div>
-            <div className="h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+            <div className="h-3 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-1000"
                 style={{ width: `${(safeData.skills.productivity / 10) * 100}%` }}
@@ -311,7 +311,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
       </div>
 
       {/* Professional Metrics */}
-      <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-8">
+      <div className="bg-[#050307] border border-[#131c26] rounded-xl p-8">
         <div className="flex items-center gap-3 mb-6">
           <Briefcase className="w-6 h-6 text-purple-400" />
           <h3 className="text-2xl font-black text-[#e0e0e0]">Professional Metrics</h3>
@@ -319,7 +319,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Portfolio Strength */}
-          <div className="bg-[#1f1f1f] rounded-lg p-6">
+          <div className="bg-[#050307] rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Award className="w-5 h-5 text-[#666]" />
@@ -329,7 +329,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.professionalMetrics.portfolioStrength}%
               </span>
             </div>
-            <div className="w-full h-2 bg-[#252525] rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-1000"
                 style={{ width: `${safeData.professionalMetrics.portfolioStrength}%` }}
@@ -338,7 +338,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
           </div>
 
           {/* Visibility */}
-          <div className="bg-[#1f1f1f] rounded-lg p-6">
+          <div className="bg-[#050307] rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Eye className="w-5 h-5 text-[#666]" />
@@ -348,7 +348,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.professionalMetrics.visibility}%
               </span>
             </div>
-            <div className="w-full h-2 bg-[#252525] rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-1000"
                 style={{ width: `${safeData.professionalMetrics.visibility}%` }}
@@ -357,7 +357,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
           </div>
 
           {/* Consistency */}
-          <div className="bg-[#1f1f1f] rounded-lg p-6">
+          <div className="bg-[#050307] rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Activity className="w-5 h-5 text-[#666]" />
@@ -367,7 +367,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
                 {safeData.professionalMetrics.consistency}%
               </span>
             </div>
-            <div className="w-full h-2 bg-[#252525] rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-1000"
                 style={{ width: `${safeData.professionalMetrics.consistency}%` }}
@@ -376,7 +376,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
           </div>
 
           {/* Market Value */}
-          <div className="bg-[#1f1f1f] rounded-lg p-6">
+          <div className="bg-[#050307] rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-[#666]" />
@@ -396,7 +396,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
       {/* Profile Type & Strengths */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Profile Type */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-8">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-8">
           <div className="flex items-center gap-3 mb-4">
             <Users className="w-6 h-6 text-purple-400" />
             <h3 className="text-xl font-black text-[#e0e0e0]">Developer Profile</h3>
@@ -413,7 +413,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
 
         {/* Strengths */}
         {safeData.strengths.length > 0 && (
-          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-8">
+          <div className="bg-[#050307] border border-[#131c26] rounded-xl p-8">
             <div className="flex items-center gap-3 mb-4">
               <CheckCircle className="w-6 h-6 text-green-400" />
               <h3 className="text-xl font-black text-[#e0e0e0]">Top Strengths</h3>
@@ -432,7 +432,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
 
       {/* Recommendations */}
       {safeData.recommendations.length > 0 && (
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-8">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-8">
           <div className="flex items-center gap-3 mb-6">
             <TrendingUp className="w-6 h-6 text-blue-400" />
             <h3 className="text-2xl font-black text-[#e0e0e0]">Growth Recommendations</h3>
@@ -440,7 +440,7 @@ export function CareerInsightsCard({ data }: CareerInsightsCardProps) {
 
           <div className="grid md:grid-cols-2 gap-4">
             {safeData.recommendations.map((rec, index) => (
-              <div key={index} className="flex items-start gap-3 bg-[#1f1f1f] rounded-lg p-4">
+              <div key={index} className="flex items-start gap-3 bg-[#050307] rounded-lg p-4">
                 <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xs font-bold text-blue-400">{index + 1}</span>
                 </div>

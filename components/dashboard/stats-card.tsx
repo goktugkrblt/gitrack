@@ -20,7 +20,7 @@ export function StatsCard({
   trend,
 }: StatsCardProps) {
   return (
-    <Card className="bg-[#252525] border-[#2a2a2a] hover:border-[#333] transition-all duration-300 p-6 group cursor-pointer">
+    <Card className="bg-[#050307] border-[#131c26] hover:border-[#333] transition-all duration-300 p-6 group cursor-pointer">
       <div className="flex items-start justify-between">
         <div className="space-y-2">
           <p className="text-xs font-mono text-[#666] tracking-wider">{title}</p>
@@ -29,7 +29,7 @@ export function StatsCard({
           </p>
           <p className="text-xs text-[#919191] font-light">{description}</p>
         </div>
-        <div className="w-12 h-12 rounded-xl bg-[#2a2a2a] group-hover:bg-[#303030] flex items-center justify-center transition-colors duration-300">
+        <div className="w-12 h-12 rounded-xl bg-[#131c26] group-hover:bg-[#303030] flex items-center justify-center transition-colors duration-300">
           <Icon className="h-6 w-6 text-[#919191] group-hover:text-[#b0b0b0] transition-colors duration-300" />
         </div>
       </div>

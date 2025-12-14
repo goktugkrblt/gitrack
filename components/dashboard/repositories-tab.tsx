@@ -11,7 +11,7 @@ interface RepositoriesTabProps {
 export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
   if (!profileData) {
     return (
-      <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-1 text-center">
+      <div className="bg-[#050307] rounded-xl border border-[#131c26] p-1 text-center">
         <Package className="w-12 h-12 text-[#666] mx-auto mb-4" />
         <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">No Repository Data</h3>
         <p className="text-[#666] text-sm">Please analyze your profile first</p>
@@ -113,7 +113,7 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">TOTAL REPOS</h3>
             <Package className="h-4 w-4 text-[#666]" />
@@ -124,7 +124,7 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
           </p>
         </div>
 
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">TOTAL STARS</h3>
             <Star className="h-4 w-4 text-[#666]" />
@@ -135,7 +135,7 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
           </p>
         </div>
 
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">TOTAL FORKS</h3>
             <GitFork className="h-4 w-4 text-[#666]" />
@@ -146,7 +146,7 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
           </p>
         </div>
 
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">LICENSED</h3>
             <Scale className="h-4 w-4 text-[#666]" />
@@ -160,13 +160,13 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
 
       {/* Language Distribution */}
       {Object.keys(languageRepos).length > 0 && (
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <h3 className="text-xl font-bold text-[#e0e0e0] mb-6">Repositories by Language</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {Object.entries(languageRepos)
               .sort(([, a]: any, [, b]: any) => b - a)
               .map(([lang, count]: any) => (
-                <div key={lang} className="bg-[#1f1f1f] rounded-lg p-4 border border-[#2a2a2a]">
+                <div key={lang} className="bg-[#050307] rounded-lg p-4 border border-[#131c26]">
                   <div className="flex items-center gap-2 mb-2">
                     <Code className="w-4 h-4 text-[#666]" />
                     <span className="text-sm font-bold text-[#e0e0e0]">{lang}</span>
@@ -183,7 +183,7 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
 
       {/* YENİ: License Distribution */}
       {Object.keys(licenseDistribution).length > 0 && (
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="mb-6">
             <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">License Distribution</h3>
             <p className="text-xs text-[#666]">
@@ -196,11 +196,11 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
 
       {/* Recently Updated */}
       {recentRepos.length > 0 && (
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <h3 className="text-xl font-bold text-[#e0e0e0] mb-6">Recently Updated</h3>
           <div className="space-y-3">
             {recentRepos.map((repo: any, i: number) => (
-              <div key={i} className="flex items-center justify-between p-4 bg-[#1f1f1f] rounded-lg border border-[#2a2a2a] hover:border-[#333] transition-colors">
+              <div key={i} className="flex items-center justify-between p-4 bg-[#050307] rounded-lg border border-[#131c26] hover:border-[#333] transition-colors">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Package className="w-4 h-4 text-[#666] flex-shrink-0" />
                   <span className="text-[#e0e0e0] font-medium truncate">{repo.name}</span>

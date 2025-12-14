@@ -27,7 +27,7 @@ export function LanguageChart({ languages }: LanguageChartProps) {
 
   if (data.length === 0) {
     return (
-      <Card className="bg-[#252525] border-[#2a2a2a] p-8">
+      <Card className="bg-[#050307] border-[#131c26] p-8">
         <h3 className="text-xl font-black text-[#e0e0e0] tracking-tighter mb-6">
           LANGUAGE DISTRIBUTION
         </h3>
@@ -39,7 +39,7 @@ export function LanguageChart({ languages }: LanguageChartProps) {
   }
 
   return (
-    <Card className="bg-[#252525] border-[#2a2a2a] p-8">
+    <Card className="bg-[#050307] border-[#131c26] p-8">
       <h3 className="text-xl font-black text-[#e0e0e0] tracking-tighter mb-6">
         LANGUAGE DISTRIBUTION
       </h3>
@@ -61,8 +61,8 @@ export function LanguageChart({ languages }: LanguageChartProps) {
           </Pie>
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: '#1f1f1f', 
-              border: '1px solid #2a2a2a',
+              backgroundColor: '#050307', 
+              border: '1px solid #131c26',
               borderRadius: '8px',
               color: '#e0e0e0',
               fontSize: '14px',

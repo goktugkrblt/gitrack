@@ -95,7 +95,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
   return (
     <div className="space-y-6">
       {/* Main Health Score Card */}
-      <div className="relative overflow-hidden bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8">
+      <div className="relative overflow-hidden bg-[#050307] border border-[#131c26] rounded-2xl p-8">
         <div className={`absolute inset-0 bg-gradient-to-br ${getScoreBgColor(data.overallScore)} opacity-50`} />
         
         <div className="relative z-10">
@@ -116,13 +116,13 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row items-center">
-              <div className={`px-6 py-3 rounded-full bg-gradient-to-r ${getScoreBgColor(data.overallScore)} border border-[#2a2a2a]`}>
+              <div className={`px-6 py-3 rounded-full bg-gradient-to-r ${getScoreBgColor(data.overallScore)} border border-[#131c26]`}>
                 <span className={`text-2xl font-black bg-gradient-to-r ${getScoreColor(data.overallScore)} bg-clip-text text-transparent`}>
                   {data.grade}
                 </span>
               </div>
 
-              <div className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-[#252525] border border-[#2a2a2a]`}>
+              <div className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-[#050307] border border-[#131c26]`}>
                 {getTrendIcon()}
                 <span className={`text-sm font-bold ${getTrendColor()}`}>
                   {getTrendText()}
@@ -150,7 +150,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="none"
-                  className="text-[#1f1f1f]"
+                  className="text-[#050307]"
                 />
                 <circle
                   cx="64"
@@ -177,7 +177,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-[#050307] rounded-full overflow-hidden">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.overallScore)} transition-all duration-1000 ease-out relative`}
               style={{ width: `${scorePercentage}%` }}
@@ -191,7 +191,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
       {/* Metrics Grid - HER ŞEY /10 */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Maintenance */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <GitCommit className="w-5 h-5 text-[#666]" />
@@ -218,7 +218,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
             </div>
           </div>
 
-          <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+          <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.metrics.maintenance.score)} transition-all duration-1000`}
               style={{ width: `${(data.metrics.maintenance.score / 10) * 100}%` }}
@@ -227,7 +227,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
         </div>
 
         {/* Issue Management */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-5 h-5 text-[#666]" />
@@ -254,7 +254,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
             </div>
           </div>
 
-          <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+          <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.metrics.issueManagement.score)} transition-all duration-1000`}
               style={{ width: `${(data.metrics.issueManagement.score / 10) * 100}%` }}
@@ -263,7 +263,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
         </div>
 
         {/* Pull Requests */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <GitPullRequest className="w-5 h-5 text-[#666]" />
@@ -290,7 +290,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
             </div>
           </div>
 
-          <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+          <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.metrics.pullRequests.score)} transition-all duration-1000`}
               style={{ width: `${(data.metrics.pullRequests.score / 10) * 100}%` }}
@@ -299,7 +299,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
         </div>
 
         {/* Activity */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Activity className="w-5 h-5 text-[#666]" />
@@ -326,7 +326,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
             </div>
           </div>
 
-          <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+          <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.metrics.activity.score)} transition-all duration-1000`}
               style={{ width: `${(data.metrics.activity.score / 10) * 100}%` }}
@@ -340,7 +340,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
      <div className="grid md:grid-cols-3 gap-6">
         {/* Strengths - YENİ EKLENEN */}
         {data.insights.strengths.length > 0 && (
-          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle className="w-5 h-5 text-green-400" />
               <h4 className="text-lg font-black text-[#e0e0e0]">Strengths</h4>
@@ -358,7 +358,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
 
         {/* Concerns */}
         {data.insights.concerns.length > 0 && (
-          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <AlertCircle className="w-5 h-5 text-red-400" />
               <h4 className="text-lg font-black text-[#e0e0e0]">Concerns</h4>
@@ -376,7 +376,7 @@ export function RepoHealthCard({ data }: RepoHealthCardProps) {
 
         {/* Recommendations */}
         {data.insights.recommendations.length > 0 && (
-          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-blue-400" />
               <h4 className="text-lg font-black text-[#e0e0e0]">Recommendations</h4>

@@ -146,7 +146,7 @@ export function ScoreDisplay({ score: initialScore, percentile: initialPercentil
 
   if (loading) {
     return (
-      <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-8 h-full flex items-center justify-center">
+      <div className="bg-[#050307] border border-[#131c26] rounded-xl p-8 h-full flex items-center justify-center">
         <div className="text-[#666] font-mono text-sm">CALCULATING SCORE...</div>
       </div>
     );
@@ -158,7 +158,7 @@ export function ScoreDisplay({ score: initialScore, percentile: initialPercentil
   const analysisRequired = scoreData?.analysisRequired ?? false;
 
   return (
-    <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6 md:p-8 h-full flex flex-col relative">
+    <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 md:p-8 h-full flex flex-col relative">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -172,7 +172,7 @@ export function ScoreDisplay({ score: initialScore, percentile: initialPercentil
           size="sm"
           onClick={calculateScore}
           disabled={loading || isLocked}
-          className="text-[#666] hover:text-[#e0e0e0] hover:bg-[#2a2a2a] -mr-2"
+          className="text-[#666] hover:text-[#e0e0e0] hover:bg-[#131c26] -mr-2"
           title="Recalculate score"
         >
           <Zap className="w-4 h-4" />
@@ -188,7 +188,7 @@ export function ScoreDisplay({ score: initialScore, percentile: initialPercentil
               cx="50%"
               cy="50%"
               r="45%"
-              stroke="#2a2a2a"
+              stroke="#131c26"
               strokeWidth="8"
               fill="none"
             />
@@ -271,7 +271,7 @@ export function ScoreDisplay({ score: initialScore, percentile: initialPercentil
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0 backdrop-blur-2xl bg-gradient-to-br from-[#1f1f1f]/95 via-purple-900/20 to-pink-900/20 flex flex-col items-center justify-center rounded-xl border-2 border-purple-500/30"
+            className="absolute inset-0 backdrop-blur-2xl bg-gradient-to-br from-[#050307]/95 via-purple-900/20 to-pink-900/20 flex flex-col items-center justify-center rounded-xl border-2 border-purple-500/30"
           >
             <div className="text-center px-6">
               {/* Animated lock icon */}
@@ -310,7 +310,7 @@ export function ScoreDisplay({ score: initialScore, percentile: initialPercentil
 
       {/* Strengths (only for unlocked PRO users) */}
       {!isLocked && scoreData?.strengths && scoreData.strengths.length > 0 && (
-        <div className="space-y-2 pt-4 border-t border-[#2a2a2a] mb-4">
+        <div className="space-y-2 pt-4 border-t border-[#131c26] mb-4">
           <div className="text-xs font-bold text-[#666] tracking-wider mb-2">STRENGTHS</div>
           {scoreData.strengths.slice(0, 2).map((strength, i) => (
             <div key={i} className="flex items-start gap-2">
@@ -333,7 +333,7 @@ export function ScoreDisplay({ score: initialScore, percentile: initialPercentil
 
       {/* CTA Messages - Only show when no overlay is visible */}
       {!isLocked && !analysisRequired && scoreData?.improvements && scoreData.improvements.length > 0 && (
-        <div className="mt-auto pt-4 p-3 bg-[#2a2a2a] border border-[#333] rounded-lg">
+        <div className="mt-auto pt-4 p-3 bg-[#131c26] border border-[#333] rounded-lg">
           <div className="text-xs text-[#919191]">
             {scoreData.improvements[0]}
           </div>

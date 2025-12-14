@@ -59,7 +59,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
       className="space-y-6"
     >
       {/* Main Score Card */}
-      <div className="relative overflow-hidden bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8">
+      <div className="relative overflow-hidden bg-[#050307] border border-[#131c26] rounded-2xl p-8">
         <div className={`absolute inset-0 bg-gradient-to-br ${getScoreColor(data.overallScore)} opacity-5`} />
         
         <div className="relative z-10">
@@ -79,7 +79,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
               </div>
             </div>
 
-            <div className="px-6 py-3 rounded-full bg-[#252525] border border-[#2a2a2a]">
+            <div className="px-6 py-3 rounded-full bg-[#050307] border border-[#131c26]">
                 <span className="text-2xl font-black text-[#e0e0e0]">
                     {data.grade}
                 </span>
@@ -105,7 +105,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="none"
-                  className="text-[#1f1f1f]"
+                  className="text-[#050307]"
                 />
                 <circle
                   cx="64"
@@ -132,7 +132,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-[#050307] rounded-full overflow-hidden">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.overallScore)} transition-all duration-1000 ease-out relative`}
               style={{ width: `${scorePercentage}%` }}
@@ -145,7 +145,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
 
       {/* Metrics Grid */}
       <div className="grid md:grid-cols-3 gap-4">
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center gap-2 mb-3">
             <FileText className="w-5 h-5 text-[#666]" />
             <h4 className="font-bold text-[#e0e0e0]">Length</h4>
@@ -156,7 +156,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
           <div className="text-xs text-[#666]">characters</div>
         </div>
 
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center gap-2 mb-3">
             <Star className="w-5 h-5 text-[#666]" />
             <h4 className="font-bold text-[#e0e0e0]">Sections</h4>
@@ -167,7 +167,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
           <div className="text-xs text-[#666]">key sections</div>
         </div>
 
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="w-5 h-5 text-[#666]" />
             <h4 className="font-bold text-[#e0e0e0]">Badges</h4>
@@ -181,7 +181,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
 
       {/* Insights Cards */}
       <div className="grid md:grid-cols-3 gap-4">
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <h4 className="font-bold text-[#e0e0e0] mb-2">Readability</h4>
           <div className="flex items-end gap-2">
             <div className="text-3xl font-black text-blue-400">
@@ -189,7 +189,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
             </div>
             <div className="text-sm text-[#666] mb-1">/100</div>
           </div>
-          <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-3">
+          <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-3">
             <div 
               className="h-full bg-gradient-to-r from-blue-500 to-cyan-500"
               style={{ width: `${data.insights.readability}%` }}
@@ -197,7 +197,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
           </div>
         </div>
 
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <h4 className="font-bold text-[#e0e0e0] mb-2">Completeness</h4>
           <div className="flex items-end gap-2">
             <div className="text-3xl font-black text-green-400">
@@ -205,7 +205,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
             </div>
             <div className="text-sm text-[#666] mb-1">/100</div>
           </div>
-          <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-3">
+          <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-3">
             <div 
               className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
               style={{ width: `${data.insights.completeness}%` }}
@@ -213,7 +213,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
           </div>
         </div>
 
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <h4 className="font-bold text-[#e0e0e0] mb-2">Professionalism</h4>
           <div className="flex items-end gap-2">
             <div className="text-3xl font-black text-purple-400">
@@ -221,7 +221,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
             </div>
             <div className="text-sm text-[#666] mb-1">/100</div>
           </div>
-          <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-3">
+          <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-3">
             <div 
               className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
               style={{ width: `${data.insights.professionalism}%` }}
@@ -231,7 +231,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
       </div>
 
       {/* Documentation Checklist */}
-      <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-8">
+      <div className="bg-[#050307] border border-[#131c26] rounded-xl p-8">
         <h3 className="text-xl font-black text-[#e0e0e0] mb-6">Documentation Elements</h3>
         
         <div className="grid md:grid-cols-2 gap-4">
@@ -243,7 +243,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
             { label: 'Table of Contents', value: data.details.toc, count: null },
             { label: 'Status Badges', value: data.details.badges, count: data.details.badges },
           ].map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-[#1f1f1f]">
+            <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-[#050307]">
               <div className="flex items-center gap-3">
                 {item.value ? (
                   <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
@@ -268,7 +268,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Strengths */}
         {data.strengths.length > 0 && (
-          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle2 className="w-5 h-5 text-green-400" />
               <h4 className="text-lg font-black text-[#e0e0e0]">Strengths</h4>
@@ -286,7 +286,7 @@ export function CodeQualityCard({ data }: CodeQualityCardProps) {
 
         {/* Improvements */}
         {data.improvements.length > 0 && (
-          <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-blue-400" />
               <h4 className="text-lg font-black text-[#e0e0e0]">Improvements</h4>

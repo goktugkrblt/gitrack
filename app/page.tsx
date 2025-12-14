@@ -63,7 +63,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-black relative overflow-hidden">
+    <div ref={containerRef} className="min-h-screen relative overflow-hidden">
       
       {/* ✨ ADVANCED ANIMATED BACKGROUND */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -244,7 +244,7 @@ export default function HomePage() {
         {/* HEADER SECTION */}
         <div className="max-w-4xl mx-auto px-6 py-12">
           <motion.header 
-            className="min-h-[85vh] flex flex-col lg:flex-row gap-8 items-start justify-between mb-20"
+            className="flex flex-col lg:flex-row gap-8 items-end justify-between mb-20"
             style={{ 
               y: headerY,
               opacity: headerOpacity,
@@ -741,7 +741,7 @@ export default function HomePage() {
                 {[
                   { label: "Privacy", href: "/privacy" },
                   { label: "Terms", href: "/terms" },
-                  { label: "Data Usage", href: "/data" },
+                  { label: "Data Usage", href: "/data-usage" },
                 ].map((link, i) => (
                   <Link
                     key={i}
@@ -761,7 +761,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="text-white/60 hover:text-white transition-colors"
                 >
-                  developers
+                  developer
                 </a>
                 {" "}by developers
               </div>

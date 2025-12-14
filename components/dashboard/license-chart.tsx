@@ -61,8 +61,8 @@ export function LicenseChart({ licenses }: LicenseChartProps) {
         </Pie>
         <Tooltip 
           contentStyle={{ 
-            backgroundColor: '#1f1f1f', 
-            border: '1px solid #2a2a2a',
+            backgroundColor: '#050307', 
+            border: '1px solid #131c26',
             borderRadius: '8px',
             color: '#e0e0e0'
           }}

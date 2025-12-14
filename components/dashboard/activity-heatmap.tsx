@@ -52,10 +52,10 @@ export function ActivityHeatmap() {
 
   if (loading) {
     return (
-      <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8">
+      <div className="bg-[#050307] rounded-xl border border-[#131c26] p-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-[#2a2a2a] rounded w-1/3"></div>
-          <div className="h-32 bg-[#2a2a2a] rounded"></div>
+          <div className="h-4 bg-[#131c26] rounded w-1/3"></div>
+          <div className="h-32 bg-[#131c26] rounded"></div>
         </div>
       </div>
     );
@@ -63,14 +63,14 @@ export function ActivityHeatmap() {
 
   if (!data) {
     return (
-      <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8">
+      <div className="bg-[#050307] rounded-xl border border-[#131c26] p-8">
         <p className="text-[#666] font-mono text-sm">Failed to load contribution data</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8 relative">
+    <div className="bg-[#050307] rounded-xl border border-[#131c26] p-8 relative">
       {/* Header */}
       <div className="mb-6">
         <h3 className="text-xs font-bold text-[#666] tracking-wider mb-2">
@@ -142,7 +142,7 @@ export function ActivityHeatmap() {
             top: mousePosition.y - 60,
             pointerEvents: 'none',
           }}
-          className="bg-[#1f1f1f] border border-[#2a2a2a] rounded-lg px-4 py-3 shadow-2xl z-50"
+          className="bg-[#050307] border border-[#131c26] rounded-lg px-4 py-3 shadow-2xl z-50"
         >
           <div className="text-[#e0e0e0] font-bold text-sm mb-1">
             {hoveredDay.contributionCount} {hoveredDay.contributionCount === 1 ? 'contribution' : 'contributions'}

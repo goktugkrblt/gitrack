@@ -16,7 +16,7 @@ interface TopReposProps {
 export function TopRepos({ repos }: TopReposProps) {
   if (repos.length === 0) {
     return (
-      <Card className="bg-[#252525] border-[#2a2a2a] p-8">
+      <Card className="bg-[#050307] border-[#131c26] p-8">
         <h3 className="text-xl font-black text-[#e0e0e0] tracking-tighter mb-6">
           TOP REPOSITORIES
         </h3>
@@ -28,7 +28,7 @@ export function TopRepos({ repos }: TopReposProps) {
   }
 
   return (
-    <Card className="bg-[#252525] border-[#2a2a2a] p-8">
+    <Card className="bg-[#050307] border-[#131c26] p-8">
       <h3 className="text-xl font-black text-[#e0e0e0] tracking-tighter mb-6">
         TOP REPOSITORIES
       </h3>
@@ -36,7 +36,7 @@ export function TopRepos({ repos }: TopReposProps) {
         {repos.map((repo, index) => (
           <div
             key={index}
-            className="group p-4 rounded-xl bg-[#2a2a2a] border border-[#333] hover:border-[#404040] transition-all duration-300 cursor-pointer"
+            className="group p-4 rounded-xl bg-[#131c26] border border-[#333] hover:border-[#404040] transition-all duration-300 cursor-pointer"
           >
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">

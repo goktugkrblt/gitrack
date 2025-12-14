@@ -4,8 +4,8 @@
     "description": "GitHub Profile Analytics",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#1f1f1f",
-    "theme_color": "#1f1f1f",
+    "background_color": "#050307",
+    "theme_color": "#050307",
     "icons": [
       {
         "src": "/favicon-32x32.png",

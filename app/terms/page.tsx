@@ -6,27 +6,36 @@ import { motion } from "framer-motion";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-[#1f1f1f] relative overflow-hidden">
-      {/* Advanced Grid Background - SAME AS HOMEPAGE */}
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      
+      {/* ✨ STATIC BACKGROUND (NO ANIMATION) */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Main Grid */}
+        
+        {/* Gradient Mesh - Static */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-[120px]" />
+        </div>
+
+        {/* Grid Pattern */}
         <div 
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0"
           style={{
             backgroundImage: `
-              linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)
+              linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)
             `,
-            backgroundSize: '60px 60px',
+            backgroundSize: '80px 80px',
           }}
         />
-        
-        {/* Radial Gradient Overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(20,20,20,0.8),transparent)]" />
+
+        {/* Vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
         
         {/* Noise Texture */}
         <div 
-          className="absolute inset-0 opacity-[0.015]"
+          className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
           }}
@@ -42,7 +51,7 @@ export default function TermsPage() {
             className="flex items-center gap-2 text-white/40 hover:text-white/70 mb-12 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm  cursor-pointer">Back to Home</span>
+            <span className="text-sm cursor-pointer">Back to Home</span>
           </motion.button>
         </Link>
 
@@ -56,12 +65,12 @@ export default function TermsPage() {
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
             Terms of Service
           </h1>
-          <p className="text-white/40  text-sm">
+          <p className="text-white/40 text-sm">
             Last updated: December 4, 2025
           </p>
         </motion.div>
 
-        {/* Content */}
+        {/* Content - ESKİ CONTENT AYNI KALACAK */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

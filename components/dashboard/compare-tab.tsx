@@ -82,7 +82,7 @@ export function CompareTab({ userProfile }: CompareTabProps) {
 
   if (!userProfile) {
     return (
-      <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8 text-center">
+      <div className="bg-[#050307] rounded-xl border border-[#131c26] p-8 text-center">
         <Target className="w-12 h-12 text-[#666] mx-auto mb-4" />
         <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">No Profile Data</h3>
         <p className="text-[#666] text-sm">Please analyze your profile first</p>
@@ -100,7 +100,7 @@ export function CompareTab({ userProfile }: CompareTabProps) {
 
   if (error || !data) {
     return (
-      <div className="bg-[#252525] rounded-xl border border-[#2a2a2a] p-8 text-center">
+      <div className="bg-[#050307] rounded-xl border border-[#131c26] p-8 text-center">
         <Target className="w-12 h-12 text-[#666] mx-auto mb-4" />
         <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">Failed to Load Comparison</h3>
         <p className="text-[#666] text-sm">Please try refreshing the page</p>
@@ -226,11 +226,11 @@ export function CompareTab({ userProfile }: CompareTabProps) {
       </div>
 
       {/* Radar Chart */}
-      <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6 md:p-8">
+      <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 md:p-8">
         <h3 className="text-lg md:text-xl font-bold text-[#e0e0e0] mb-6 text-center">Performance Overview</h3>
         <ResponsiveContainer width="100%" height={400}>
           <RadarChart data={radarData}>
-            <PolarGrid stroke="#2a2a2a" />
+            <PolarGrid stroke="#131c26" />
             <PolarAngleAxis dataKey="metric" tick={{ fill: '#666', fontSize: 12 }} />            
             <PolarRadiusAxis
                 angle={90}
@@ -243,8 +243,8 @@ export function CompareTab({ userProfile }: CompareTabProps) {
             <Legend wrapperStyle={{ color: '#919191' }} />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: '#1f1f1f', 
-                border: '1px solid #2a2a2a',
+                backgroundColor: '#050307', 
+                border: '1px solid #131c26',
                 borderRadius: '8px',
                 color: '#e0e0e0'
               }}
@@ -258,7 +258,7 @@ export function CompareTab({ userProfile }: CompareTabProps) {
         {comparisons.map((item, i) => {
           const Icon = item.icon;
           return (
-            <div key={i} className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6 hover:border-[#333] transition-all">
+            <div key={i} className="bg-[#050307] border border-[#131c26] rounded-xl p-6 hover:border-[#333] transition-all">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Icon className={`w-4 h-4 ${item.color}`} />
@@ -276,7 +276,7 @@ export function CompareTab({ userProfile }: CompareTabProps) {
                   <p className="text-xs text-[#666]">{getComparisonText(item.user, item.avg)}</p>
                 </div>
 
-                <div className="flex items-center justify-between text-xs pt-3 border-t border-[#2a2a2a]">
+                <div className="flex items-center justify-between text-xs pt-3 border-t border-[#131c26]">
                   <div>
                     <div className="text-[#666]">Average</div>
                     <div className="text-[#919191] font-bold">{item.avg.toLocaleString()}</div>

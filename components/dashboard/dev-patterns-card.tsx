@@ -94,7 +94,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
   return (
     <div className="space-y-6">
       {/* Main Score Card */}
-      <div className="relative overflow-hidden bg-[#252525] border border-[#2a2a2a] rounded-2xl p-8">
+      <div className="relative overflow-hidden bg-[#050307] border border-[#131c26] rounded-2xl p-8">
         <div className={`absolute inset-0 bg-gradient-to-br ${getScoreBgColor(data.overallScore)} opacity-50`} />
         
         <div className="relative z-10">
@@ -115,13 +115,13 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row items-center">
-              <div className={`px-6 py-3 rounded-full bg-gradient-to-r ${getScoreBgColor(data.overallScore)} border border-[#2a2a2a]`}>
+              <div className={`px-6 py-3 rounded-full bg-gradient-to-r ${getScoreBgColor(data.overallScore)} border border-[#131c26]`}>
                 <span className={`text-2xl font-black bg-gradient-to-r ${getScoreColor(data.overallScore)} bg-clip-text text-transparent`}>
                   {data.grade}
                 </span>
               </div>
 
-              <div className="hidden sm:block px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-[#2a2a2a]">
+              <div className="hidden sm:block px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-[#131c26]">
                 <span className="text-sm font-bold text-purple-400">
                   {data.developerPersona}
                 </span>
@@ -148,7 +148,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="none"
-                  className="text-[#1f1f1f]"
+                  className="text-[#050307]"
                 />
                 <circle
                   cx="64"
@@ -175,7 +175,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full h-3 bg-[#1f1f1f] rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-[#050307] rounded-full overflow-hidden">
             <div 
               className={`h-full bg-gradient-to-r ${getScoreColor(data.overallScore)} transition-all duration-1000 ease-out relative`}
               style={{ width: `${scorePercentage}%` }}
@@ -194,7 +194,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
       <div className="text-center text-[#666] py-8">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* 1. Commit Patterns */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 text-[#666]" />
@@ -227,7 +227,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             </div>
             </div>
 
-            <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
                 className={`h-full bg-gradient-to-r ${getScoreColor(data.patterns.commitPatterns.score)} transition-all duration-1000`}
                 style={{ width: `${(data.patterns.commitPatterns.score / 10) * 100}%` }}
@@ -236,7 +236,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
         </div>
 
         {/* 2. Code Quality */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
                 <Code className="w-5 h-5 text-[#666]" />
@@ -269,7 +269,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             </div>
             </div>
 
-            <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
                 className={`h-full bg-gradient-to-r ${getScoreColor(data.patterns.codeQuality.score)} transition-all duration-1000`}
                 style={{ width: `${(data.patterns.codeQuality.score / 10) * 100}%` }}
@@ -278,7 +278,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
         </div>
 
         {/* 3. Work-Life Balance */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
                 <Zap className="w-5 h-5 text-[#666]" />
@@ -311,7 +311,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             </div>
             </div>
 
-            <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
                 className={`h-full bg-gradient-to-r ${getScoreColor(data.patterns.workLifeBalance.score)} transition-all duration-1000`}
                 style={{ width: `${(data.patterns.workLifeBalance.score / 10) * 100}%` }}
@@ -320,7 +320,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
         </div>
 
         {/* 4. Collaboration */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
                 <Users className="w-5 h-5 text-[#666]" />
@@ -353,7 +353,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             </div>
             </div>
 
-            <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
                 className={`h-full bg-gradient-to-r ${getScoreColor(data.patterns.collaboration.score)} transition-all duration-1000`}
                 style={{ width: `${(data.patterns.collaboration.score / 10) * 100}%` }}
@@ -362,7 +362,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
         </div>
 
         {/* 5. Technology */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-[#666]" />
@@ -395,7 +395,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             </div>
             </div>
 
-            <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
                 className={`h-full bg-gradient-to-r ${getScoreColor(data.patterns.technology.score)} transition-all duration-1000`}
                 style={{ width: `${(data.patterns.technology.score / 10) * 100}%` }}
@@ -404,7 +404,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
         </div>
 
         {/* 6. Productivity */}
-        <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
                 <Target className="w-5 h-5 text-[#666]" />
@@ -437,7 +437,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             </div>
             </div>
 
-            <div className="w-full h-2 bg-[#1f1f1f] rounded-full overflow-hidden mt-4">
+            <div className="w-full h-2 bg-[#050307] rounded-full overflow-hidden mt-4">
             <div 
                 className={`h-full bg-gradient-to-r ${getScoreColor(data.patterns.productivity.score)} transition-all duration-1000`}
                 style={{ width: `${(data.patterns.productivity.score / 10) * 100}%` }}
@@ -449,7 +449,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
         {/* Legend */}  
 </div>
      {/* 24-Hour Activity Heatmap - TAM GENİŞLİK */}
-<div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+<div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
   <div className="flex items-center gap-3 mb-6">
     <Clock className="w-6 h-6 text-purple-400" />
     <div>
@@ -474,7 +474,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
               className={`
                 h-16 rounded transition-all duration-200
                 ${isPeak ? 'ring-2 ring-purple-400' : ''}
-                ${activity === 0 ? 'bg-[#1f1f1f]' : ''}
+                ${activity === 0 ? 'bg-[#050307]' : ''}
               `}
               style={{
                 backgroundColor: activity > 0 
@@ -484,7 +484,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
             />
             
             {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-[#1f1f1f] border border-[#2a2a2a] rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-[#050307] border border-[#131c26] rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
               {hour}:00 - {activity}%
             </div>
           </div>
@@ -503,9 +503,9 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
   </div>
 
   {/* Legend */}
-  <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-[#2a2a2a]">
+  <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-[#131c26]">
     <div className="flex items-center gap-2 text-sm text-[#666]">
-      <div className="w-4 h-4 rounded bg-[#1f1f1f] border border-[#2a2a2a]" />
+      <div className="w-4 h-4 rounded bg-[#050307] border border-[#131c26]" />
       <span>No activity</span>
     </div>
     <div className="flex items-center gap-2 text-sm text-[#666]">
@@ -527,7 +527,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
 <div className="grid md:grid-cols-3 gap-6">
   {/* Strengths */}
   {data.insights.strengths.length > 0 && (
-    <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
       <div className="flex items-center gap-2 mb-4">
         <CheckCircle className="w-5 h-5 text-green-400" />
         <h4 className="text-lg font-black text-[#e0e0e0]">Strengths</h4>
@@ -545,7 +545,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
 
   {/* Patterns */}
   {data.insights.patterns.length > 0 && (
-    <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-5 h-5 text-purple-400" />
         <h4 className="text-lg font-black text-[#e0e0e0]">Your Patterns</h4>
@@ -563,7 +563,7 @@ export function DevPatternsCard({ data }: DevPatternsCardProps) {
 
   {/* Recommendations */}
   {data.insights.recommendations.length > 0 && (
-    <div className="bg-[#252525] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
       <div className="flex items-center gap-2 mb-4">
         <TrendingUp className="w-5 h-5 text-blue-400" />
         <h4 className="text-lg font-black text-[#e0e0e0]">Recommendations</h4>
