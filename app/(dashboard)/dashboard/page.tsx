@@ -170,21 +170,26 @@ export default function DashboardPage() {
     }
   };
 
-  const fetchProfile = async () => {
-    try {
-      const res = await fetch("/api/profile");
-      const data = await res.json();
-      if (data.profile) {
-        setProfileData(data.profile);
-        setHasProfile(true);
-        setUserPlan(data.user?.plan || "FREE");
+ const fetchProfile = async () => {
+  try {
+    const res = await fetch("/api/profile");
+    const data = await res.json();
+    if (data.profile) {
+      setProfileData(data.profile);
+      setHasProfile(true);
+      setUserPlan(data.user?.plan || "FREE");
+      
+      // ✅ Update score in database
+      if (data.user?.plan === "PRO") {
+        fetch("/api/score").catch(console.error);
       }
-    } catch (error) {
-      console.error("Failed to fetch profile:", error);
-    } finally {
-      setInitialLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Failed to fetch profile:", error);
+  } finally {
+    setInitialLoading(false);
+  }
+};
 
   const handleAnalyze = async () => {
     setLoading(true);
@@ -322,7 +327,7 @@ export default function DashboardPage() {
         className="lg:motion-safe:animate-fadeIn"
       >
         <h1 className="text-3xl font-black text-white tracking-tighter px-4 md:px-0">
-          DASHBOARD
+          Dashboard
         </h1>
         <p className="text-white/40 text-sm mt-1 px-4 md:px-0">
           Track your GitHub metrics and developer growth
@@ -341,7 +346,7 @@ export default function DashboardPage() {
               <TrendingUp className="h-10 w-10 text-white/60" />
             </div>
             <h2 className="text-3xl font-black text-white tracking-tighter">
-              ANALYZE YOUR PROFILE
+              Analyze Your Profile
             </h2>
             <p className="text-white/60 font-light">
               Get insights into your coding activity, discover your strengths, and see how you compare to other developers.
@@ -352,7 +357,7 @@ export default function DashboardPage() {
               onClick={handleAnalyze}
               disabled={loading}
             >
-              {loading ? "ANALYZING..." : "START ANALYSIS"}
+              {loading ? "Analyzing..." : "Start Analysis"}
             </Button>
             <p className="text-xs text-white/40 font-mono">
               ✓ FREE SCAN • NO LIMITS

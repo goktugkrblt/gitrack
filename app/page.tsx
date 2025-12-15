@@ -12,50 +12,63 @@ export default function HomePage() {
   const isAuthenticated = status === "authenticated";
   const isLoading = status === "loading";
 
-  const [profileCount, setProfileCount] = useState(6);
+  const [profileCount, setProfileCount] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  
+  // ✅ NEW: Leaderboard state
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [leaderboardCount, setLeaderboardCount] = useState(0);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll();
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-  // Reduced motion for accessibility
   const prefersReducedMotion = useReducedMotion();
 
-  // ✅ CHANGED: Disable scroll animations on mobile/tablet
   const headerY = useTransform(smoothProgress, [0, 0.3], !isMobile && !prefersReducedMotion ? [0, -100] : [0, 0]);
   const headerOpacity = useTransform(smoothProgress, [0, 0.2], !isMobile && !prefersReducedMotion ? [1, 0] : [1, 1]);
   const headerScale = useTransform(smoothProgress, [0, 0.2], !isMobile && !prefersReducedMotion ? [1, 0.95] : [1, 1]);
 
-  // Top 10 Profiles Mock Data
-  const topProfiles = [
-    { rank: 1, username: "torvalds", score: 98, avatar: "https://avatars.githubusercontent.com/u/1024025" },
-    { rank: 2, username: "gaearon", score: 97, avatar: "https://avatars.githubusercontent.com/u/810438" },
-    { rank: 3, username: "tj", score: 96, avatar: "https://avatars.githubusercontent.com/u/25254" },
-    { rank: 4, username: "sindresorhus", score: 95, avatar: "https://avatars.githubusercontent.com/u/170270" },
-    { rank: 5, username: "addyosmani", score: 94, avatar: "https://avatars.githubusercontent.com/u/110953" },
-    { rank: 6, username: "yyx990803", score: 93, avatar: "https://avatars.githubusercontent.com/u/499550" },
-    { rank: 7, username: "sophiebits", score: 92, avatar: "https://avatars.githubusercontent.com/u/6820" },
-    { rank: 8, username: "kentcdodds", score: 91, avatar: "https://avatars.githubusercontent.com/u/1500684" },
-    { rank: 9, username: "wesbos", score: 90, avatar: "https://avatars.githubusercontent.com/u/176013" },
-    { rank: 10, username: "mdo", score: 89, avatar: "https://avatars.githubusercontent.com/u/98681" },
-  ];
-
+  // Fetch profile count
   useEffect(() => {
     fetch('/api/profile-count')
       .then(res => res.json())
-      .then(data => setProfileCount(data.count))
-      .catch(() => setProfileCount(6));
+      .then(data => setProfileCount(data.count || 0))
+      .catch(() => setProfileCount(0));
+  }, []);
+
+  // ✅ NEW: Fetch real leaderboard
+  useEffect(() => {
+    setLeaderboardLoading(true);
+    fetch('/api/leaderboard')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setLeaderboard(data.leaderboard);
+          setLeaderboardCount(data.count);
+        } else {
+          setLeaderboard([]);
+          setLeaderboardCount(0);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to load leaderboard:', err);
+        setLeaderboard([]);
+        setLeaderboardCount(0);
+      })
+      .finally(() => {
+        setLeaderboardLoading(false);
+      });
   }, []);
 
   useEffect(() => {
     setMounted(true);
     
-    // Detect mobile (tablet included)
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024); // ✅ Changed to 1024px (lg breakpoint)
+      setIsMobile(window.innerWidth < 1024);
     };
     
     checkMobile();
@@ -64,7 +77,6 @@ export default function HomePage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Mouse tracking for interactive grid (only on desktop)
   useEffect(() => {
     if (isMobile || prefersReducedMotion) return;
     
@@ -82,10 +94,9 @@ export default function HomePage() {
   return (
     <div ref={containerRef} className="min-h-screen relative overflow-hidden">
       
-      {/* ✨ OPTIMIZED ANIMATED BACKGROUND */}
+      {/* ✨ ANIMATED BACKGROUND */}
       <div className="fixed inset-0 pointer-events-none z-0">
         
-        {/* Gradient Mesh Animation - Reduced on mobile */}
         <div className="absolute inset-0">
           <motion.div
             className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px]"
@@ -128,7 +139,6 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Interactive Grid - Desktop only */}
         {!isMobile && !prefersReducedMotion && (
           <motion.div 
             className="absolute inset-0"
@@ -143,7 +153,6 @@ export default function HomePage() {
           />
         )}
 
-        {/* Reduced shapes on mobile/tablet */}
         {mounted && !prefersReducedMotion && [...Array(isMobile ? 5 : 15)].map((_, i) => (
           <motion.div
             key={`shape-${i}`}
@@ -171,7 +180,6 @@ export default function HomePage() {
           />
         ))}
 
-        {/* Particle Network - Desktop only */}
         {mounted && !isMobile && !prefersReducedMotion && (
           <svg className="absolute inset-0 w-full h-full opacity-20">
             <defs>
@@ -207,7 +215,6 @@ export default function HomePage() {
           </svg>
         )}
 
-        {/* Animated Lines - Desktop only */}
         {mounted && !isMobile && !prefersReducedMotion && [...Array(6)].map((_, i) => (
           <motion.div
             key={`line-${i}`}
@@ -229,17 +236,14 @@ export default function HomePage() {
           />
         ))}
 
-        {/* Scan Lines - Retro CRT effect */}
         <div className="absolute inset-0 opacity-[0.02]">
           <div className="absolute inset-0" style={{
             backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
           }} />
         </div>
 
-        {/* Vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
         
-        {/* Noise Texture - Desktop only */}
         {!isMobile && (
           <div 
             className="absolute inset-0 opacity-[0.02]"
@@ -250,20 +254,18 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Scroll Progress */}
       <motion.div 
         className="fixed top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500/50 via-pink-500/50 to-blue-500/50 origin-left z-50"
         style={{ scaleX: smoothProgress }}
       />
 
-      {/* Main Content */}
+      {/* MAIN CONTENT */}
       <div className="relative z-10">
         
         {/* HEADER SECTION */}
         <div className="max-w-4xl mx-auto px-6 py-8 md:py-12">
-          {/* ✅ CHANGED: Disable scroll effects on mobile/tablet */}
-<motion.header
-  className="flex flex-col lg:flex-row gap-8 items-end justify-between mb-12 md:mb-20 md:items-start md:pl-[40px]"
+          <motion.header
+            className="flex flex-col lg:flex-row gap-8 items-end justify-between mb-12 md:mb-20 md:items-start md:pl-[40px]"
             style={!isMobile && !prefersReducedMotion ? { 
               y: headerY,
               opacity: headerOpacity,
@@ -446,7 +448,12 @@ export default function HomePage() {
               transition={{ delay: isMobile ? 0 : 1.2, duration: isMobile ? 0 : 0.8 }}
               className="hidden lg:block w-[260px] flex-shrink-0"
             >
-              <LeaderboardCard profiles={topProfiles} isMobile={isMobile} />
+              <LeaderboardCard 
+                profiles={leaderboard}
+                count={leaderboardCount}
+                loading={leaderboardLoading}
+                isMobile={isMobile} 
+              />
             </motion.div>
           </motion.header>
 
@@ -457,7 +464,12 @@ export default function HomePage() {
             transition={{ delay: isMobile ? 0 : 1, duration: isMobile ? 0 : 0.8 }}
             className="lg:hidden mb-12"
           >
-            <LeaderboardCard profiles={topProfiles} isMobile={isMobile} />
+            <LeaderboardCard 
+              profiles={leaderboard}
+              count={leaderboardCount}
+              loading={leaderboardLoading}
+              isMobile={isMobile} 
+            />
           </motion.div>
         </div>
 
@@ -733,8 +745,18 @@ export default function HomePage() {
   );
 }
 
-// Leaderboard Card Component
-function LeaderboardCard({ profiles, isMobile }: { profiles: any[], isMobile: boolean }) {
+// ✅ NEW: Leaderboard Card Component with Real Data Support
+function LeaderboardCard({ 
+  profiles, 
+  count,
+  loading,
+  isMobile 
+}: { 
+  profiles: any[], 
+  count: number,
+  loading: boolean,
+  isMobile: boolean 
+}) {
   return (
     <div className="border border-white/[0.08] rounded-xl bg-white/[0.02] p-4 backdrop-blur-sm">
       {/* Header */}
@@ -745,52 +767,88 @@ function LeaderboardCard({ profiles, isMobile }: { profiles: any[], isMobile: bo
         </h3>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="space-y-2">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex items-center gap-2 p-1.5">
+              <div className="w-5 h-5 rounded-full bg-white/5 animate-pulse" />
+              <div className="w-6 h-6 rounded-full bg-white/5 animate-pulse" />
+              <div className="flex-1 h-3 bg-white/5 rounded animate-pulse" />
+              <div className="w-8 h-3 bg-white/5 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && count === 0 && (
+        <div className="py-8 text-center">
+          <div className="text-4xl mb-3">🏆</div>
+          <p className="text-xs text-white/60 mb-2 font-medium">No rankings yet</p>
+          <p className="text-[10px] text-white/40 leading-relaxed">
+            Be the first to analyze
+            <br />
+            your GitHub profile!
+          </p>
+        </div>
+      )}
+
       {/* List */}
-      <div className="space-y-1.5">
-        {profiles.map((profile, i) => (
-          <motion.div
-            key={profile.username}
-            initial={{ opacity: 0, x: isMobile ? 0 : -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: isMobile ? 0 : 0.2 + (i * 0.05), duration: isMobile ? 0 : 0.3 }}
-            whileHover={!isMobile ? { x: 2, backgroundColor: "rgba(255,255,255,0.03)" } : {}}
-            className="flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer group"
-          >
-            {/* Rank */}
-            <div className={`
-              w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold flex-shrink-0
-              ${profile.rank === 1 ? 'bg-yellow-500/20 text-yellow-500' : ''}
-              ${profile.rank === 2 ? 'bg-gray-400/20 text-gray-400' : ''}
-              ${profile.rank === 3 ? 'bg-orange-600/20 text-orange-600' : ''}
-              ${profile.rank > 3 ? 'bg-white/5 text-white/40' : ''}
-            `}>
-              {profile.rank}
-            </div>
-
-            {/* Avatar */}
-            <img 
-              src={profile.avatar} 
-              alt={profile.username}
-              className="w-6 h-6 rounded-full border border-white/10 flex-shrink-0"
-            />
-
-            {/* Username */}
-            <div className="flex-1 min-w-0">
-              <div className="text-[11px] text-white/90 font-medium truncate">
-                {profile.username}
+      {!loading && count > 0 && (
+        <div className="space-y-1.5">
+          {profiles.map((profile, i) => (
+            <motion.div
+              key={profile.username}
+              initial={{ opacity: 0, x: isMobile ? 0 : -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ 
+                delay: isMobile ? 0 : 0.2 + (i * 0.05), 
+                duration: isMobile ? 0 : 0.3 
+              }}
+              whileHover={!isMobile ? { 
+                x: 2, 
+                backgroundColor: "rgba(255,255,255,0.03)" 
+              } : {}}
+              className="flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer group"
+            >
+              {/* Rank */}
+              <div className={`
+                w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold flex-shrink-0
+                ${profile.rank === 1 ? 'bg-yellow-500/20 text-yellow-500' : ''}
+                ${profile.rank === 2 ? 'bg-gray-400/20 text-gray-400' : ''}
+                ${profile.rank === 3 ? 'bg-orange-600/20 text-orange-600' : ''}
+                ${profile.rank > 3 ? 'bg-white/5 text-white/40' : ''}
+              `}>
+                {profile.rank}
               </div>
-            </div>
 
-            {/* Score */}
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <Star className="h-2.5 w-2.5 text-white/40 group-hover:text-white/60 transition-colors" />
-              <span className="text-[10px] font-mono text-white/60 group-hover:text-white/80 transition-colors">
-                {profile.score}
-              </span>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+              {/* Avatar */}
+              <img 
+                src={profile.avatar} 
+                alt={profile.username}
+                className="w-6 h-6 rounded-full border border-white/10 flex-shrink-0"
+                loading="lazy"
+              />
+
+              {/* Username */}
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] text-white/90 font-medium truncate">
+                  {profile.username}
+                </div>
+              </div>
+
+              {/* Score */}
+<div className="flex items-center gap-1 flex-shrink-0">
+  <Star className="h-2.5 w-2.5 text-white/40 group-hover:text-white/60 transition-colors" />
+  <span className="text-[10px] font-mono text-white/60 group-hover:text-white/80 transition-colors">
+    {profile.score.toFixed(2)}  {/* ✅ CHANGED: 54.30 instead of 54.3 */}
+  </span>
+</div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Footer */}
       <motion.div
@@ -800,9 +858,19 @@ function LeaderboardCard({ profiles, isMobile }: { profiles: any[], isMobile: bo
         className="mt-4 pt-3 border-t border-white/[0.06] text-center"
       >
         <p className="text-[9px] text-white/40 font-mono leading-tight">
-          Updated daily
-          <br />
-          Based on GitCheck scores
+          {count > 0 ? (
+            <>
+              {count} developer{count > 1 ? 's' : ''} ranked
+              <br />
+              Updated live
+            </>
+          ) : (
+            <>
+              Start your journey
+              <br />
+              Analyze your profile
+            </>
+          )}
         </p>
       </motion.div>
     </div>

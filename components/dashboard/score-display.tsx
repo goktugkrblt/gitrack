@@ -194,7 +194,7 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
               onClick={() => setShowBreakdown(!showBreakdown)}
               className="w-full flex items-center justify-center gap-2 text-sm text-white/60 hover:text-white transition-colors group"
             >
-              <span className="font-medium">Why this score?</span>
+              <span className="font-medium cursor-pointer">Why this score?</span>
               {showBreakdown ? (
                 <ChevronUp className="w-4 h-4 group-hover:transform group-hover:-translate-y-0.5 transition-transform" />
               ) : (
