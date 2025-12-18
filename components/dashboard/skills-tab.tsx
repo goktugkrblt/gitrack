@@ -10,7 +10,7 @@ interface SkillsTabProps {
 export function SkillsTab({ profileData }: SkillsTabProps) {
   if (!profileData) {
     return (
-      <div className="bg-[#050307] rounded-xl border border-[#131c26] p-1 text-center">
+      <div className="bg-white/5 rounded-xl border border-[#131c26] p-1 text-center">
         <Code className="w-12 h-12 text-[#666] mx-auto mb-4" />
         <h3 className="text-xl font-bold text-[#e0e0e0] mb-2">No Skills Data</h3>
         <p className="text-[#666] text-sm">Please analyze your profile first</p>
@@ -72,7 +72,7 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">          
         {/* LANGUAGES */}
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
+        <div className="bg-white/5 border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">LANGUAGES</h3>
             <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
         </div>
 
         {/* FRAMEWORKS */}
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
+        <div className="bg-white/5 border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">FRAMEWORKS</h3>
             <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
         </div>
 
         {/* GISTS */}
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
+        <div className="bg-white/5 border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">GISTS</h3>
             <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
 
       {/* Framework Detection */}
       {frameworkEntries.length > 0 && (
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        <div className="bg-white/5 border border-[#131c26] rounded-xl p-6">
           <h3 className="text-xl font-bold text-[#e0e0e0] mb-6 flex items-center gap-2">
             <Boxes className="h-5 w-5" />
             Framework Detection
@@ -143,7 +143,7 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
             {frameworkEntries.map(([framework, count]: any) => (
               <div 
                 key={framework}
-                className="bg-[#050307] border border-[#131c26] rounded-lg p-4 hover:border-[#666] transition-colors"
+                className="bg-white/5 border border-[#131c26] rounded-lg p-4 hover:border-[#666] transition-colors"
               >
                 <div className="text-2xl mb-2">{frameworkEmojis[framework] || '📦'}</div>
                 <div className="text-sm font-bold text-[#e0e0e0] mb-1 truncate">
@@ -163,7 +163,7 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
 
       {/* Top Languages List */}
       {languageEntries.length > 0 && (
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        <div className="bg-white/5 border border-[#131c26] rounded-xl p-6">
           <h3 className="text-xl font-bold text-[#e0e0e0] mb-6">Language Breakdown</h3>
           <div className="space-y-3">
             {languageEntries.map(([lang, bytes]: any, i: number) => {
@@ -178,7 +178,7 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
                       <span className="text-sm font-bold text-[#e0e0e0] truncate">{lang}</span>
                       <span className="text-xs text-[#666] ml-2">{percentage}%</span>
                     </div>
-                    <div className="w-full bg-[#050307] rounded-full h-2">
+                    <div className="w-full bg-white/5 rounded-full h-2">
                       <div 
                         className="bg-[#666] h-2 rounded-full transition-all duration-500"
                         style={{ width: `${percentage}%` }}

@@ -17,7 +17,7 @@ interface ComponentScore {
   source: 'pro' | 'fallback';
   description: string;
   details?: string;
-  subScores?: { [key: string]: number | string }; // ✅ Added
+  subScores?: { [key: string]: number | string };
 }
 
 export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps) {
@@ -36,14 +36,23 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
   useEffect(() => {
     const fetchComponents = async () => {
       try {
+        console.log('🔍 [ScoreDisplay] Fetching score components...');
         const response = await fetch('/api/profile');
         const data = await response.json();
+        
+        console.log('📊 [ScoreDisplay] Profile data received');
+        console.log('📊 [ScoreDisplay] scoreComponents:', data.profile?.scoreComponents);
+        console.log('📊 [ScoreDisplay] scoringMethod:', data.profile?.scoringMethod);
+        
         if (data.profile?.scoreComponents) {
           setComponents(data.profile.scoreComponents);
-          setScoringMethod(data.profile.scoringMethod || 'fallback');
+          setScoringMethod(data.profile.scoringMethod || 'pro');
+          console.log('✅ [ScoreDisplay] Components set successfully');
+        } else {
+          console.log('⚠️ [ScoreDisplay] No score components found in response');
         }
       } catch (error) {
-        console.error('Failed to fetch score components:', error);
+        console.error('❌ [ScoreDisplay] Failed to fetch score components:', error);
       }
     };
 
@@ -51,12 +60,18 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
 
     // Listen for score updates
     const handleScoreUpdate = () => {
+      console.log('🔄 [ScoreDisplay] Score update event - refetching components');
       fetchComponents();
     };
 
     window.addEventListener('proAnalysisComplete', handleScoreUpdate);
     return () => window.removeEventListener('proAnalysisComplete', handleScoreUpdate);
   }, []);
+
+  // ✅ Debug: Log when components change
+  useEffect(() => {
+    console.log('🎯 [ScoreDisplay] Components state updated:', components);
+  }, [components]);
 
   // Determine grade based on score
   const getGrade = (score: number): { grade: string; color: string; label: string; bgColor: string } => {
@@ -148,7 +163,6 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
         </div>
 
         <div className="flex flex-col items-center gap-4 mb-6">
-          {/* ✅ UPDATED: Score Display with /100 and decimals */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -168,7 +182,6 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
             </p>
           </motion.div>
 
-          {/* ✅ FIXED: Grade Badge with proper styling */}
           <div className={`flex items-center gap-3 px-6 py-2.5 rounded-full ${gradeInfo.bgColor} border-2 border-white/20`}>
             <span className={`text-3xl font-black bg-gradient-to-br ${gradeInfo.color} bg-clip-text text-transparent`}>
               {gradeInfo.grade}
@@ -187,7 +200,7 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
           </p>
         </div>
 
-        {/* ✅ NEW: Score Breakdown Toggle */}
+        {/* ✅ Score Breakdown Toggle */}
         {components && (
           <div className="mt-4 pt-4 border-t border-white/10">
             <button
@@ -224,7 +237,6 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
                               <span className="text-xl">{config.icon}</span>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  {/* ✅ CHANGED: Show actual metrics from description instead of component name */}
                                   <p className="text-xs text-white/80 font-medium">
                                     {component.description}
                                   </p>
@@ -254,7 +266,7 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
                             />
                           </div>
 
-                          {/* ✅ NEW: Generic scoring explanation instead of user's scores */}
+                          {/* Generic scoring explanation */}
                           <div className="mt-3 pt-3 border-t border-white/10">
                             <p className="text-xs text-white/60 font-semibold mb-2 uppercase tracking-wider">
                               📊 How This Is Calculated:
@@ -304,7 +316,7 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
                       );
                     })}
 
-                    {/* ✅ NEW: Mathematical Formula */}
+                    {/* Mathematical Formula */}
                     <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-lg">
                       <p className="text-xs text-white/60 font-semibold mb-2 uppercase tracking-wider">
                         🧮 Final Calculation:
@@ -318,7 +330,7 @@ export function ScoreDisplay({ score, percentile, username }: ScoreDisplayProps)
                       </p>
                     </div>
 
-                    {/* ✅ UPDATED: Scoring Method & Formula Explanation */}
+                    {/* Scoring Method & Formula Explanation */}
                     <div className="mt-2 p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-lg">
                       <p className="text-xs text-white/60 font-semibold mb-2 uppercase tracking-wider">
                         🧮 Scoring Methodology:
