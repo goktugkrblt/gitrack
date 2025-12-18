@@ -746,6 +746,7 @@ export default function HomePage() {
 }
 
 // ✅ NEW: Leaderboard Card Component with Real Data Support
+// ✅ FIXED: Leaderboard Card Component - Hydration Error Fixed
 function LeaderboardCard({ 
   profiles, 
   count,
@@ -794,12 +795,15 @@ function LeaderboardCard({
         </div>
       )}
 
-      {/* List */}
+      {/* List - Clickable Links */}
       {!loading && count > 0 && (
         <div className="space-y-1.5">
           {profiles.map((profile, i) => (
-            <motion.div
+            <motion.a
               key={profile.username}
+              href={`https://github.com/${profile.username}`}
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, x: isMobile ? 0 : -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ 
@@ -808,7 +812,7 @@ function LeaderboardCard({
               }}
               whileHover={!isMobile ? { 
                 x: 2, 
-                backgroundColor: "rgba(255,255,255,0.03)" 
+                backgroundColor: "rgba(255,255,255,0.05)" 
               } : {}}
               className="flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer group"
             >
@@ -833,46 +837,45 @@ function LeaderboardCard({
 
               {/* Username */}
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] text-white/90 font-medium truncate">
+                <div className="text-[11px] text-white/90 font-medium truncate group-hover:text-white transition-colors">
                   {profile.username}
                 </div>
               </div>
 
-              {/* Score */}
-<div className="flex items-center gap-1 flex-shrink-0">
-  <Star className="h-2.5 w-2.5 text-white/40 group-hover:text-white/60 transition-colors" />
-  <span className="text-[10px] font-mono text-white/60 group-hover:text-white/80 transition-colors">
-    {profile.score.toFixed(2)}  {/* ✅ CHANGED: 54.30 instead of 54.3 */}
-  </span>
-</div>
-            </motion.div>
+              {/* Score - No Star Icon */}
+              <div className="flex-shrink-0">
+                <span className="text-[10px] font-mono text-white/60 group-hover:text-white/80 transition-colors">
+                  {profile.score.toFixed(2)}
+                </span>
+              </div>
+            </motion.a>
           ))}
         </div>
       )}
 
-      {/* Footer */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: isMobile ? 0 : 0.8 }}
-        className="mt-4 pt-3 border-t border-white/[0.06] text-center"
-      >
-        <p className="text-[9px] text-white/40 font-mono leading-tight">
+      {/* Footer - ✅ FIXED: No conditional rendering inside */}
+      <div className="mt-4 pt-3 border-t border-white/[0.06] text-center">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: isMobile ? 0 : 0.8 }}
+          className="text-[9px] text-white/40 font-mono leading-tight"
+        >
           {count > 0 ? (
-            <>
+            <span>
               {count} developer{count > 1 ? 's' : ''} ranked
               <br />
               Updated live
-            </>
+            </span>
           ) : (
-            <>
+            <span>
               Start your journey
               <br />
               Analyze your profile
-            </>
+            </span>
           )}
-        </p>
-      </motion.div>
+        </motion.p>
+      </div>
     </div>
   );
 }

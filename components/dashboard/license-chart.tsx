@@ -59,12 +59,23 @@ export function LicenseChart({ licenses }: LicenseChartProps) {
             />
           ))}
         </Pie>
+        {/* ✅ FIXED: Added itemStyle for text visibility */}
         <Tooltip 
           contentStyle={{ 
             backgroundColor: '#050307', 
             border: '1px solid #131c26',
             borderRadius: '8px',
-            color: '#e0e0e0'
+            color: '#e0e0e0',
+            padding: '8px 12px',
+          }}
+          itemStyle={{
+            color: '#e0e0e0',
+            fontSize: '13px',
+          }}
+          labelStyle={{
+            color: '#e0e0e0',
+            fontWeight: 'bold',
+            marginBottom: '4px',
           }}
           formatter={(value: number, name: string) => [`${value} repos`, name]}
         />

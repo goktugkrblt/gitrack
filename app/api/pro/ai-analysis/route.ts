@@ -57,9 +57,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    if (user.plan !== 'PRO') {
+    // ✅ DEV MODE: Allow in development, require PRO in production
+    const isDev = process.env.NODE_ENV === 'development';
+    const hasPRO = user.plan === 'PRO' || isDev;
+
+    if (!hasPRO) {
+      console.log(`❌ PRO plan required (user plan: ${user.plan}, dev: ${isDev})`);
       return NextResponse.json({ error: 'PRO plan required' }, { status: 403 });
     }
+
+    console.log(`✅ Access granted: ${isDev ? 'DEV MODE' : 'PRO USER'}`);
 
     const username = user.githubUsername;
 
