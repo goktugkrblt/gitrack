@@ -23,7 +23,8 @@ import {
   Activity,
   Target,
   Sparkles,
-  Brain
+  Brain,
+  Info // ✅ Info icon eklendi
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -43,6 +44,7 @@ export default function DashboardPage() {
   // ✅ NEW: PRO Analysis state
   const [proAnalysisStatus, setProAnalysisStatus] = useState<'idle' | 'running' | 'complete'>('idle');
   const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [initialCheckDone, setInitialCheckDone] = useState(false); // ✅ YENİ: Sadece bir kez kontrol
 
   const effectivePlan = process.env.NODE_ENV === 'development' && devMockPlan 
     ? devMockPlan 
@@ -131,6 +133,14 @@ export default function DashboardPage() {
 
   // ✅ NEW: Start background PRO analysis
   const startBackgroundAnalysis = async () => {
+    // ✅ YENİ: Eğer zaten score varsa, analiz yapma!
+    if (profileData?.score && profileData.score > 0) {
+      console.log('✅ Score exists, skipping analysis');
+      setProAnalysisStatus('complete');
+      setAnalysisProgress(100);
+      return;
+    }
+
     setProAnalysisStatus('running');
     setAnalysisProgress(0);
     
@@ -140,7 +150,7 @@ export default function DashboardPage() {
       // Simulate progress
       const progressInterval = setInterval(() => {
         setAnalysisProgress(prev => {
-          if (prev >= 90) return 90; // Stop at 90%, wait for actual completion
+          if (prev >= 90) return 90;
           return prev + 5;
         });
       }, 1000);
@@ -152,21 +162,25 @@ export default function DashboardPage() {
 
       if (result.success) {
         console.log('✅ Background PRO analysis complete');
+        
+        // ✅ YENİ: Score'u güncelle
+        console.log('🔄 Updating score in database...');
+        await fetch('/api/score'); // Score hesapla ve kaydet
+        
         setProAnalysisStatus('complete');
         setAnalysisProgress(100);
         
-        // Dispatch event for other components
         window.dispatchEvent(new Event('proAnalysisComplete'));
         
         // Refresh profile data
         await fetchProfile();
       } else {
         console.error('❌ PRO analysis failed:', result.error);
-        setProAnalysisStatus('complete'); // Still show score even if analysis fails
+        setProAnalysisStatus('complete');
       }
     } catch (error) {
       console.error('❌ Background analysis error:', error);
-      setProAnalysisStatus('complete'); // Still show score even on error
+      setProAnalysisStatus('complete');
     }
   };
 
@@ -179,9 +193,17 @@ export default function DashboardPage() {
       setHasProfile(true);
       setUserPlan(data.user?.plan || "FREE");
       
-      // ✅ Update score in database
-      if (data.user?.plan === "PRO") {
-        fetch("/api/score").catch(console.error);
+      // ✅ YENİ: Score > 0 ise analiz tamamlanmış
+      if (!initialCheckDone) {
+        if (data.profile.score > 0) {
+          console.log('✅ Score ready:', data.profile.score);
+          setProAnalysisStatus('complete');
+          setAnalysisProgress(100);
+        } else {
+          console.log('⚠️ No score yet, analysis needed');
+          // Status 'idle' kalacak
+        }
+        setInitialCheckDone(true);
       }
     }
   } catch (error) {
@@ -194,12 +216,14 @@ export default function DashboardPage() {
   const handleAnalyze = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/github/analyze", {
+      // ✅ skipPro=true ile sadece public verileri çek (hızlı ~5 saniye)
+      const res = await fetch("/api/github/analyze?skipPro=true", {
         method: "POST",
       });
       const data = await res.json();
       
       if (data.success) {
+        // ✅ Public veriler geldi, dashboard'a geç
         await fetchProfile();
       } else {
         alert(data.error || "Analysis failed");
@@ -353,14 +377,48 @@ export default function DashboardPage() {
             </p>
             <Button 
               size="lg" 
-              className="bg-white text-black hover:bg-white/90 px-12 py-7 text-base font-bold rounded-2xl transition-colors duration-300"
+              className="bg-white text-black hover:bg-white/90 px-12 py-7 text-base font-bold rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
               onClick={handleAnalyze}
               disabled={loading}
             >
-              {loading ? "Analyzing..." : "Start Analysis"}
+              {loading ? (
+                <span className="flex items-center gap-3">
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle 
+                      className="opacity-25" 
+                      cx="12" 
+                      cy="12" 
+                      r="10" 
+                      stroke="currentColor" 
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path 
+                      className="opacity-75" 
+                      fill="currentColor" 
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Analyzing Your Profile...
+                </span>
+              ) : (
+                <span className="relative z-10">Start Analysis</span>
+              )}
+              {!loading && (
+                <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+              )}
             </Button>
             <p className="text-xs text-white/40 font-mono">
-              ✓ FREE SCAN • NO LIMITS
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="inline-block w-1 h-1 bg-white/40 rounded-full animate-pulse" />
+                  <span className="inline-block w-1 h-1 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                  <span className="inline-block w-1 h-1 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+                  <span className="ml-2">Fetching your GitHub data...</span>
+                </span>
+              ) : (
+                "✓ FREE SCAN • NO LIMITS"
+              )}
             </p>
           </div>
         </div>
@@ -482,6 +540,7 @@ export default function DashboardPage() {
               </TabsList>
             </div>
 
+            {/* ✅ OVERVIEW TAB - Info iconlar eklendi */}
             <TabsContent value="overview" className="space-y-6 mt-6 px-4 md:px-0">
               <div>
                 <h2 className="text-3xl font-black text-white tracking-tighter mb-2">
@@ -493,55 +552,109 @@ export default function DashboardPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+                {/* TOTAL COMMITS */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm relative">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xs font-bold text-white/40 tracking-wider">TOTAL COMMITS</h3>
-                    <GitBranch className="h-4 w-4 text-white/40" />
+                    <div className="flex items-center gap-2">
+                      <GitBranch className="h-4 w-4 text-white/40" />
+                      <div className="relative group/tooltip">
+                        <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                        <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                          Total number of commits you've made across all your repositories
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <p className="text-2xl font-black text-white mb-1">{displayData.totalCommits}</p>
                   <p className="text-xs text-white/40">{displayData.averageCommitsPerDay}/day average</p>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+                {/* PULL REQUESTS */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm relative">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xs font-bold text-white/40 tracking-wider">PULL REQUESTS</h3>
-                    <GitPullRequest className="h-4 w-4 text-white/40" />
+                    <div className="flex items-center gap-2">
+                      <GitPullRequest className="h-4 w-4 text-white/40" />
+                      <div className="relative group/tooltip">
+                        <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                        <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                          Total pull requests you've created. Shows how actively you collaborate and contribute to projects
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <p className="text-2xl font-black text-white mb-1">{displayData.totalPRs}</p>
                   <p className="text-xs text-white/40">{displayData.mergedPRs} merged</p>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+                {/* CURRENT STREAK */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm relative">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xs font-bold text-white/40 tracking-wider">CURRENT STREAK</h3>
-                    <Zap className="h-4 w-4 text-white/40" />
+                    <div className="flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-white/40" />
+                      <div className="relative group/tooltip">
+                        <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                        <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                          Consecutive days with at least one commit. Maintain your streak to show consistency!
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <p className="text-2xl font-black text-white mb-1">{displayData.currentStreak} days</p>
                   <p className="text-xs text-white/40">Longest: {displayData.longestStreak} days</p>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+                {/* COMMUNITY */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm relative">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xs font-bold text-white/40 tracking-wider">COMMUNITY</h3>
-                    <Users className="h-4 w-4 text-white/40" />
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-white/40" />
+                      <div className="relative group/tooltip">
+                        <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                        <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                          Your GitHub followers count. Reflects your influence and network in the developer community
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <p className="text-2xl font-black text-white mb-1">{displayData.followersCount}</p>
                   <p className="text-xs text-white/40">{displayData.organizationsCount} organizations</p>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+                {/* ISSUES OPENED */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm relative">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xs font-bold text-white/40 tracking-wider">ISSUES OPENED</h3>
-                    <Activity className="h-4 w-4 text-white/40" />
+                    <div className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-white/40" />
+                      <div className="relative group/tooltip">
+                        <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                        <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                          Total issues you've opened. Shows your engagement in identifying bugs and suggesting improvements
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <p className="text-2xl font-black text-white mb-1">{displayData.totalIssuesOpened || 0}</p>
                   <p className="text-xs text-white/40">Contributions made</p>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+                {/* CODE REVIEWS */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm relative">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xs font-bold text-white/40 tracking-wider">CODE REVIEWS</h3>
-                    <Code className="h-4 w-4 text-white/40" />
+                    <div className="flex items-center gap-2">
+                      <Code className="h-4 w-4 text-white/40" />
+                      <div className="relative group/tooltip">
+                        <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                        <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                          Number of code reviews you've completed. Demonstrates your collaboration and code quality focus
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <p className="text-2xl font-black text-white mb-1">{displayData.totalReviews || 0}</p>
                   <p className="text-xs text-white/40">Reviews given</p>
@@ -591,7 +704,7 @@ export default function DashboardPage() {
               </div>
             </TabsContent>
           </Tabs>
-          </div> {/* ✅ Close tabs wrapper */}
+          </div>
         </>
       )}
     </div>

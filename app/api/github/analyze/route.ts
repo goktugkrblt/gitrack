@@ -14,6 +14,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // ✅ YENİ: Query parametresini kontrol et
+    const url = new URL(req.url);
+    const skipPro = url.searchParams.get('skipPro') === 'true';
+    
+    if (skipPro) {
+      console.log('⚡ Fast mode: Skipping PRO analysis (will run in background)');
+    }
+
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: { 
@@ -91,39 +99,8 @@ export async function POST(req: NextRequest) {
 
     const avgRepoQuality = calculateAverageQuality(repos);
 
-    // ✅ TEMPORARY: Use fallback score for initial save
-    const tempScoringResult = calculateDeveloperScore({
-      basicMetrics: {
-        totalCommits: contributions.totalCommits,
-        totalRepos: repos.length,
-        totalStars,
-        totalForks,
-        totalPRs: pullRequests.totalPRs,
-        mergedPRs: pullRequests.mergedPRs,
-        openPRs: pullRequests.openPRs,
-        totalIssuesOpened: contributions.totalIssues,
-        totalReviews: contributions.totalReviews,
-        currentStreak: activity.currentStreak,
-        longestStreak: activity.longestStreak,
-        averageCommitsPerDay: activity.averageCommitsPerDay,
-        weekendActivity: activity.weekendActivity,
-        followersCount: userData.followers,
-        followingCount: userData.following,
-        organizationsCount,
-        gistsCount,
-        accountAge,
-        totalContributions: contributions.contributionCalendar.totalContributions,
-        mostActiveDay: activity.mostActiveDay,
-        averageRepoSize: repos.length > 0 
-          ? Math.round(repos.reduce((sum, repo: any) => sum + (repo.size || 0), 0) / repos.length) 
-          : 0,
-      },
-    });
-
-    const tempScore = tempScoringResult.overallScore;
-    const tempPercentile = tempScoringResult.percentile;
-
-    console.log(`🎯 Temporary Score: ${tempScore.toFixed(2)} (${tempPercentile}th percentile)`);
+    // ✅ SADECE PRO PUAN SİSTEMİ: Puan hesaplama yok!
+    console.log('⚠️ No score calculation - waiting for PRO analysis');
 
     const topReposData = repos
       .filter(r => !r.fork)
@@ -163,8 +140,8 @@ export async function POST(req: NextRequest) {
         userId: user.id 
       },
       update: {
-        score: tempScore,
-        percentile: tempPercentile,
+        score: 0, // Prisma null kabul etmiyorsa 0
+        percentile: 0,
         totalCommits: contributions.totalCommits,
         totalRepos: repos.length,
         totalStars,
@@ -218,8 +195,8 @@ export async function POST(req: NextRequest) {
       create: {
         userId: user.id,
         
-        score: tempScore,
-        percentile: tempPercentile,
+        score: 0, // PRO analizi yapacak
+        percentile: 0,
         totalCommits: contributions.totalCommits,
         totalRepos: repos.length,
         totalStars,
@@ -276,7 +253,40 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // ✅ NEW: Clear old PRO cache before fresh analysis
+    // ✅ YENİ: skipPro true ise burada dur, PRO analizini atla
+    if (skipPro) {
+      console.log('✅ Public data saved. PRO analysis will run in background.');
+      
+      // Clear old PRO cache
+      await prisma.profile.update({
+        where: { userId: user.id },
+        data: {
+          codeQualityCache: Prisma.JsonNull,
+          repoHealthCache: Prisma.JsonNull,
+          testCoverageCache: Prisma.JsonNull,
+          cicdAnalysisCache: Prisma.JsonNull,
+          lastCodeQualityScan: null,
+          lastRepoHealthScan: null,
+          lastTestCoverageScan: null,
+          lastCicdAnalysisScan: null,
+        },
+      });
+      
+      const finalRateLimit = await github.getRateLimitInfo();
+      
+      return NextResponse.json({
+        success: true,
+        profile,
+        skipPro: true,
+        rateLimit: {
+          remaining: finalRateLimit.remaining,
+          limit: finalRateLimit.limit,
+          reset: finalRateLimit.reset,
+        },
+      });
+    }
+
+    // ✅ Normal flow: PRO analizini de yap
     console.log('🗑️  Clearing old PRO cache for fresh analysis...');
     await prisma.profile.update({
       where: { userId: user.id },

@@ -1,6 +1,6 @@
 "use client";
 
-import { Code, BarChart3, Boxes } from "lucide-react";
+import { Code, BarChart3, Boxes, Info } from "lucide-react";
 import { LanguageChart } from "./language-chart";
 
 interface SkillsTabProps {
@@ -71,10 +71,19 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">          
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        {/* LANGUAGES */}
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">LANGUAGES</h3>
-            <Code className="h-4 w-4 text-[#666]" />
+            <div className="flex items-center gap-2">
+              <Code className="h-4 w-4 text-[#666]" />
+              <div className="relative group/tooltip">
+                <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                  Number of programming languages detected across your repositories
+                </div>
+              </div>
+            </div>
           </div>
           <p className="text-3xl font-black text-[#e0e0e0] mb-1">
             {Object.keys(languages).length}
@@ -82,10 +91,19 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
           <p className="text-xs text-[#666]">Programming languages</p>
         </div>
 
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        {/* FRAMEWORKS */}
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">FRAMEWORKS</h3>
-            <Boxes className="h-4 w-4 text-[#666]" />
+            <div className="flex items-center gap-2">
+              <Boxes className="h-4 w-4 text-[#666]" />
+              <div className="relative group/tooltip">
+                <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                  Frameworks and libraries detected from package.json, requirements.txt, and dependency files
+                </div>
+              </div>
+            </div>
           </div>
           <p className="text-3xl font-black text-[#e0e0e0] mb-1">
             {Object.keys(frameworks).length}
@@ -93,10 +111,19 @@ export function SkillsTab({ profileData }: SkillsTabProps) {
           <p className="text-xs text-[#666]">Frameworks & libraries</p>
         </div>
 
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        {/* GISTS */}
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">GISTS</h3>
-            <Code className="h-4 w-4 text-[#666]" />
+            <div className="flex items-center gap-2">
+              <Code className="h-4 w-4 text-[#666]" />
+              <div className="relative group/tooltip">
+                <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                  Code snippets and quick shares you've created on GitHub Gist
+                </div>
+              </div>
+            </div>
           </div>
           <p className="text-3xl font-black text-[#e0e0e0] mb-1">
             {profileData.gistsCount || 0}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Package, Star, GitFork, TrendingUp, Code, Calendar, Scale } from "lucide-react";
+import { Package, Star, GitFork, TrendingUp, Code, Calendar, Scale, Info } from "lucide-react";
 import { TopRepos } from "./top-repos";
 import { LicenseChart } from "./license-chart";
 
@@ -46,7 +46,7 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
     }
   });
 
-  // YENİ: License Distribution
+  // License Distribution
   const licenseDistribution: Record<string, number> = {};
   let licensedCount = 0;
   
@@ -113,10 +113,19 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        {/* TOTAL REPOS */}
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">TOTAL REPOS</h3>
-            <Package className="h-4 w-4 text-[#666]" />
+            <div className="flex items-center gap-2">
+              <Package className="h-4 w-4 text-[#666]" />
+              <div className="relative group/tooltip">
+                <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                  Total number of repositories including original projects and forks
+                </div>
+              </div>
+            </div>
           </div>
           <p className="text-3xl font-black text-[#e0e0e0] mb-1">{profileData.totalRepos || 0}</p>
           <p className="text-xs text-[#666]">
@@ -124,10 +133,19 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
           </p>
         </div>
 
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        {/* TOTAL STARS */}
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">TOTAL STARS</h3>
-            <Star className="h-4 w-4 text-[#666]" />
+            <div className="flex items-center gap-2">
+              <Star className="h-4 w-4 text-[#666]" />
+              <div className="relative group/tooltip">
+                <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                  Total stars received across all repositories. Shows community appreciation!
+                </div>
+              </div>
+            </div>
           </div>
           <p className="text-3xl font-black text-[#e0e0e0] mb-1">{profileData.totalStars || 0}</p>
           <p className="text-xs text-[#666]">
@@ -135,10 +153,19 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
           </p>
         </div>
 
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        {/* TOTAL FORKS */}
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">TOTAL FORKS</h3>
-            <GitFork className="h-4 w-4 text-[#666]" />
+            <div className="flex items-center gap-2">
+              <GitFork className="h-4 w-4 text-[#666]" />
+              <div className="relative group/tooltip">
+                <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                  Number of times your repositories have been forked. Indicates code reusability!
+                </div>
+              </div>
+            </div>
           </div>
           <p className="text-3xl font-black text-[#e0e0e0] mb-1">{profileData.totalForks || 0}</p>
           <p className="text-xs text-[#666]">
@@ -146,10 +173,19 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
           </p>
         </div>
 
-        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
+        {/* LICENSED */}
+        <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-[#666] tracking-wider">LICENSED</h3>
-            <Scale className="h-4 w-4 text-[#666]" />
+            <div className="flex items-center gap-2">
+              <Scale className="h-4 w-4 text-[#666]" />
+              <div className="relative group/tooltip">
+                <Info className="h-3.5 w-3.5 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer" />
+                <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-black/95 border border-purple-500/30 rounded-lg text-xs text-white/80 opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 pointer-events-none z-50 shadow-xl">
+                  Repositories with open source licenses. Proper licensing is important for collaboration!
+                </div>
+              </div>
+            </div>
           </div>
           <p className="text-3xl font-black text-[#e0e0e0] mb-1">{licensedCount}</p>
           <p className="text-xs text-[#666]">
@@ -181,7 +217,7 @@ export function RepositoriesTab({ profileData }: RepositoriesTabProps) {
         </div>
       )}
 
-      {/* YENİ: License Distribution */}
+      {/* License Distribution */}
       {Object.keys(licenseDistribution).length > 0 && (
         <div className="bg-[#050307] border border-[#131c26] rounded-xl p-6">
           <div className="mb-6">
