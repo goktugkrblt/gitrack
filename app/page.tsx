@@ -547,6 +547,7 @@ export default function HomePage() {
     />
   </motion.div>
 </div>
+
         {/* REST OF CONTENT */}
         <main className="max-w-4xl mx-auto px-6">
           
@@ -705,7 +706,105 @@ export default function HomePage() {
               </Link>
             )}
           </ScrollRevealSection>
+            {/* Comparison Table Section */}
+          <ScrollRevealSection delay={0.25} isMobile={isMobile}>
+            <h2 className="text-xs font-mono text-white/40 uppercase tracking-widest mb-10">
+              Free vs PRO
+            </h2>
 
+            {/* Header */}
+            <div className="grid grid-cols-3 gap-4 md:gap-6 mb-6 pb-4 border-b border-white/10">
+              <div className="text-xs md:text-sm text-white/60 font-mono uppercase tracking-wider">
+                Feature
+              </div>
+              <div className="text-center text-xs md:text-sm text-white/60 font-mono uppercase tracking-wider">
+                Free
+              </div>
+              <div className="text-center text-xs md:text-sm text-white/60 font-mono uppercase tracking-wider">
+                PRO
+              </div>
+            </div>
+
+            {/* Rows */}
+            <div className="space-y-3 md:space-y-4">
+              {[
+                { feature: "Basic Profile Stats", free: true, pro: true },
+                { feature: "Repository Analysis", free: true, pro: true },
+                { feature: "Contribution Timeline", free: true, pro: true },
+                { feature: "Language Breakdown", free: true, pro: true },
+                { feature: "README Quality Score", free: false, pro: true },
+                { feature: "Repository Health Check", free: false, pro: true },
+                { feature: "Developer Patterns", free: false, pro: true },
+                { feature: "Career Growth Insights", free: false, pro: true },
+                { feature: "AI Recommendations", free: false, pro: true },
+                { feature: "Detailed Breakdown", free: false, pro: true },
+              ].map((row, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: isMobile ? 0 : -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: isMobile ? 0 : i * 0.05, duration: isMobile ? 0 : 0.4 }}
+                  className="grid grid-cols-3 gap-4 md:gap-6 items-center p-3 md:p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:border-white/15 transition-all duration-200"
+                >
+                  {/* Feature Name */}
+                  <div className="text-xs md:text-sm text-white/80">
+                    {row.feature}
+                  </div>
+
+                  {/* Free Column */}
+                  <div className="flex justify-center">
+                    {row.free ? (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: isMobile ? 0 : i * 0.05 + 0.2, type: "spring" }}
+                        className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path
+                            d="M10 3L4.5 8.5L2 6"
+                            stroke="#22c55e"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </motion.div>
+                    ) : (
+                      <div className="text-white/20 text-sm">—</div>
+                    )}
+                  </div>
+
+                  {/* PRO Column */}
+                  <div className="flex justify-center">
+                    {row.pro ? (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: isMobile ? 0 : i * 0.05 + 0.3, type: "spring" }}
+                        className="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path
+                            d="M10 3L4.5 8.5L2 6"
+                            stroke="#a855f7"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </motion.div>
+                    ) : (
+                      <div className="text-white/20 text-sm">—</div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </ScrollRevealSection>
           {/* FAQ */}
           <ScrollRevealSection delay={0.3} isMobile={isMobile}>
             <h2 className="text-xs font-mono text-white/40 uppercase tracking-widest mb-10">
