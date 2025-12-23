@@ -322,18 +322,86 @@ export default function HomePage() {
         scale: headerScale
       } : {}}
     >
-      {/* Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: isMobile ? 0 : -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: isMobile ? 0 : 0.3, duration: isMobile ? 0 : 0.6 }}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 mb-6 md:mb-8 backdrop-blur-sm w-fit"
-      >
-        <Sparkles className="h-3.5 w-3.5 text-white/60" />
-        <span className="text-xs text-white/60 font-mono uppercase tracking-widest">
-          Developer Analytics
-        </span>
-      </motion.div>
+     {/* Badge */}
+<motion.div
+  initial={{ opacity: 0, y: isMobile ? 0 : -20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: isMobile ? 0 : 0.3, duration: isMobile ? 0 : 0.6 }}
+  className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 mb-6 md:mb-8 backdrop-blur-sm w-fit"
+>
+  {/* Animated glow */}
+  <motion.div
+    className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 blur-sm"
+    animate={!isMobile ? {
+      scale: [1, 1.1, 1],
+      opacity: [0.3, 0.6, 0.3]
+    } : {}}
+    transition={{
+      duration: 3,
+      repeat: Infinity,
+      ease: "easeInOut"
+    }}
+  />
+  
+  {/* Custom SVG Icon */}
+  <motion.svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    className="relative"
+    animate={!isMobile ? { 
+      rotate: [0, 360],
+    } : {}}
+    transition={{
+      duration: 8,
+      repeat: Infinity,
+      ease: "linear"
+    }}
+  >
+    {/* Outer ring */}
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="url(#gradient1)"
+      strokeWidth="2"
+      fill="none"
+    />
+    
+    {/* Inner star/sparkle */}
+    <motion.path
+      d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10L12 2Z"
+      fill="url(#gradient2)"
+      animate={!isMobile ? { 
+        scale: [1, 1.2, 1],
+        opacity: [0.8, 1, 0.8]
+      } : {}}
+      transition={{
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    />
+    
+    {/* Gradient definitions */}
+    <defs>
+      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#a855f7" />
+        <stop offset="50%" stopColor="#ec4899" />
+        <stop offset="100%" stopColor="#3b82f6" />
+      </linearGradient>
+      <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#fbbf24" />
+        <stop offset="100%" stopColor="#f59e0b" />
+      </linearGradient>
+    </defs>
+  </motion.svg>
+  
+  <span className="text-xs text-white/80 font-mono uppercase tracking-widest relative">
+    AI-Powered Analytics
+  </span>
+</motion.div>
 
       {/* Title */}
       <motion.h1
