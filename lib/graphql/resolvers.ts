@@ -9,7 +9,7 @@ export const resolvers = {
       try {
         // Check cache first
         const cached = await prisma.profile.findFirst({
-          where: { 
+          where: {
             username: username.toLowerCase(),
           },
         });
@@ -142,29 +142,43 @@ function formatProfile(profile: any) {
     location: profile.location || '',
     company: profile.company || '',
     blog: profile.blog || '',
-    
+
     score: profile.score || 0,
     percentile: profile.percentile || 0,
-    
+
     totalCommits: profile.totalCommits || 0,
     totalRepos: profile.totalRepos || 0,
     totalStars: profile.totalStars || 0,
     totalForks: profile.totalForks || 0,
-    
+    totalPRs: profile.totalPRs || 0,
+    mergedPRs: profile.mergedPRs || 0,
+
     currentStreak: profile.currentStreak || 0,
     longestStreak: profile.longestStreak || 0,
     averageCommitsPerDay: profile.averageCommitsPerDay || 0,
-    
+    mostActiveDay: profile.mostActiveDay || 'N/A',
+    weekendActivity: profile.weekendActivity || 0,
+
     followersCount: profile.followersCount || 0,
     followingCount: profile.followingCount || 0,
-    
+    organizationsCount: profile.organizationsCount || 0,
+    gistsCount: profile.gistsCount || 0,
+
+    totalIssuesOpened: profile.totalIssuesOpened || 0,
+    totalReviews: profile.totalReviews || 0,
+    totalContributions: profile.totalContributions || 0,
+    totalWatchers: profile.totalWatchers || 0,
+    totalOpenIssues: profile.totalOpenIssues || 0,
+    averageRepoSize: profile.averageRepoSize || 0,
+    accountAge: profile.accountAge || 0,
+
     languages: formatLanguages(profile.languages),
     topRepos: formatRepos(profile.topRepos),
     contributions: formatContributions(profile.contributions),
-    
+
     hasPro: false, // TODO: Check PRO purchase
     proAnalysis: null, // TODO: Get PRO data if purchased
-    
+
     lastAnalyzed: profile.scannedAt.toISOString(),
     isPublic: profile.isPublic,
   };
@@ -172,18 +186,18 @@ function formatProfile(profile: any) {
 
 function formatLanguages(data: any): any[] {
   if (!data || typeof data !== 'object') return [];
-  
+
   const entries = Array.isArray(data) ? data : Object.entries(data);
   const total = entries.reduce((sum: number, item: any) => {
     const bytes = Array.isArray(data) ? item.bytes || item[1] : item[1];
     return sum + (bytes || 0);
   }, 0);
-  
+
   return entries.map((item: any) => {
-    const [name, bytes] = Array.isArray(data) 
+    const [name, bytes] = Array.isArray(data)
       ? [item.name || item[0], item.bytes || item[1]]
       : item;
-    
+
     return {
       name: name || 'Unknown',
       bytes: bytes || 0,
@@ -195,7 +209,7 @@ function formatLanguages(data: any): any[] {
 
 function formatRepos(data: any): any[] {
   if (!Array.isArray(data)) return [];
-  
+
   return data.map(repo => ({
     name: repo.name || 'Unknown',
     description: repo.description || '',
@@ -216,7 +230,7 @@ function formatContributions(data: any): any {
       byDay: [],
     };
   }
-  
+
   return {
     total: data.total || 0,
     byMonth: data.byMonth || [],

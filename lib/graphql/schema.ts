@@ -61,15 +61,30 @@ export const typeDefs = gql`
     totalRepos: Int!
     totalStars: Int!
     totalForks: Int!
+    totalPRs: Int!
+    mergedPRs: Int!
     
     # Activity (FREE)
     currentStreak: Int!
     longestStreak: Int!
     averageCommitsPerDay: Float!
+    mostActiveDay: String!
+    weekendActivity: Int!
     
     # Community (FREE)
     followersCount: Int!
     followingCount: Int!
+    organizationsCount: Int!
+    gistsCount: Int!
+    
+    # Extended Metrics (FREE)
+    totalIssuesOpened: Int!
+    totalReviews: Int!
+    totalContributions: Int!
+    totalWatchers: Int!
+    totalOpenIssues: Int!
+    averageRepoSize: Float!
+    accountAge: Int!
     
     # Languages and repos (FREE)
     languages: [Language!]!
